@@ -2,6 +2,11 @@ import type {Metadata} from 'next'
 import {Nunito} from 'next/font/google'
 import './globals.css'
 
+import {config} from '@fortawesome/fontawesome-svg-core'
+import '@fortawesome/fontawesome-svg-core/styles.css'
+config.autoAddCss = false
+
+
 const nunito = Nunito({
 	variable: '--font-nunito',
 	subsets: ['latin-ext'],
@@ -20,7 +25,9 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang='en'>
-			<body className={`${nunito.variable} antialiased`}>{children}</body>
+			<body className={`${nunito.variable} antialiased`}>
+				<main>{children}</main>
+			</body>
 		</html>
 	)
 }
