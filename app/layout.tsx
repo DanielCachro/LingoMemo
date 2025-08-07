@@ -6,6 +6,7 @@ import {config} from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
 
+import MainNavigation from './MainNavigation'
 
 const nunito = Nunito({
 	variable: '--font-nunito',
@@ -25,8 +26,9 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang='en'>
-			<body className={`${nunito.variable} antialiased`}>
-				<main>{children}</main>
+			<body className={`${nunito.variable} antialiased sm:flex`}>
+				<MainNavigation />
+				<main className='w-full'>{children}</main>
 			</body>
 		</html>
 	)
