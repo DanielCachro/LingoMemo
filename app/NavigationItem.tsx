@@ -41,7 +41,7 @@ export default function NavigationItem({
 					<motion.div
 						layoutId={indicatorLayoutId}
 						className={cn(
-							'absolute bg-primary-500',
+							'absolute bg-primary-500 dark:bg-primary-600',
 							{'top-0 -mt-[2px] h-[2px] w-full': indicatorPosition === 'top'},
 							{'right-0 -mr-[2px] h-full w-[2px]': indicatorPosition === 'right'},
 							{'bottom-0 -mb-[2px] h-[2px] w-full': indicatorPosition === 'bottom'},
