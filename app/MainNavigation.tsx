@@ -2,7 +2,6 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faFireFlameSimple, faSliders} from '@fortawesome/free-solid-svg-icons'
 import PrimaryButton from '../components/PrimaryButton'
 import NavigationItems from './NavigationItems'
-import NavigationItem from './NavigationItem'
 
 export default function MainNavigation() {
 	return (
@@ -14,14 +13,8 @@ export default function MainNavigation() {
 				</span>
 				<PrimaryButton content={<FontAwesomeIcon icon={faSliders} />} />
 			</div>
-			<NavigationItems>
-				{links => (
-					<ul className='hidden sm:flex flex-col gap-16'>
-						{links.map(link => (
-							<NavigationItem key={link.title} link={link} />
-						))}
-					</ul>
-				)}
+			<NavigationItems className='hidden sm:flex flex-col gap-16'>
+				{item => <NavigationItems.NavigationItem key={item.title} item={item} />}
 			</NavigationItems>
 		</div>
 	)
