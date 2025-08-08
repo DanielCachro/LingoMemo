@@ -14,7 +14,14 @@ export default function MainNavigation() {
 				<PrimaryButton content={<FontAwesomeIcon icon={faSliders} />} />
 			</div>
 			<NavigationItems className='hidden flex-col gap-16 sm:flex'>
-				{item => <NavigationItems.NavigationItem key={item.title} item={item} />}
+				{item => (
+					<NavigationItems.NavigationItem
+						key={item.title}
+						item={item}
+						indicatorLayoutId='main-navigation-indicator'
+						indicatorPosition='right'
+					/>
+				)}
 			</NavigationItems>
 		</div>
 	)

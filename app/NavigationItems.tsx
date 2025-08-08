@@ -2,12 +2,12 @@ import {ReactNode} from 'react'
 import {navigationItems} from '@/lib/navigationItems'
 import NavigationItem from './NavigationItem'
 
-interface NavigationItemsProps {
+interface Props {
 	className?: string
 	children: (item: (typeof navigationItems)[number]) => ReactNode
 }
 
-export default function NavigationItems({children, className}: NavigationItemsProps) {
+export default function NavigationItems({children, className}: Props) {
 	return <ul className={className}>{navigationItems.map(item => children(item))}</ul>
 }
 
