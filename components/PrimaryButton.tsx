@@ -17,10 +17,10 @@ export default function PrimaryButton({content}: Props) {
 					boxShadow: 'none',
 					transition: {duration: 0.075},
 				}}
-				className='h-full w-full bg-primary-500 text-primary-100 font-bold relative z-10 rounded-sm dark:bg-primary-600 dark:text-primary-200 hover:cursor-pointer'>
+				className='relative z-10 h-full w-full rounded-sm bg-primary-500 font-bold text-primary-100 transition-colors duration-50 hover:cursor-pointer hover:bg-primary-400 focus-visible:bg-primary-400 focus-visible:outline-2 focus-visible:outline-primary-200 dark:bg-primary-600 dark:text-primary-200 dark:hover:bg-primary-500 dark:focus-visible:outline-primary-500'>
 				{content}
 			</motion.button>
-			<div className='absolute h-full w-full top-[3px] left-0 z-0 bg-primary-700 dark:bg-primary-800 rounded-sm'></div>
+			<div className='absolute top-[3px] left-0 z-0 h-full w-full rounded-sm bg-primary-700 transition-colors duration-50 peer-hover:bg-primary-600 peer-focus:bg-primary-600 dark:bg-primary-800 dark:peer-hover:bg-primary-700'></div>
 		</div>
 	)
 }

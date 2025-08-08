@@ -15,8 +15,10 @@ export default function NavigationItem({className, item}: NavigationItemProps) {
 		<li
 			key={item.title}
 			className={cn(
-				pathname.endsWith(item.href) && '-mr-[2px] border-r-2 text-primary-500 dark:text-primary-600',
-				className
+				'transition-colors duration-100 hover:text-primary-500 has-focus-visible:text-primary-500 hover:dark:text-primary-600 dark:has-focus-visible:text-primary-500',
+				pathname.endsWith(item.href) &&
+					'-mr-[2px] border-r-2 text-primary-500 hover:text-primary-400 has-focus-visible:text-primary-400 dark:text-primary-600 dark:hover:text-primary-500 dark:has-focus-visible:text-primary-500',
+				className,
 			)}>
 			<Link href={item.href} className='flex items-center gap-8'>
 				{item.icon}
