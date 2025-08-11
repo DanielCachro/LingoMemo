@@ -1,4 +1,4 @@
-import NavigationItems from './NavigationItems'
+import NavigationItems from '../components/NavigationItems'
 import {cn} from '@/lib/utils'
 
 interface Props {
@@ -7,7 +7,7 @@ interface Props {
 
 export default function BottomNavigation({className}: Props) {
 	return (
-		<div className={cn('fixed bottom-0 w-full', className)}>
+		<nav className={cn('fixed bottom-0 w-full', className)}>
 			<NavigationItems className='flex justify-center gap-32'>
 				{item => (
 					<NavigationItems.NavigationItem
@@ -19,6 +19,6 @@ export default function BottomNavigation({className}: Props) {
 					/>
 				)}
 			</NavigationItems>
-		</div>
+		</nav>
 	)
 }

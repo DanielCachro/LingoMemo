@@ -12,7 +12,7 @@ import BottomNavigation from './BottomNavigation'
 const nunito = Nunito({
 	variable: '--font-nunito',
 	subsets: ['latin-ext'],
-	weight: ['500', '700'],
+	weight: ['500', '700', '900'],
 })
 
 export const metadata: Metadata = {
