@@ -1,5 +1,5 @@
-import GradientIcon from './GradientIcon'
 import CurrentWeek from './CurrentWeek'
+import GradientIcon from './GradientIcon'
 
 // Temporary hardcoded streak count
 const streakCount = 64

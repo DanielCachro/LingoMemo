@@ -1,7 +1,7 @@
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faFireFlameSimple, faSliders} from '@fortawesome/free-solid-svg-icons'
-import PrimaryButton from '../components/PrimaryButton'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import NavigationItems from '../components/NavigationItems'
+import PrimaryButton from '../components/PrimaryButton'
 
 export default function MainNavigation() {
 	return (

@@ -1,5 +1,5 @@
-import {ReactNode} from 'react'
 import {navigationItems} from '@/lib/navigationItems'
+import {ReactNode} from 'react'
 import NavigationItem from './NavigationItem'
 
 interface Props {

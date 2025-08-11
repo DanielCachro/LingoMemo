@@ -1,6 +1,6 @@
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faCheck} from '@fortawesome/free-solid-svg-icons'
 import {cn} from '@/lib/utils'
+import {faCheck} from '@fortawesome/free-solid-svg-icons'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
 function getCurrentWeekDays() {
 	const days = []

@@ -1,5 +1,5 @@
+import {faBook, faGraduationCap, faHome} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faHome, faGraduationCap, faBook} from '@fortawesome/free-solid-svg-icons'
 
 export const navigationItems = [
 	{

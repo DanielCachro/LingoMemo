@@ -6,8 +6,8 @@ import {config} from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
 
-import MainNavigation from './MainNavigation'
 import BottomNavigation from './BottomNavigation'
+import MainNavigation from './MainNavigation'
 
 const nunito = Nunito({
 	variable: '--font-nunito',

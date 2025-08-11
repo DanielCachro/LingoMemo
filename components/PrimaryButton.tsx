@@ -1,8 +1,8 @@
 'use client'
 
-import {JSX} from 'react'
-import {motion} from 'motion/react'
 import {clsx} from 'clsx'
+import {motion} from 'motion/react'
+import {JSX} from 'react'
 
 interface Props {
 	content: string | JSX.Element

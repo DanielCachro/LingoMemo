@@ -1,5 +1,5 @@
-import NavigationItems from '../components/NavigationItems'
 import {cn} from '@/lib/utils'
+import NavigationItems from '../components/NavigationItems'
 
 interface Props {
 	className?: string

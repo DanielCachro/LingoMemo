@@ -1,9 +1,9 @@
 'use client'
+import {navigationItems} from '@/lib/navigationItems'
+import {cn} from '@/lib/utils'
+import {motion} from 'motion/react'
 import Link from 'next/link'
 import {usePathname} from 'next/navigation'
-import {motion} from 'motion/react'
-import {cn} from '@/lib/utils'
-import {navigationItems} from '@/lib/navigationItems'
 
 interface Props {
 	className?: string
