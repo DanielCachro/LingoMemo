@@ -7,8 +7,7 @@ interface Props {
 	initialValue?: number
 	decimalPlaces?: number
 	transition?: Transition
-	whileInView?: boolean
-	once?: boolean
+	whileInView?: false | true | 'once'
 }
 
 export default function AnimatedNumber({
@@ -17,14 +16,15 @@ export default function AnimatedNumber({
 	decimalPlaces = 0,
 	transition,
 	whileInView = false,
-	once = false,
 }: Props) {
 	const x = useMotionValue(initialValue)
 	const ref = useRef<HTMLParagraphElement>(null)
-	const isInView = useInView(ref, {once})
+
+	const inViewState = useInView(ref, {once: whileInView === 'once'})
+	const isInView = whileInView ? inViewState : undefined
 
 	useEffect(() => {
-		if (whileInView && !isInView) return
+		if (isInView != undefined && !isInView) return
 		if (initialValue === maxValue) return
 
 		const controls = animate(initialValue, maxValue, {
@@ -37,7 +37,8 @@ export default function AnimatedNumber({
 		})
 
 		return () => controls.stop()
-	}, [isInView, whileInView, initialValue, maxValue, decimalPlaces, x, transition])
+		/* eslint-disable-next-line react-hooks/exhaustive-deps */
+	}, [isInView, initialValue, maxValue])
 
 	useMotionValueEvent(x, 'change', latest => {
 		if (ref.current) {
