@@ -5,7 +5,6 @@ import getCurrentWeekDays from './getCurrentWeekDays'
 
 export default function CurrentWeek() {
 	const currentWeekDays = getCurrentWeekDays()
-	console.log(currentWeekDays)
 
 	return <StaggeredWeekItems currentWeekDays={currentWeekDays} />
 }

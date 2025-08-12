@@ -4,11 +4,7 @@ import {cn} from '@/lib/utils'
 import {motion} from 'motion/react'
 import getCurrentWeekDays from './getCurrentWeekDays'
 
-interface Props {
-	currentWeekDays: ReturnType<typeof getCurrentWeekDays>
-}
-
-export function AnimatedCheck() {
+function AnimatedCheck() {
 	// Icon Copyright
 	// Copyright (c) 2013-2023 Cole Bemis
 
@@ -39,6 +35,10 @@ export function AnimatedCheck() {
 				points='20 6 9 17 4 12'></motion.polyline>
 		</svg>
 	)
+}
+
+interface Props {
+	currentWeekDays: ReturnType<typeof getCurrentWeekDays>
 }
 
 export default function StaggeredWeekItems({currentWeekDays}: Props) {

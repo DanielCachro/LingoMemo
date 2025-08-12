@@ -21,7 +21,6 @@ export default function TotalStreak() {
 			</div>
 
 			<CurrentWeek />
-			<div className='h-dvh'></div>
 		</section>
 	)
 }
