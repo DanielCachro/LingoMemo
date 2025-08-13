@@ -1,9 +1,9 @@
-import TotalStreak from './TotalStreak'
+import TotalStreakSection from './TotalStreakSection'
 
 export default function Home() {
 	return (
 		<>
-			<TotalStreak />
+			<TotalStreakSection />
 		</>
 	)
 }
