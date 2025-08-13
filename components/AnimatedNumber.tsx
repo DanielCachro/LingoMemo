@@ -1,18 +1,18 @@
 'use client'
 import {animate, Transition, useInView, useMotionValue, useMotionValueEvent} from 'motion/react'
-import {useEffect, useRef} from 'react'
+import {useLayoutEffect, useRef} from 'react'
 
 interface Props {
-	maxValue: number
 	initialValue?: number
+	targetValue: number
 	decimalPlaces?: number
 	transition?: Transition
 	whileInView?: false | true | 'once'
 }
 
 export default function AnimatedNumber({
-	maxValue,
 	initialValue = 0,
+	targetValue,
 	decimalPlaces = 0,
 	transition,
 	whileInView = false,
@@ -23,11 +23,15 @@ export default function AnimatedNumber({
 	const inViewState = useInView(ref, {once: whileInView === 'once'})
 	const isInView = whileInView ? inViewState : undefined
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		if (isInView != undefined && !isInView) return
-		if (initialValue === maxValue) return
+		
+		if (initialValue === targetValue) {
+			x.set(targetValue)
+			return
+		}
 
-		const controls = animate(initialValue, maxValue, {
+		const controls = animate(initialValue, targetValue, {
 			duration: 2.5,
 			ease: 'circOut',
 			...transition,
@@ -38,7 +42,7 @@ export default function AnimatedNumber({
 
 		return () => controls.stop()
 		/* eslint-disable-next-line react-hooks/exhaustive-deps */
-	}, [isInView, initialValue, maxValue])
+	}, [isInView, initialValue, targetValue])
 
 	useMotionValueEvent(x, 'change', latest => {
 		if (ref.current) {
