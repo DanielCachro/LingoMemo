@@ -18,7 +18,7 @@ const bigStreakMessages = [
 function getStreakMessage(streakCount: number) {
 	const key = 'streakMessage'
 
-	if(streakCount < 0) {
+	if (streakCount < 0) {
 		throw new Error('Streak count cannot be negative')
 	}
 
@@ -68,7 +68,7 @@ export default function StreakMessage({streakCount}: {streakCount: number}) {
 			animate={{scale: 1, rotate: 0}}
 			transition={{visualDuration: 0.7, type: 'spring'}}
 			className='text-xl font-bold text-background-500 sm:text-2xl'>
-			{streakMessage}
+			{streakMessage || <span className='opacity-0'>Loading...</span>}
 		</motion.p>
 	)
 }
