@@ -20,7 +20,7 @@ export default function TotalStreak() {
 				</p>
 			</div>
 			<div className='text-center'>
-				<p className='text-2xl font-black sm:text-3xl dark:text-background-200'>Total Streak</p>
+				<h1 className='text-2xl font-black sm:text-3xl dark:text-background-200'>Total Streak</h1>
 				<StreakMessage streakCount={streakCount} />
 			</div>
 			<CurrentWeek />
