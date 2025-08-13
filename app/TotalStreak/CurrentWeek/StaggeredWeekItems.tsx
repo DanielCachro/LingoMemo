@@ -2,6 +2,7 @@
 
 import {cn} from '@/lib/utils'
 import {motion} from 'motion/react'
+import {useEffect, useState} from 'react'
 import getCurrentWeekDays from './getCurrentWeekDays'
 
 function AnimatedCheck() {
@@ -42,7 +43,11 @@ interface Props {
 }
 
 export default function StaggeredWeekItems({currentWeekDays}: Props) {
-	const currentDay = new Date().getDate()
+	const [currentDay, setCurrentDay] = useState<number>(0)
+
+	useEffect(() => {
+		setCurrentDay(new Date().getDate())
+	}, [])
 
 	return (
 		<>
