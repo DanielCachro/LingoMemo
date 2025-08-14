@@ -147,6 +147,10 @@
 	}
 }
 
+@utility no-scrollbar {
+	@apply [scrollbar-width:none] [&::-webkit-scrollbar]:hidden;
+}
+
 @media (prefers-color-scheme: dark) {
 	:root {
 		--background: var(--color-background-900);

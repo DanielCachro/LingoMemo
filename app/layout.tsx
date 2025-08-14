@@ -29,7 +29,7 @@ export default function RootLayout({
 		<html lang='en'>
 			<body className={`${nunito.variable} antialiased sm:flex`}>
 				<MainNavigation />
-				<main className='w-full'>{children}</main>
+				<main className='mb-64 w-full'>{children}</main>
 				<BottomNavigation className='sm:hidden' />
 			</body>
 		</html>

@@ -1,9 +1,9 @@
 'use client'
 
+import {getCurrentWeekDays} from '@/lib/dateRanges'
 import {cn} from '@/lib/utils'
-import {motion} from 'motion/react'
+import {motion, stagger} from 'motion/react'
 import {useEffect, useState} from 'react'
-import getCurrentWeekDays from './getCurrentWeekDays'
 
 function AnimatedCheck() {
 	// Icon Copyright
@@ -50,7 +50,7 @@ export default function StaggeredWeekItems({currentWeekDays}: Props) {
 	}, [])
 
 	return (
-		<motion.ul initial='hidden' animate='visible' transition={{staggerChildren: 0.1}} className='flex gap-8'>
+		<motion.ul initial='hidden' animate='visible' transition={{delayChildren: stagger(0.1)}} className='flex gap-8'>
 			{currentWeekDays.map(({day, dayLabel, datetime, completed}) => (
 				<motion.li
 					variants={{
