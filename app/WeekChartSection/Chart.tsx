@@ -17,7 +17,8 @@ export default function Chart({last7Days}: {last7Days: ReturnType<typeof getLast
 	return (
 		<motion.figure
 			initial='hidden'
-			animate='visible'
+			whileInView='visible'
+			viewport={{once: true, amount: 0.75}}
 			transition={{delayChildren: 0.7}}
 			className='flex min-w-max justify-start gap-8 pr-24 sm:p-0'
 			style={{direction: 'ltr'}}>
