@@ -10,8 +10,10 @@ interface Props {
 export default function BottomNavigation({className}: Props) {
 	return (
 		<motion.nav
-			layoutScroll
-			className={cn('fixed bottom-0 w-full border-t-2 border-background-800 bg-background-900', className)}>
+			className={cn(
+				'w-full border-t-2 border-background-200 bg-background-100 dark:border-background-800 dark:bg-background-900',
+				className,
+			)}>
 			<NavigationItems className='flex justify-center gap-32'>
 				{item => (
 					<NavigationItems.NavigationItem

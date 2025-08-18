@@ -147,8 +147,19 @@
 	}
 }
 
+@utility scrollbar {
+	scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0);
+
+	@variant dark {
+		scrollbar-color: rgba(255, 255, 255, 0.2) rgba(0, 0, 0, 0);
+	}
+}
+
 @utility no-scrollbar {
-	@apply [scrollbar-width:none] [&::-webkit-scrollbar]:hidden;
+	scrollbar-width: none;
+	&::-webkit-scrollbar {
+		display: none;
+	}
 }
 
 @media (prefers-color-scheme: dark) {

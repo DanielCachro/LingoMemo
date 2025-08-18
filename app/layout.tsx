@@ -27,9 +27,9 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang='en'>
-			<body className={`${nunito.variable} antialiased sm:flex`}>
+			<body className={`${nunito.variable} flex h-dvh flex-col overflow-y-hidden antialiased sm:flex-row`}>
 				<MainNavigation />
-				<main className='mb-64 w-full'>{children}</main>
+				<main className='w-full grow overflow-y-scroll py-48 scrollbar sm:py-64'>{children}</main>
 				<BottomNavigation className='sm:hidden' />
 			</body>
 		</html>
