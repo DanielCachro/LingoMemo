@@ -1,7 +1,7 @@
-import StudyCtaSection from './StudyCtaSection'
-import TotalStreakSection from './TotalStreakSection'
-import UserStatsSection from './UserStatsSection'
-import WeekChartSection from './WeekChartSection'
+import StudyCtaSection from './_sections/StudyCtaSection'
+import TotalStreakSection from './_sections/TotalStreakSection'
+import UserStatsSection from './_sections/UserStatsSection'
+import WeekChartSection from './_sections/WeekChartSection'
 
 export default function Home() {
 	return (
