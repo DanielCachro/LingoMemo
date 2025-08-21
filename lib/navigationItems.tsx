@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 export const navigationItems = [
 	{
 		title: 'Home',
-		href: '/',
+		href: '/home',
 		icon: <FontAwesomeIcon icon={faHome} />,
 	},
 	{
