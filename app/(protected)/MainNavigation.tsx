@@ -11,7 +11,9 @@ export default function MainNavigation() {
 					<FontAwesomeIcon className='h-16 text-primary-500 dark:text-primary-600' icon={faFireFlameSimple} />
 					64
 				</span>
-				<PrimaryButton content={<FontAwesomeIcon icon={faSliders} />} />
+				<PrimaryButton>
+					<FontAwesomeIcon icon={faSliders} />
+				</PrimaryButton>
 			</div>
 			<nav>
 				<NavigationItems className='hidden flex-col gap-16 sm:flex'>

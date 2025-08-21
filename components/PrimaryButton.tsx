@@ -1,20 +1,20 @@
 'use client'
 
 import {clsx} from 'clsx'
-import {motion} from 'motion/react'
-import {JSX, isValidElement} from 'react'
+import {HTMLMotionProps, motion} from 'motion/react'
+import {isValidElement, ReactNode} from 'react'
 
-interface Props {
-	content: string | JSX.Element
+type Props = {
+	children: ReactNode
 	className?: string
 	wrapperClassName?: string
 	shadowClassName?: string
-}
+} & HTMLMotionProps<'button'>
 
-export default function PrimaryButton({content, className, wrapperClassName, shadowClassName}: Props) {
+export default function PrimaryButton({children, className, wrapperClassName, shadowClassName, ...props}: Props) {
 	let type: string = ''
 
-	if (isValidElement(content) && content.type === 'svg') {
+	if (isValidElement(children) && children.type === 'svg') {
 		type = 'icon'
 	} else {
 		type = 'inline'
@@ -41,8 +41,9 @@ export default function PrimaryButton({content, className, wrapperClassName, sha
 						'px-16 py-12': type === 'inline',
 					},
 					className,
-				)}>
-				{content}
+				)}
+				{...props}>
+				{children}
 			</motion.button>
 			<div
 				className={clsx(

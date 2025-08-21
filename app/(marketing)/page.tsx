@@ -12,14 +12,10 @@ export default function LandingPage() {
 					A smarter way to learn vocabulary<span className='text-primary-500 dark:text-primary-600'>.</span>
 				</h1>
 				<p>Create your own cards, track your progress, and never forget the words that matter.</p>
-				<PrimaryButton
-					content={
-						<>
-							<FontAwesomeIcon icon={faGoogle} size='lg' className='mr-12' />
-							Sign in with Google
-						</>
-					}
-				/>
+				<PrimaryButton>
+					<FontAwesomeIcon icon={faGoogle} size='lg' className='mr-12' />
+					Sign in with Google
+				</PrimaryButton>
 			</div>
 		</section>
 	)
