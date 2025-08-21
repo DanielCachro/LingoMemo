@@ -32,19 +32,12 @@ export default function AnimatedCards() {
 				variants={variants}
 				className='relative z-20 flex h-192 w-256 flex-col items-center justify-between rounded-sm bg-primary-500 py-32 dark:bg-primary-600'>
 				<p className='flex h-full items-center text-primary-50 uppercase'>pilny</p>
-
-				{PrimaryButton ? (
-					<PrimaryButton
-						content='Let’s do some cards!'
-						className={
-							'border-2 border-primary-700 hover:border-primary-600 hover:bg-primary-500 focus-visible:border-primary-600 dark:border-primary-800 hover:dark:border-primary-700 hover:dark:bg-primary-600'
-						}
-					/>
-				) : (
-					<button className='rounded py-6 border-2 border-primary-700 px-12 hover:border-primary-600 hover:bg-primary-500 focus-visible:border-primary-600 dark:border-primary-800 hover:dark:border-primary-700 hover:dark:bg-primary-600'>
-						Let’s do some cards!
-					</button>
-				)}
+				<PrimaryButton
+					content='Let’s do some cards!'
+					className={
+						'border-2 border-primary-700 focus-visible:border-primary-600 dark:border-primary-800 pointer-fine:hover:border-primary-800 pointer-fine:hover:dark:border-primary-900'
+					}
+				/>
 			</motion.div>
 
 			<motion.div
