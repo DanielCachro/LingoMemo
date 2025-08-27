@@ -4,12 +4,12 @@ import {clsx} from 'clsx'
 import {HTMLMotionProps, motion} from 'motion/react'
 import {isValidElement, ReactNode} from 'react'
 
-type Props = {
+interface Props extends HTMLMotionProps<'button'> {
 	children: ReactNode
 	className?: string
 	wrapperClassName?: string
 	shadowClassName?: string
-} & HTMLMotionProps<'button'>
+}
 
 export default function PrimaryButton({children, className, wrapperClassName, shadowClassName, ...props}: Props) {
 	let type: string = ''
