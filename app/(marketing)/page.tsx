@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import LoginButton from './LoginButton'
 
-export default async function LandingPage() {
+export default function LandingPage() {
 	return (
 		<section className='mx-32 flex min-h-dvh flex-col items-center justify-center gap-32 text-center'>
 			<Image src='/cats/CatSmile.svg' alt='Brand cat smiling' width={128} height={120} className='w-128' />

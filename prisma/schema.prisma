@@ -4,7 +4,6 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -15,11 +14,22 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  test      String?
-  published Boolean @default(false)
+enum Theme {
+  Light
+  Dark
+  Automatic
 }
 
+model User {
+  id          String       @id
+  name        String
+  email       String       @unique
+  preferences Preferences?
+}
+
+model Preferences {
+  id     Int    @id @default(autoincrement())
+  theme  Theme
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+}
