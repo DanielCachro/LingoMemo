@@ -1,10 +1,12 @@
-import {NextResponse} from 'next/server'
+import {NextRequest, NextResponse} from 'next/server'
 // The client you created from the Server-Side Auth instructions
 import {createClient} from '@/lib/supabase/server'
+import getOrigin from '../getOrigin'
 import {createNewUser} from './createNewUser'
 
-export async function GET(request: Request) {
-	const {searchParams, origin} = new URL(request.url)
+export async function GET(request: NextRequest) {
+	const {searchParams} = new URL(request.url)
+	const origin = getOrigin(request)
 	const code = searchParams.get('code')
 	// if "next" is in param, use it as the redirect URL
 	let next = searchParams.get('next') ?? '/'
@@ -17,25 +19,25 @@ export async function GET(request: Request) {
 		const supabase = await createClient()
 		const {error} = await supabase.auth.exchangeCodeForSession(code)
 
-		const user = await supabase.auth.getUser()
-		try {
-			await createNewUser(user.data.user)
-		} catch {
-			await supabase.auth.signOut()
-			return NextResponse.redirect(`${origin}/auth/error`)
-		}
-
 		if (!error) {
-			const forwardedHost = request.headers.get('x-forwarded-host') // original origin before load balancer
-			const isLocalEnv = process.env.NODE_ENV === 'development'
-			if (isLocalEnv) {
-				// we can be sure that there is no load balancer in between, so no need to watch for X-Forwarded-Host
-				return NextResponse.redirect(`${origin}${next}/home`)
-			} else if (forwardedHost) {
-				return NextResponse.redirect(`https://${forwardedHost}${next}/home`)
-			} else {
-				return NextResponse.redirect(`${origin}${next}/home`)
+			const user = await supabase.auth.getUser()
+
+			async function signOutAndRedirect() {
+				await supabase.auth.signOut()
+				return NextResponse.redirect(`${origin}/auth/error`)
 			}
+
+			if (!user) {
+				return await signOutAndRedirect()
+			}
+
+			try {
+				await createNewUser(user.data.user)
+			} catch {
+				return await signOutAndRedirect()
+			}
+
+			return NextResponse.redirect(`${origin}${next}/home`)
 		}
 	}
 
