@@ -3,16 +3,17 @@ import Image from 'next/image'
 
 interface Props {
 	onBtnClick: () => void
+	error: Error
 }
 
-export default function ErrorPage({onBtnClick}: Props) {
+export default function ErrorPage({onBtnClick, error}: Props) {
 	return (
 		<section className='mx-32 flex min-h-dvh flex-col items-center justify-center gap-24 text-center'>
 			<Image src='/cats/CatCry.svg' alt='Brand cat crying' width={128} height={120} className='w-128' />
-			<div className='max-w-384 space-y-16'>
-				<div>
-					<h1 className='text-2xl font-bold'>Oops...</h1>
-					<p>Something went wrong!</p>
+			<div className='max-w-384 space-y-24'>
+				<div className='space-y-8'>
+					<h1 className='text-2xl font-bold'>Something went wrong!</h1>
+					<p>{error.message}.</p>
 				</div>
 
 				<PrimaryButton onClick={onBtnClick}>Try again</PrimaryButton>

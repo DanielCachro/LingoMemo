@@ -13,5 +13,5 @@ export default function Error({error, reset}: Props) {
 		console.error(error)
 	}, [error])
 
-	return <ErrorPage onBtnClick={() => reset()} />
+	return <ErrorPage error={error} onBtnClick={() => reset()} />
 }
