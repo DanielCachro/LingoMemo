@@ -20,11 +20,48 @@ enum Theme {
   Automatic
 }
 
+enum SourceLanguages {
+  en
+}
+
+enum TargetLanguages {
+  ca
+  zh
+  cs
+  nl
+  en
+  eo
+  fi
+  fr
+  gl
+  de
+  el
+  hu
+  it
+  ja
+  la
+  lv
+  mk
+  cmn
+  nb
+  nn
+  ang
+  pl
+  pt
+  ro
+  ru
+  sh
+  es
+  sv
+  mul
+}
+
 model User {
-  id          String       @id
-  name        String
-  email       String       @unique
-  preferences Preferences?
+  id               String            @id
+  name             String
+  email            String            @unique
+  preferences      Preferences?
+  learningProfiles LearningProfile[]
 }
 
 model Preferences {
@@ -32,4 +69,13 @@ model Preferences {
   theme  Theme
   userId String @unique
   user   User   @relation(fields: [userId], references: [id])
+}
+
+model LearningProfile {
+  id         Int             @id @default(autoincrement())
+  sourceLang SourceLanguages
+  targetLang TargetLanguages
+  users      User[]
+
+  @@unique([sourceLang, targetLang])
 }
