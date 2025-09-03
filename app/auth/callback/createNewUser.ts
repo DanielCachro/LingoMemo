@@ -53,6 +53,17 @@ export async function createNewUser(user: User | null) {
 							},
 						},
 					},
+					activeLearningProfile: {
+						connectOrCreate: {
+							where: {
+								sourceLang_targetLang: {sourceLang: 'en', targetLang: 'en'},
+							},
+							create: {
+								sourceLang: 'en',
+								targetLang: 'en',
+							},
+						},
+					},
 				},
 			})
 		} catch (error: unknown) {

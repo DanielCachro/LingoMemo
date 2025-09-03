@@ -1,8 +1,10 @@
+import {getCurrentUser} from '@/lib/userActions'
 import Entry from './Entry'
 import SearchBarWrapper from './SearchBarWrapper'
 import type {DictionaryEntry, NotFoundEntry} from './types'
 
-const target_lang: 'en' | 'pl' = 'en'
+const user = await getCurrentUser()
+const target_lang = user?.activeLearningProfile?.targetLang || 'en'
 
 interface Props {
 	searchParams?: Promise<{search: string}>
