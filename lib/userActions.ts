@@ -1,3 +1,5 @@
+import 'server-only'
+
 import {prisma} from '@/prisma/client'
 import {cache} from 'react'
 import {createClient} from './supabase/server'
