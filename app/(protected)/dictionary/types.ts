@@ -1,21 +1,28 @@
-export interface DictionaryDefinition {
+export interface DictionaryEntry {
 	word: string
 	phonetic: string
 	audio: string[]
-	meanings: {
+	senses: {
 		partOfSpeech: string
 		definitions: [
 			{
 				definition: string
-				example: string
+				examples: string[]
 				synonyms: string[]
 			},
 		]
 		synonyms: string[]
 	}[]
+	source: {
+		license: {
+			name: string
+			url: string
+		}
+		url: string
+	}
 }
 
-export interface NotFoundDefinition {
+export interface NotFoundEntry {
 	notFound: true
 	word: string
 }
