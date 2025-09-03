@@ -3,7 +3,7 @@ import Image from 'next/image'
 
 interface Props {
 	onBtnClick: () => void
-	error: Error
+	error?: Error
 }
 
 export default function ErrorPage({onBtnClick, error}: Props) {
@@ -13,7 +13,7 @@ export default function ErrorPage({onBtnClick, error}: Props) {
 			<div className='max-w-384 space-y-24'>
 				<div className='space-y-8'>
 					<h1 className='text-2xl font-bold'>Something went wrong!</h1>
-					<p>{error.message}.</p>
+					<p>{error?.message ? error.message : 'Unknown error occurred'}.</p>
 				</div>
 
 				<PrimaryButton onClick={onBtnClick}>Try again</PrimaryButton>
