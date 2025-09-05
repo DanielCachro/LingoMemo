@@ -57,13 +57,13 @@ enum TargetLanguages {
 }
 
 model User {
-  id               String            @id
-  name             String
-  email            String            @unique
-  preferences      Preferences?
-  learningProfiles LearningProfile[]
-  activeLearningProfileId Int?
-  activeLearningProfile   LearningProfile?  @relation("ActiveProfile", fields: [activeLearningProfileId], references: [id])
+  id                      String            @id
+  name                    String
+  email                   String            @unique
+  preferences             Preferences?
+  learningProfiles        LearningProfile[]
+  activeLearningProfileId Int?              @unique
+  activeLearningProfile   LearningProfile?  @relation("ActiveLearningProfile", fields: [activeLearningProfileId], references: [id])
 }
 
 model Preferences {
@@ -74,11 +74,47 @@ model Preferences {
 }
 
 model LearningProfile {
-  id         Int             @id @default(autoincrement())
-  sourceLang SourceLanguages
-  targetLang TargetLanguages
-  users      User[]
-  activeForUsers User[] @relation("ActiveProfile")
+  id            Int             @id @default(autoincrement())
+  sourceLang    SourceLanguages
+  targetLang    TargetLanguages
+  userId        String
+  user          User?           @relation(fields: [userId], references: [id])
+  activeForUser User?           @relation("ActiveLearningProfile")
+  flashcards    Flashcard[]
 
-  @@unique([sourceLang, targetLang])
+  @@unique([userId, sourceLang, targetLang])
+}
+
+model AnswerLicense {
+  id         Int    @id @default(autoincrement())
+  name       String
+  licenseUrl String
+  sourceUrl  String
+  answerId   Int    @unique
+  answer     Answer @relation(fields: [answerId], references: [id])
+}
+
+model Answer {
+  id          Int            @id @default(autoincrement())
+  text        String
+  license     AnswerLicense?
+  flashcardId Int            @unique
+  flashcard   Flashcard      @relation(fields: [flashcardId], references: [id])
+}
+
+model Flashcard {
+  id                Int             @id @default(autoincrement())
+  question          String
+  note              String?
+  answer            Answer?
+  phonetic          String
+  audio             String[]
+  examples          String[]
+  synonyms          String[]
+  eFactor           Float           @default(2.5)
+  interval          Int             @default(0)
+  nextReview        DateTime?       @default(now())
+  repetitions       Int             @default(0)
+  learningProfileId Int
+  learningProfile   LearningProfile @relation(fields: [learningProfileId], references: [id])
 }

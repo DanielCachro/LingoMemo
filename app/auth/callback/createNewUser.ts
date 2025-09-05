@@ -1,5 +1,4 @@
 import {prisma} from '@/prisma/client'
-import {Prisma} from '@prisma/client'
 
 import {User} from '@supabase/supabase-js'
 import {z} from 'zod'
@@ -9,6 +8,42 @@ const userMetadataSchema = z.object({
 	avatar_url: z.url(),
 	email: z.email(),
 })
+
+async function create(userId: string, userMetadata: z.infer<typeof userMetadataSchema>) {
+	await prisma.$transaction(async tx => {
+		const createdUser = await tx.user.create({
+			data: {
+				id: userId,
+				name: userMetadata.full_name,
+				email: userMetadata.email,
+				preferences: {
+					create: {
+						theme: 'Automatic',
+					},
+				},
+				learningProfiles: {
+					create: [
+						{
+							sourceLang: 'en',
+							targetLang: 'en',
+						},
+					],
+				},
+			},
+			include: {
+				learningProfiles: true,
+			},
+		})
+
+		const learningProfile = createdUser.learningProfiles[0]
+		if (!learningProfile) throw new Error('LearningProfile has not been created!')
+
+		await tx.user.update({
+			where: {id: createdUser.id},
+			data: {activeLearningProfileId: learningProfile.id},
+		})
+	})
+}
 
 export async function createNewUser(user: User | null) {
 	if (!user) {
@@ -32,74 +67,13 @@ export async function createNewUser(user: User | null) {
 
 	if (!dbUser) {
 		try {
-			await prisma.user.create({
-				data: {
-					id: user.id,
-					email: userMetadata.email,
-					name: userMetadata.full_name,
-					preferences: {
-						create: {
-							theme: 'Automatic',
-						},
-					},
-					learningProfiles: {
-						connectOrCreate: {
-							where: {
-								sourceLang_targetLang: {sourceLang: 'en', targetLang: 'en'},
-							},
-							create: {
-								sourceLang: 'en',
-								targetLang: 'en',
-							},
-						},
-					},
-					activeLearningProfile: {
-						connectOrCreate: {
-							where: {
-								sourceLang_targetLang: {sourceLang: 'en', targetLang: 'en'},
-							},
-							create: {
-								sourceLang: 'en',
-								targetLang: 'en',
-							},
-						},
-					},
-				},
-			})
+			await create(user.id, userMetadata)
 		} catch (error: unknown) {
-			if (error instanceof Prisma.PrismaClientKnownRequestError) {
-				// Handling Unique constraint failed
-				if (error.code === 'P2002') {
-					const learningProfile = await prisma.learningProfile.findUnique({
-						where: {sourceLang_targetLang: {sourceLang: 'en', targetLang: 'en'}},
-					})
-					if (!learningProfile) {
-						throw error
-					}
-
-					await prisma.user.create({
-						data: {
-							id: user.id,
-							email: userMetadata.email,
-							name: userMetadata.full_name,
-							preferences: {
-								create: {
-									theme: 'Automatic',
-								},
-							},
-							learningProfiles: {
-								connect: {
-									id: learningProfile.id,
-								},
-							},
-						},
-					})
-				}
-
-				throw error
+			if (typeof error === 'object' && error !== null && 'message' in error) {
+				console.error(`Error creating new user: ${error.message}`)
+			} else {
+				throw new Error('Failed to create new user')
 			}
-
-			throw error
 		}
 	}
 }
