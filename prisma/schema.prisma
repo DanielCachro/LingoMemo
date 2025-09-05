@@ -95,18 +95,16 @@ model AnswerLicense {
 }
 
 model Answer {
-  id          Int            @id @default(autoincrement())
-  text        String
-  license     AnswerLicense?
-  flashcardId Int            @unique
-  flashcard   Flashcard      @relation(fields: [flashcardId], references: [id])
+  id         Int         @id @default(autoincrement())
+  text       String
+  license    AnswerLicense?
+  flashcards Flashcard[]
 }
 
 model Flashcard {
   id                Int             @id @default(autoincrement())
   question          String
   note              String?
-  answer            Answer?
   phonetic          String
   audio             String[]
   examples          String[]
@@ -115,6 +113,8 @@ model Flashcard {
   interval          Int             @default(0)
   nextReview        DateTime?       @default(now())
   repetitions       Int             @default(0)
+  answerId Int      
+  answer   Answer   @relation(fields: [answerId], references: [id], onDelete: Cascade)
   learningProfileId Int
   learningProfile   LearningProfile @relation(fields: [learningProfileId], references: [id])
 }

@@ -37,7 +37,6 @@ CREATE TABLE "public"."AnswerLicense" (
 CREATE TABLE "public"."Answer" (
     "id" SERIAL NOT NULL,
     "text" TEXT NOT NULL,
-    "flashcardId" INTEGER NOT NULL,
 
     CONSTRAINT "Answer_pkey" PRIMARY KEY ("id")
 );
@@ -51,6 +50,11 @@ CREATE TABLE "public"."Flashcard" (
     "audio" TEXT[],
     "examples" TEXT[],
     "synonyms" TEXT[],
+    "eFactor" DOUBLE PRECISION NOT NULL DEFAULT 2.5,
+    "interval" INTEGER NOT NULL DEFAULT 0,
+    "nextReview" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "repetitions" INTEGER NOT NULL DEFAULT 0,
+    "answerId" INTEGER NOT NULL,
     "learningProfileId" INTEGER NOT NULL,
 
     CONSTRAINT "Flashcard_pkey" PRIMARY KEY ("id")
@@ -58,9 +62,6 @@ CREATE TABLE "public"."Flashcard" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "AnswerLicense_answerId_key" ON "public"."AnswerLicense"("answerId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Answer_flashcardId_key" ON "public"."Answer"("flashcardId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "LearningProfile_userId_sourceLang_targetLang_key" ON "public"."LearningProfile"("userId", "sourceLang", "targetLang");
@@ -75,7 +76,7 @@ ALTER TABLE "public"."LearningProfile" ADD CONSTRAINT "LearningProfile_userId_fk
 ALTER TABLE "public"."AnswerLicense" ADD CONSTRAINT "AnswerLicense_answerId_fkey" FOREIGN KEY ("answerId") REFERENCES "public"."Answer"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."Answer" ADD CONSTRAINT "Answer_flashcardId_fkey" FOREIGN KEY ("flashcardId") REFERENCES "public"."Flashcard"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."Flashcard" ADD CONSTRAINT "Flashcard_answerId_fkey" FOREIGN KEY ("answerId") REFERENCES "public"."Answer"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."Flashcard" ADD CONSTRAINT "Flashcard_learningProfileId_fkey" FOREIGN KEY ("learningProfileId") REFERENCES "public"."LearningProfile"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
