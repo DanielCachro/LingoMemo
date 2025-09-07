@@ -37,6 +37,9 @@ CREATE TABLE "public"."AnswerLicense" (
 CREATE TABLE "public"."Answer" (
     "id" SERIAL NOT NULL,
     "text" TEXT NOT NULL,
+    "phonetic" TEXT,
+    "audio" TEXT[],
+    "isPersonal" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "Answer_pkey" PRIMARY KEY ("id")
 );
@@ -46,8 +49,6 @@ CREATE TABLE "public"."Flashcard" (
     "id" SERIAL NOT NULL,
     "question" TEXT NOT NULL,
     "note" TEXT,
-    "phonetic" TEXT NOT NULL,
-    "audio" TEXT[],
     "examples" TEXT[],
     "synonyms" TEXT[],
     "eFactor" DOUBLE PRECISION NOT NULL DEFAULT 2.5,

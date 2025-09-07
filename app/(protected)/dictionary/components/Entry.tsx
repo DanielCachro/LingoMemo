@@ -1,7 +1,10 @@
 import Link from 'next/link'
+import {findFlashcardId} from '../lib/actions'
+import type {DictionaryEntry, NotFoundEntry} from '../lib/types'
 import AudioIcon from './AudioIcon'
 import AudioPlayback from './AudioPlayback'
-import type {DictionaryEntry, NotFoundEntry} from './types'
+import {EntryProvider} from './EntryProvider'
+import {FlashcardButtons} from './FlashcardButtons'
 
 // Header
 function Header({entry}: {entry: DictionaryEntry}) {
@@ -47,7 +50,7 @@ function Header({entry}: {entry: DictionaryEntry}) {
 }
 
 // Sense
-function Sense({sense}: {sense: DictionaryEntry['senses'][0]}) {
+function Sense({sense, word}: {sense: DictionaryEntry['senses'][0]; word: string}) {
 	return (
 		<div className='space-y-24'>
 			<div className='relative w-fit'>
@@ -55,17 +58,28 @@ function Sense({sense}: {sense: DictionaryEntry['senses'][0]}) {
 				{sense.synonyms.length > 0 && <Synonyms synonyms={sense.synonyms} />}
 			</div>
 			{sense.definitions.map((definition, index) => (
-				<Definition key={index} definition={definition} />
+				<Definition key={index} definition={definition} word={word} />
 			))}
 		</div>
 	)
 }
 
 // Definition
-function Definition({definition}: {definition: DictionaryEntry['senses'][0]['definitions'][0]}) {
+async function Definition({
+	definition,
+	word,
+}: {
+	definition: DictionaryEntry['senses'][0]['definitions'][0]
+	word: string
+}) {
+	const flashcardId = await findFlashcardId(definition.definition, word)
+
 	return (
-		<div className='space-y-24 rounded-sm border-2 border-background-300 p-16 dark:border-background-700'>
-			<p>{definition.definition}</p>
+		<div className='space-y-32 rounded-sm border-2 border-background-300 p-24 dark:border-background-700'>
+			<p className='space-x-4'>
+				<span>{definition.definition}</span>
+				<FlashcardButtons definition={definition} flashcardId={flashcardId} />
+			</p>
 			<Examples examples={definition.examples} />
 			{definition.synonyms.length > 0 && <Synonyms synonyms={definition.synonyms} />}
 		</div>
@@ -118,15 +132,15 @@ export default function Entry({entry}: {entry: DictionaryEntry | NotFoundEntry})
 	return (
 		<>
 			{!('notFound' in entry) && (
-				<>
+				<EntryProvider data={{word: entry.word, phonetic: entry.phonetic, audio: entry.audio, source: entry.source}}>
 					<AudioPlayback audio={entry.audio[0]} />
 					<Header entry={entry} />
 					<div className='space-y-64'>
 						{entry.senses.map((sense, index) => (
-							<Sense key={index} sense={sense} />
+							<Sense key={index} sense={sense} word={entry.word} />
 						))}
 					</div>
-				</>
+				</EntryProvider>
 			)}
 			{'notFound' in entry && entry.word && (
 				<p>

@@ -1,7 +1,7 @@
 import {getCurrentUser} from '@/lib/userActions'
-import Entry from './Entry'
-import SearchBarWrapper from './SearchBarWrapper'
-import type {DictionaryEntry, NotFoundEntry} from './types'
+import Entry from './components/Entry'
+import SearchBarWrapper from './components/SearchBarWrapper'
+import type {DictionaryEntry, NotFoundEntry} from './lib/types'
 
 const user = await getCurrentUser()
 const target_lang = user?.activeLearningProfile?.targetLang || 'en'

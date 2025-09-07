@@ -1,4 +1,4 @@
-export interface DictionaryEntry {
+export type DictionaryEntry = {
 	word: string
 	phonetic: string
 	audio: string[]
@@ -22,7 +22,9 @@ export interface DictionaryEntry {
 	}
 }
 
-export interface NotFoundEntry {
+export type DictionaryDefinition = DictionaryEntry['senses'][0]['definitions'][0]
+
+export type NotFoundEntry = {
 	notFound: true
 	word: string
 }
