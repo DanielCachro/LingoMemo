@@ -4,7 +4,7 @@ import LoginButton from './LoginButton'
 export default function LandingPage() {
 	return (
 		<section className='mx-32 flex min-h-dvh flex-col items-center justify-center gap-32 text-center'>
-			<Image src='/cats/CatSmile.svg' alt='Brand cat smiling' width={128} height={120} className='w-128' />
+			<Image src='/cats/CatSmile.svg' alt='Brand cat smiling' width={120} height={112} priority className='w-128' />
 			<div className='max-w-384 space-y-32'>
 				<div className='space-y-12'>
 					<h1 className='text-2xl font-bold'>
