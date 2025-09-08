@@ -1,8 +1,19 @@
+import Answer from './Answer'
+import Flashcard from './Flashcard'
+import Input from './Input'
+import ProgressBar from './ProgressBar'
+
 export default function Home() {
 	return (
-		<div className='mt-64 flex w-full items-center justify-center gap-8'>
-			<p className='text-2xl font-bold hover:animate-pulse hover:cursor-default'>Study</p>
-			<div className='size-24 animate-pulse rounded-full bg-primary-500'></div>
-		</div>
+		<section className='flex flex-col items-center px-32'>
+			<div className='w-full max-w-full space-y-48 sm:w-512'>
+				<ProgressBar />
+				<div className='space-y-24'>
+					<Flashcard />
+					{/* <Input /> */}
+					<Answer />
+				</div>
+			</div>
+		</section>
 	)
 }

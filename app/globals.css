@@ -118,6 +118,7 @@
 	--slab-size-100: 1px;
 	--slab-size-200: 2px;
 	--slab-size-300: 3px;
+	--slab-size-400: 4px;
 }
 
 @utility shadow-slab-primary-* {
@@ -159,6 +160,13 @@
 	scrollbar-width: none;
 	&::-webkit-scrollbar {
 		display: none;
+	}
+}
+
+@utility list-paren {
+	list-style-type: none;
+	& li::marker {
+		content: counter(list-item) ') ';
 	}
 }
 
