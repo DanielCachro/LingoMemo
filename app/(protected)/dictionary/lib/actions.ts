@@ -53,6 +53,18 @@ export async function createFlashcard(flashcard: Flashcard) {
 				answerId = createdAnswer.id
 			}
 
+			const existingFlashcard = await tx.flashcard.findFirst({
+				where: {
+					question: flashcardData.question,
+					answerId,
+					learningProfileId: userData.activeLearningProfileId!,
+				},
+			})
+
+			if (existingFlashcard) {
+				return // Do not create duplicate flashcards
+			}
+
 			await tx.flashcard.create({
 				data: {
 					question: flashcardData.question,
