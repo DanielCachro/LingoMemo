@@ -135,7 +135,7 @@ export default function Entry({entry}: {entry: DictionaryEntry | NotFoundEntry})
 				<EntryProvider data={{word: entry.word, phonetic: entry.phonetic, audio: entry.audio, source: entry.source}}>
 					<AudioPlayback audio={entry.audio[0]} />
 					<Header entry={entry} />
-					<div className='space-y-64'>
+					<div className='space-y-64 pb-48'>
 						{entry.senses.map((sense, index) => (
 							<Sense key={index} sense={sense} word={entry.word} />
 						))}

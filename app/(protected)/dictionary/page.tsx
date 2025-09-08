@@ -1,4 +1,6 @@
 import {getCurrentUser} from '@/lib/userActions'
+import {cn} from '@/lib/utils'
+import Image from 'next/image'
 import Entry from './components/Entry'
 import SearchBarWrapper from './components/SearchBarWrapper'
 import type {DictionaryEntry, NotFoundEntry} from './lib/types'
@@ -89,10 +91,21 @@ export default async function DictionaryPage({searchParams}: Props) {
 	}
 
 	return (
-		<section className='flex flex-col items-center px-16'>
-			<div className='w-full max-w-640 space-y-48'>
+		<section className='flex h-full flex-col items-center px-16'>
+			<div
+				className={cn('flex h-full w-full max-w-640 flex-col', {
+					'space-y-48': search,
+				})}>
 				<SearchBarWrapper />
-				<Entry entry={entry} />
+				{search && <Entry entry={entry} />}
+				{!search && (
+					<div className='flex grow flex-col items-center justify-center space-y-32 text-center'>
+						<Image src='/cats/CatWow.svg' alt='Brand cat smiling' width={120} height={112} priority className='w-128' />
+						<p>
+							Looking for a new word? <br /> Search above and turn it into a flashcard!
+						</p>
+					</div>
+				)}
 			</div>
 		</section>
 	)
