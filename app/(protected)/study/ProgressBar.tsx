@@ -1,5 +1,6 @@
 import {faChevronLeft} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import Link from 'next/link'
 
 export default function ProgressBar() {
 	const value = 60
@@ -8,9 +9,9 @@ export default function ProgressBar() {
 
 	return (
 		<div className='flex w-full items-center gap-12'>
-			<button className='hover:cursor-pointer'>
+			<Link href='/home' className='hover:cursor-pointer'>
 				<FontAwesomeIcon icon={faChevronLeft} />
-			</button>
+			</Link>
 			<div className='relative h-8 grow overflow-hidden rounded-full bg-background-200 dark:bg-background-800'>
 				<div
 					className='h-full rounded-full bg-primary-500 transition-all dark:bg-primary-600'
