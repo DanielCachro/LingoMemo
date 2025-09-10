@@ -91,7 +91,7 @@ export default async function DictionaryPage({searchParams}: Props) {
 	}
 
 	return (
-		<section className='flex h-full flex-col items-center px-16'>
+		<section className='flex h-full flex-col items-center px-16 page-padding-y'>
 			<div
 				className={cn('flex h-full w-full max-w-640 flex-col', {
 					'space-y-48': search,
