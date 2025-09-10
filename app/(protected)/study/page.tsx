@@ -6,9 +6,9 @@ import ProgressBar from './ProgressBar'
 
 export default function Home() {
 	return (
-		<section className='flex min-h-full flex-col items-center'>
-			<div className='h-full grow page-padding-x page-padding-y'>
-				<div className='w-full max-w-full space-y-48 sm:w-512'>
+		<section className='flex h-full flex-col overflow-hidden'>
+			<div className='flex h-full flex-col items-center overflow-y-auto page-padding-x page-padding-y'>
+				<div className='max-w-full space-y-48 sm:w-512'>
 					<ProgressBar />
 					<div className='space-y-24'>
 						<Flashcard />
