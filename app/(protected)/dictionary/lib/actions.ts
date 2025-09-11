@@ -1,6 +1,7 @@
 'use server'
 import {getCurrentUser} from '@/lib/userActions'
 import {prisma} from '@/prisma/client'
+import {DateTime} from 'luxon'
 import {revalidatePath} from 'next/cache'
 import {Flashcard, FlashcardSchema} from './schema'
 
@@ -73,6 +74,7 @@ export async function createFlashcard(flashcard: Flashcard) {
 					synonyms: flashcardData.synonyms ?? [],
 					answerId,
 					learningProfileId: userData.activeLearningProfileId!,
+					nextReview: DateTime.now().toUTC().toJSDate(),
 				},
 			})
 		})

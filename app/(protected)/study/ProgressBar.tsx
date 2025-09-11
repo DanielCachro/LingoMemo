@@ -1,10 +1,14 @@
+import {cn} from '@/lib/utils'
 import {faChevronLeft} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import Link from 'next/link'
 
-export default function ProgressBar() {
-	const value = 60
-	const max = 100
+interface Props {
+	value: number
+	max: number
+}
+
+export default function ProgressBar({value, max}: Props) {
 	const percent = (value / max) * 100
 
 	return (
@@ -14,10 +18,14 @@ export default function ProgressBar() {
 			</Link>
 			<div className='relative h-8 grow overflow-hidden rounded-full bg-background-200 dark:bg-background-800'>
 				<div
-					className='h-full rounded-full bg-primary-500 transition-all dark:bg-primary-600'
+					className={cn('h-full rounded-full bg-primary-500 transition-all dark:bg-primary-600', {
+						'bg-success-500 dark:bg-success-600': percent === 100,
+					})}
 					style={{width: `${percent}%`}}></div>
 			</div>
-			<p>9/48</p>
+			<p>
+				{value}/{max}
+			</p>
 		</div>
 	)
 }

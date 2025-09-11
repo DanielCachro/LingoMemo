@@ -1,7 +1,9 @@
+'use client'
 import {faMessage, faMinusCircle} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import type {Flashcard} from './types'
 
-export default function Flashcard() {
+export default function Flashcard({flashcard}: {flashcard: Flashcard}) {
 	const buttonStyle = 'hover:cursor-pointer'
 
 	return (
@@ -15,10 +17,7 @@ export default function Flashcard() {
 				</button>
 			</div>
 			<div className='flex w-full max-w-384 grow flex-col items-center justify-center gap-24 pt-24 pb-48 text-center'>
-				<p>
-					A perennial woody plant taller and larger than a shrub with a wooden trunk and, at some distance from the
-					ground, having leaves and branches.
-				</p>
+				<p>{flashcard.question}</p>
 				<p className='w-full justify-self-center rounded-sm bg-primary-400 px-24 py-16 text-sm text-primary-300 dark:bg-primary-500'>
 					No comments yet.
 				</p>
