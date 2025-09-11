@@ -74,13 +74,14 @@ model Preferences {
 }
 
 model LearningProfile {
-  id            Int             @id @default(autoincrement())
-  sourceLang    SourceLanguages
-  targetLang    TargetLanguages
-  userId        String
-  user          User?           @relation(fields: [userId], references: [id])
-  activeForUser User?           @relation("ActiveLearningProfile")
-  flashcards    Flashcard[]
+  id                 Int                  @id @default(autoincrement())
+  sourceLang         SourceLanguages
+  targetLang         TargetLanguages
+  userId             String
+  user               User?                @relation(fields: [userId], references: [id])
+  activeForUser      User?                @relation("ActiveLearningProfile")
+  flashcards         Flashcard[]
+  FlashcardReviewLog FlashcardReviewLog[]
 
   @@unique([userId, sourceLang, targetLang])
 }
@@ -105,17 +106,33 @@ model Answer {
 }
 
 model Flashcard {
+  id                 Int                  @id @default(autoincrement())
+  question           String
+  note               String?
+  examples           String[]
+  synonyms           String[]
+  eFactor            Float                @default(2.5)
+  interval           Int                  @default(0)
+  nextReview         DateTime?            @default(now())
+  answerId           Int
+  answer             Answer               @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  learningProfileId  Int
+  learningProfile    LearningProfile      @relation(fields: [learningProfileId], references: [id])
+  FlashcardReviewLog FlashcardReviewLog[]
+
+  @@index([learningProfileId, nextReview])
+}
+
+model FlashcardReviewLog {
   id                Int             @id @default(autoincrement())
-  question          String
-  note              String?
-  examples          String[]
-  synonyms          String[]
-  eFactor           Float           @default(2.5)
-  interval          Int             @default(0)
-  nextReview        DateTime?       @default(now())
-  repetitions       Int             @default(0)
-  answerId          Int
-  answer            Answer          @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  flashcardId       Int
+  flashcard         Flashcard       @relation(fields: [flashcardId], references: [id])
   learningProfileId Int
   learningProfile   LearningProfile @relation(fields: [learningProfileId], references: [id])
+  reviewedAt        DateTime        @default(now())
+  eFactor           Float
+
+  @@unique([flashcardId, learningProfileId, reviewedAt])
+  @@index([flashcardId, reviewedAt])
+  @@index([learningProfileId, reviewedAt])
 }
