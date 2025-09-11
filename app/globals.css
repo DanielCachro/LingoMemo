@@ -138,7 +138,7 @@
 }
 
 @utility page-padding-y {
-	@apply py-48 sm:py-64;
+	@apply py-24 sm:py-64;
 }
 
 @utility page-padding-x {

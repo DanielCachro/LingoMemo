@@ -12,8 +12,8 @@ export default function Home() {
 					<ProgressBar />
 					<div className='space-y-24'>
 						<Flashcard />
-						{/* <Input /> */}
-						<Answer />
+						<Input />
+						{/* <Answer /> */}
 					</div>
 				</div>
 			</div>

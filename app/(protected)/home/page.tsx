@@ -5,7 +5,7 @@ import WeekChartSection from './_sections/WeekChartSection'
 
 export default function Home() {
 	return (
-		<div className='page-padding-y'>
+		<div className='py-48 sm:page-padding-y'>
 			<TotalStreakSection />
 			<WeekChartSection />
 			<div className='items-end justify-center gap-48 lg:flex'>
