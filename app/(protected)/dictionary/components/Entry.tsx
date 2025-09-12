@@ -17,7 +17,7 @@ function Header({entry}: {entry: DictionaryEntry}) {
 					{entry.audio.map((audio, index) => (
 						<AudioIcon
 							className='ml-8 text-background-700 transition-colors duration-200 hover:text-background-500 dark:text-background-400 dark:hover:text-background-200'
-							key={index}
+							key={`${entry.word}-audio-${index}`}
 							audio={audio}
 						/>
 					))}
@@ -58,7 +58,11 @@ function Sense({sense, word}: {sense: DictionaryEntry['senses'][0]; word: string
 				{sense.synonyms.length > 0 && <Synonyms synonyms={sense.synonyms} />}
 			</div>
 			{sense.definitions.map((definition, index) => (
-				<Definition key={index} definition={definition} word={word} />
+				<Definition
+					key={`${word}-${definition.definition.slice(1, 6).trim()}-${definition.definition.slice(-6, -1).trim()}-${index}`}
+					definition={definition}
+					word={word}
+				/>
 			))}
 		</div>
 	)
@@ -92,7 +96,7 @@ function Synonyms({synonyms}: {synonyms: string[]}) {
 		<p className='text-sm'>
 			<span className='text-background-600 dark:text-background-500'>synonyms: </span>
 			{synonyms.map((synonym, index) => (
-				<span key={index} className='text-primary-500 dark:text-primary-600'>
+				<span key={`${synonym.slice(0, 10).trim()}-${index}`} className='text-primary-500 dark:text-primary-600'>
 					<Link href={`?search=${synonym}`} className='hover:underline'>
 						{synonym}
 					</Link>
@@ -116,7 +120,7 @@ function Examples({examples}: {examples: string[]}) {
 				<ExamplesLabel count={examples.length} />
 				<ul>
 					{examples.map((example, index) => (
-						<li key={index} className='text-sm'>
+						<li key={`${example.slice(1, 6).trim()}-${example.slice(-6, -1).trim()}-${index}`} className='text-sm'>
 							{example}
 						</li>
 					))}
@@ -137,7 +141,7 @@ export default function Entry({entry}: {entry: DictionaryEntry | NotFoundEntry})
 					<Header entry={entry} />
 					<div className='space-y-64 pb-48'>
 						{entry.senses.map((sense, index) => (
-							<Sense key={index} sense={sense} word={entry.word} />
+							<Sense key={`${entry.word}-${sense.partOfSpeech}-${index}`} sense={sense} word={entry.word} />
 						))}
 					</div>
 				</EntryProvider>
