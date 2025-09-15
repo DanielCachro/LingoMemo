@@ -1,5 +1,5 @@
 'use server'
-import {getCurrentUser} from '@/lib/userActions'
+import {getCurrentUser} from '@/lib/actions/user'
 import {prisma} from '@/prisma/client'
 import {DateTime} from 'luxon'
 import {revalidatePath} from 'next/cache'

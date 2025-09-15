@@ -1,10 +1,11 @@
 'use server'
-import {getCurrentUser} from '@/lib/userActions'
+import {getCurrentUser} from '@/lib/actions/user'
 import {prisma} from '@/prisma/client'
+import {FlashcardResponseQuality} from '@/types/study'
+import {Prisma} from '@prisma/client'
 import {DateTime} from 'luxon'
-import {revalidatePath} from 'next/cache'
 
-export async function updateFlashcard(flashcardId: number, q: number) {
+export async function updateFlashcard(flashcardId: number, q: FlashcardResponseQuality) {
 	if (q !== 0 && q !== 3 && q !== 5) throw new Error('Invalid quality value')
 
 	const user = await getCurrentUser()
@@ -42,18 +43,14 @@ export async function updateFlashcard(flashcardId: number, q: number) {
 
 	try {
 		await prisma.$transaction(async tx => {
-			await tx.flashcardReviewLog
-				.create({
-					data: {
-						flashcardId: flashcard.id,
-						learningProfileId: activeLearningProfileId,
-						reviewedAt: DateTime.now().toUTC().startOf('day').toJSDate(),
-						eFactor: flashcard.eFactor,
-					},
-				})
-				.catch(() => {
-					revalidatePath('/study')
-				})
+			await tx.flashcardReviewLog.create({
+				data: {
+					flashcardId: flashcard.id,
+					learningProfileId: activeLearningProfileId,
+					reviewedAt: DateTime.now().toUTC().startOf('day').toJSDate(),
+					eFactor: flashcard.eFactor,
+				},
+			})
 
 			await tx.flashcard.update({
 				where: {id: flashcard.id, learningProfileId: activeLearningProfileId},
@@ -64,12 +61,14 @@ export async function updateFlashcard(flashcardId: number, q: number) {
 				},
 			})
 		})
+		return {updated: true, alreadyReviewed: false}
 	} catch (err) {
+		if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
+			return {updated: false, alreadyReviewed: true}
+		}
 		console.error('Error updating flashcard:', err)
 		throw new Error('Failed to update flashcard')
 	}
-
-	revalidatePath('/study')
 }
 
 export async function getStudyData() {
@@ -114,4 +113,34 @@ export async function getStudyData() {
 	const toReviewToday = toReview + doneToday
 
 	return {flashcard, doneToday, toReviewToday}
+}
+
+export async function getNextFlashcards(limit = 5, excludeIds: number[] = []) {
+	if (limit < 1 || limit > 20) throw new Error('Limit must be between 1 and 20')
+
+	const endOfTodayUTC = DateTime.now().toUTC().endOf('day').toJSDate()
+	const user = await getCurrentUser()
+	const activeLearningProfileId = user?.activeLearningProfileId
+	if (!activeLearningProfileId) return []
+
+	const where: Prisma.FlashcardWhereInput = {
+		learningProfileId: activeLearningProfileId,
+		nextReview: {
+			not: null,
+			lte: endOfTodayUTC,
+		},
+	}
+
+	if (Array.isArray(excludeIds) && excludeIds.length > 0) {
+		where.id = {notIn: excludeIds}
+	}
+
+	const cards = await prisma.flashcard.findMany({
+		where,
+		include: {answer: true},
+		orderBy: [{nextReview: 'asc'}, {id: 'asc'}],
+		take: limit,
+	})
+
+	return cards
 }

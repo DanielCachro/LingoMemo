@@ -1,4 +1,4 @@
-import {getCurrentUser} from '@/lib/userActions'
+import {getCurrentUser} from '@/lib/actions/user'
 import {cn} from '@/lib/utils'
 import Image from 'next/image'
 import Entry from './components/Entry'

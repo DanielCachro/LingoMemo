@@ -3,7 +3,7 @@ import 'server-only'
 
 import {prisma} from '@/prisma/client'
 import {cache} from 'react'
-import {createClient} from './supabase/server'
+import {createClient} from '../supabase/server'
 
 export const getCurrentUser = cache(async () => {
 	const supabase = await createClient()

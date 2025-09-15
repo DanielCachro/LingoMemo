@@ -1,7 +1,7 @@
 'use client'
 import {faMessage, faMinusCircle} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import type {Flashcard} from './types'
+import type {Flashcard} from '@/types/study'
 
 export default function Flashcard({flashcard}: {flashcard: Flashcard}) {
 	const buttonStyle = 'hover:cursor-pointer'
