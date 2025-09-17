@@ -1,8 +1,8 @@
 import AudioIcon from '@/components/AudioIcon'
 import AudioPlayback from '@/components/AudioPlayback'
 import Link from 'next/link'
-import {findFlashcardId} from '../lib/actions'
-import type {DictionaryEntry, NotFoundEntry} from '../lib/types'
+import {findFlashcardId} from '../_lib/actions'
+import type {DictionaryEntry, NotFoundEntry} from '../_lib/types'
 import {EntryProvider} from './EntryProvider'
 import {FlashcardButtons} from './FlashcardButtons'
 

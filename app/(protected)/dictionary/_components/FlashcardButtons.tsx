@@ -3,8 +3,8 @@
 import {faCircleExclamation, faCirclePlus, faMinusCircle, faSpinner} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {useState, useTransition} from 'react'
-import {createFlashcard, deleteFlashcard} from '../lib/actions'
-import type {DictionaryDefinition} from '../lib/types'
+import {createFlashcard, deleteFlashcard} from '../_lib/actions'
+import type {DictionaryDefinition} from '../_lib/types'
 import {useEntry} from './EntryProvider'
 
 type Props = {
@@ -79,7 +79,7 @@ export function FlashcardButtons({flashcardId, definition}: Props) {
 				</button>
 			)}
 			{error && (
-				<span className='text-sm text-error-600'>
+				<span className='text-sm text-error-500 dark:text-error-600'>
 					<FontAwesomeIcon icon={faCircleExclamation} className='mr-4' />
 					{error}
 				</span>

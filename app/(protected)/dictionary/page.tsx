@@ -1,9 +1,9 @@
 import {getCurrentUser} from '@/lib/actions/user'
 import {cn} from '@/lib/utils'
 import Image from 'next/image'
-import Entry from './components/Entry'
-import SearchBarWrapper from './components/SearchBarWrapper'
-import type {DictionaryEntry, NotFoundEntry} from './lib/types'
+import Entry from './_components/Entry'
+import SearchBarWrapper from './_components/SearchBarWrapper'
+import type {DictionaryEntry, NotFoundEntry} from './_lib/types'
 
 const user = await getCurrentUser()
 const target_lang = user?.activeLearningProfile?.targetLang || 'en'

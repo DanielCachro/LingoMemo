@@ -1,6 +1,6 @@
 'use client'
-import type {DictionaryEntry} from '../lib/types'
 import {ReactNode, createContext, useContext} from 'react'
+import type {DictionaryEntry} from '../_lib/types'
 export type FlashcardEntry = Pick<DictionaryEntry, 'word' | 'phonetic' | 'audio' | 'source'>
 
 type ContextValue = {data: FlashcardEntry}
