@@ -98,7 +98,7 @@ export default function AnswerDisplay({
 					<p className='space-x-8'>
 						<span>{answer.text}</span>
 						{answer.audio && answer.audio.length > 0 && (
-							<span>
+							<span className='space-x-8'>
 								{answer.audio.map((audio, index) => (
 									<AudioIcon key={`${answer.text}-audio-${index}`} audio={audio} />
 								))}
