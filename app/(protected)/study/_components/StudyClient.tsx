@@ -1,7 +1,8 @@
 'use client'
 import type {Flashcard, FlashcardResponseQuality} from '@/types/study'
 import {QueryClient, QueryClientProvider, useMutation, useQuery, useQueryClient} from '@tanstack/react-query'
-import React, {useEffect, useState} from 'react'
+import {useEffect, useState} from 'react'
+import AnswerDisplay from './AnswerDisplay'
 import Buttons from './Buttons'
 import FlashcardComponent from './Flashcard'
 import FlashcardsStatus from './FlashcardsStatus'
@@ -16,6 +17,13 @@ interface Props {
 	toReviewToday: number
 }
 
+export type UserAnswer = {
+	answer: string
+	isAnswered: boolean
+	isCorrect: boolean
+	hintCount: number
+}
+
 export default function StudyClient({initialFlashcard, initialDone, toReviewToday}: Props) {
 	return (
 		<QueryClientProvider client={queryClient}>
@@ -28,6 +36,13 @@ function InnerStudy({initialFlashcard, initialDone, toReviewToday}: Props) {
 	const queryClient = useQueryClient()
 	const [currentFlashcard, setCurrentFlashcard] = useState<Flashcard | null>(initialFlashcard)
 	const [doneToday, setDoneToday] = useState(initialDone ?? 0)
+
+	const [userAnswer, setUserAnswer] = useState<UserAnswer>({
+		answer: '',
+		isAnswered: false,
+		isCorrect: false,
+		hintCount: 0,
+	})
 
 	// fetch queue of next flashcards
 	const {
@@ -79,28 +94,31 @@ function InnerStudy({initialFlashcard, initialDone, toReviewToday}: Props) {
 		},
 		onMutate: async () => {
 			await queryClient.cancelQueries({queryKey: ['nextFlashcards']})
-			const previousQueue = queryClient.getQueryData<Flashcard[]>(['nextFlashcards']) ?? []
+			const prevQueue = queryClient.getQueryData<Flashcard[]>(['nextFlashcards']) ?? []
 			const prevCurrentFlashcard = currentFlashcard
+			const prevUserAnswer = userAnswer
 
 			// remove first occurrence from queue if present
-			const newQueue = previousQueue.slice()
+			const newQueue = prevQueue.slice()
 			if (newQueue.length > 0) newQueue.shift()
 
 			// optimistic: increment doneToday and set currentFlashcard to next or null
 			setDoneToday(done => done + 1)
 			setCurrentFlashcard(newQueue.length ? newQueue[0] : null)
+			setUserAnswer({answer: '', isAnswered: false, isCorrect: false, hintCount: 0})
 
 			// update cache immediately
 			queryClient.setQueryData(['nextFlashcards'], newQueue)
 
-			return {previousQueue, prevCurrentFlashcard}
+			return {prevQueue, prevCurrentFlashcard, prevUserAnswer}
 		},
 		onError: (error, data, context) => {
 			console.error('Mutation failed', error)
 
 			// rollback optimistic cache
-			if (context?.previousQueue) queryClient.setQueryData(['nextFlashcards'], context.previousQueue)
+			if (context?.prevQueue) queryClient.setQueryData(['nextFlashcards'], context.prevQueue)
 			if (context?.prevCurrentFlashcard) setCurrentFlashcard(context.prevCurrentFlashcard)
+			if (context?.prevUserAnswer) setUserAnswer(context.prevUserAnswer)
 			setDoneToday(done => Math.max(0, done - 1))
 
 			// TODO: show toast
@@ -112,9 +130,57 @@ function InnerStudy({initialFlashcard, initialDone, toReviewToday}: Props) {
 		},
 	})
 
-	function handleAnswer(quality: FlashcardResponseQuality) {
+	function handleRateAnswer(quality: FlashcardResponseQuality) {
 		if (!currentFlashcard) return
 		mutate({flashcardId: currentFlashcard.id, q: quality})
+	}
+
+	function handleUserAnswerChange(event: React.ChangeEvent<HTMLInputElement>) {
+		setUserAnswer(prevAnswer => {
+			return {...prevAnswer, answer: event.target.value}
+		})
+	}
+
+	function handleCheckAnswer() {
+		const correctAnswer = currentFlashcard?.answer.text.trim()
+		if (!correctAnswer) return
+
+		if (userAnswer.answer === correctAnswer) {
+			setUserAnswer(prevAnswer => {
+				const newAnswer = {...prevAnswer, isAnswered: true, isCorrect: true}
+				return newAnswer
+			})
+		} else {
+			setUserAnswer(prevAnswer => {
+				const newAnswer = {...prevAnswer, isAnswered: true, isCorrect: false}
+				return newAnswer
+			})
+		}
+	}
+
+	function handleGiveHint() {
+		const correctAnswer = currentFlashcard?.answer.text.trim()
+		if (!correctAnswer) return
+
+		const n = Math.min(userAnswer.answer.length, correctAnswer.length)
+		let i = 0
+		for (i; i < n; i++) {
+			if (userAnswer.answer.charAt(i) !== correctAnswer.charAt(i)) break
+		}
+		const newUserAnswer = correctAnswer.slice(0, i + 1)
+
+		setUserAnswer(prevAnswer => ({
+			...prevAnswer,
+			answer: newUserAnswer,
+			hintCount: prevAnswer.hintCount + 1,
+		}))
+
+		if (newUserAnswer === correctAnswer)
+			setUserAnswer(prevAnswer => ({
+				...prevAnswer,
+				isAnswered: true,
+				isCorrect: false,
+			}))
 	}
 
 	// if currentFlashcard is null, try to take from queue
@@ -136,7 +202,15 @@ function InnerStudy({initialFlashcard, initialDone, toReviewToday}: Props) {
 					{currentFlashcard && (
 						<>
 							<FlashcardComponent flashcard={currentFlashcard} />
-							<Input />
+							{!userAnswer.isAnswered ? (
+								<Input value={userAnswer.answer} onChange={handleUserAnswerChange} />
+							) : (
+								<AnswerDisplay
+									answer={currentFlashcard.answer}
+									examples={currentFlashcard.examples}
+									userAnswer={userAnswer}
+								/>
+							)}
 						</>
 					)}
 					{!currentFlashcard && isQueueError ? (
@@ -148,7 +222,11 @@ function InnerStudy({initialFlashcard, initialDone, toReviewToday}: Props) {
 					) : null}
 				</div>
 			</div>
-			{currentFlashcard && <Buttons handleAnswerFn={handleAnswer} />}
+			{currentFlashcard && !userAnswer.isAnswered ? (
+				<Buttons mode='checkAnswer' handleCheckAnswer={handleCheckAnswer} handleGiveHint={handleGiveHint} />
+			) : (
+				<Buttons mode='rateAnswer' handleRateAnswer={handleRateAnswer} userAnswer={userAnswer} />
+			)}
 		</>
 	)
 }
