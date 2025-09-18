@@ -5,9 +5,6 @@ import Entry from './_components/Entry'
 import SearchBarWrapper from './_components/SearchBarWrapper'
 import type {DictionaryEntry, NotFoundEntry} from './_lib/types'
 
-const user = await getCurrentUser()
-const target_lang = user?.activeLearningProfile?.targetLang || 'en'
-
 interface Props {
 	searchParams?: Promise<{search: string}>
 }
@@ -29,6 +26,9 @@ async function fetchAudioUrls(search: string) {
 }
 
 async function fetchEntry(search: string): Promise<DictionaryEntry | NotFoundEntry> {
+	const user = await getCurrentUser()
+	const target_lang = user?.activeLearningProfile?.targetLang || 'en'
+	
 	try {
 		const result = await fetch(`https://freedictionaryapi.com/api/v1/entries/${target_lang}/${search}`)
 
