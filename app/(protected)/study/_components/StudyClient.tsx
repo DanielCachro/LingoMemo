@@ -1,6 +1,7 @@
 'use client'
 import type {Flashcard, FlashcardResponseQuality} from '@/types/study'
 import {QueryClient, QueryClientProvider, useMutation, useQuery, useQueryClient} from '@tanstack/react-query'
+import {useRouter} from 'next/navigation'
 import {useEffect, useState} from 'react'
 import AnswerDisplay from './AnswerDisplay'
 import Buttons from './Buttons'
@@ -33,6 +34,7 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 }
 
 function InnerStudy({initialFlashcard, initialDone, toReviewToday}: Props) {
+	const router = useRouter()
 	const queryClient = useQueryClient()
 	const [currentFlashcard, setCurrentFlashcard] = useState<Flashcard | null>(initialFlashcard)
 	const [doneToday, setDoneToday] = useState(initialDone ?? 0)
@@ -81,16 +83,30 @@ function InnerStudy({initialFlashcard, initialDone, toReviewToday}: Props) {
 	// mutation to update flashcard after answer
 	const {mutate} = useMutation({
 		mutationFn: async ({flashcardId, q}: {flashcardId: number; q: number}) => {
-			const res = await fetch('/api/study/update', {
+			const flashcardRes = await fetch('/api/study/update', {
 				method: 'POST',
 				headers: {'Content-Type': 'application/json'},
 				body: JSON.stringify({flashcardId, q}),
 			})
-			if (!res.ok) {
-				const text = await res.text()
+			if (!flashcardRes.ok) {
+				const text = await flashcardRes.text()
 				throw new Error(text || 'update failed')
 			}
-			return res.json()
+
+			let streakRes = null
+			if (doneToday === toReviewToday) {
+				streakRes = await fetch('/api/profile/streak/total-streak/update', {method: 'POST'})
+				if (!streakRes.ok) {
+					// TODO: show toast
+					alert('Error: Failed to update streak. Please try again.')
+				}
+				router.refresh()
+			}
+
+			return {
+				flashcard: await flashcardRes.json(),
+				streak: streakRes ? await streakRes.json() : null,
+			}
 		},
 		onMutate: async () => {
 			await queryClient.cancelQueries({queryKey: ['nextFlashcards']})

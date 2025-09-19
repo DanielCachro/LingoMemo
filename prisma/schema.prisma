@@ -77,6 +77,9 @@ model LearningProfile {
   id                 Int                  @id @default(autoincrement())
   sourceLang         SourceLanguages
   targetLang         TargetLanguages
+  streakCount        Int                  @default(0)
+  streakLastUpdated  DateTime?            
+  longestStreak      Int                  @default(0)
   userId             String
   user               User?                @relation(fields: [userId], references: [id])
   activeForUser      User?                @relation("ActiveLearningProfile")
