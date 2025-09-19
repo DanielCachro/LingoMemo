@@ -210,16 +210,6 @@ function InnerStudy({initialFlashcard, initialDone, toReviewToday}: Props) {
 		}
 	}, [queue, currentFlashcard, queryClient])
 
-	function ActionButtons() {
-		if (doneToday === toReviewToday) return null
-
-		if (currentFlashcard && !userAnswer.isAnswered) {
-			return <Buttons mode='checkAnswer' handleCheckAnswer={handleCheckAnswer} handleGiveHint={handleGiveHint} />
-		} else {
-			return <Buttons mode='rateAnswer' handleRateAnswer={handleRateAnswer} userAnswer={userAnswer} />
-		}
-	}
-
 	return (
 		<>
 			<div className='flex h-full flex-col items-center overflow-y-auto page-padding-x page-padding-y'>
@@ -248,7 +238,12 @@ function InnerStudy({initialFlashcard, initialDone, toReviewToday}: Props) {
 					) : null}
 				</div>
 			</div>
-			<ActionButtons />
+			{doneToday !== toReviewToday &&
+				(currentFlashcard && !userAnswer.isAnswered ? (
+					<Buttons mode='checkAnswer' handleCheckAnswer={handleCheckAnswer} handleGiveHint={handleGiveHint} />
+				) : (
+					<Buttons mode='rateAnswer' handleRateAnswer={handleRateAnswer} userAnswer={userAnswer} />
+				))}
 		</>
 	)
 }

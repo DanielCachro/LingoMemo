@@ -9,9 +9,17 @@ interface Props extends HTMLMotionProps<'button'> {
 	className?: string
 	wrapperClassName?: string
 	shadowClassName?: string
+	pressed?: boolean
 }
 
-export default function PrimaryButton({children, className, wrapperClassName, shadowClassName, ...props}: Props) {
+export default function PrimaryButton({
+	children,
+	className,
+	wrapperClassName,
+	shadowClassName,
+	pressed = false,
+	...props
+}: Props) {
 	let type: string = ''
 
 	if (isValidElement(children) && children.type === 'svg') {
@@ -35,6 +43,7 @@ export default function PrimaryButton({children, className, wrapperClassName, sh
 					boxShadow: 'none',
 					transition: {duration: 0.075},
 				}}
+				animate={pressed ? {y: 3, boxShadow: 'none'} : {y: 0}}
 				className={cn(
 					'peer relative z-10 h-full w-full rounded-sm bg-primary-500 font-bold text-primary-100 transition-colors duration-50 hover:cursor-pointer focus-visible:bg-primary-400 focus-visible:outline-2 focus-visible:outline-primary-200 dark:bg-primary-600 dark:text-primary-200 focus-visible:dark:bg-primary-500 focus-visible:dark:outline-primary-300 pointer-fine:hover:bg-primary-600 pointer-fine:dark:hover:bg-primary-700',
 					{
