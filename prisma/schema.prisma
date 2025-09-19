@@ -70,7 +70,7 @@ model Preferences {
   id     Int    @id @default(autoincrement())
   theme  Theme
   userId String @unique
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model LearningProfile {
@@ -78,10 +78,10 @@ model LearningProfile {
   sourceLang         SourceLanguages
   targetLang         TargetLanguages
   streakCount        Int                  @default(0)
-  streakLastUpdated  DateTime?            
+  streakLastUpdated  DateTime?
   longestStreak      Int                  @default(0)
   userId             String
-  user               User?                @relation(fields: [userId], references: [id])
+  user               User?                @relation(fields: [userId], references: [id], onDelete: Cascade)
   activeForUser      User?                @relation("ActiveLearningProfile")
   flashcards         Flashcard[]
   FlashcardReviewLog FlashcardReviewLog[]
@@ -95,7 +95,7 @@ model AnswerLicense {
   licenseUrl String
   sourceUrl  String
   answerId   Int    @unique
-  answer     Answer @relation(fields: [answerId], references: [id])
+  answer     Answer @relation(fields: [answerId], references: [id], onDelete: Cascade)
 }
 
 model Answer {
@@ -118,9 +118,9 @@ model Flashcard {
   interval           Int                  @default(0)
   nextReview         DateTime?            @default(now())
   answerId           Int
-  answer             Answer               @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  answer             Answer               @relation(fields: [answerId], references: [id])
   learningProfileId  Int
-  learningProfile    LearningProfile      @relation(fields: [learningProfileId], references: [id])
+  learningProfile    LearningProfile      @relation(fields: [learningProfileId], references: [id], onDelete: Cascade)
   FlashcardReviewLog FlashcardReviewLog[]
 
   @@index([learningProfileId, nextReview])
@@ -129,9 +129,9 @@ model Flashcard {
 model FlashcardReviewLog {
   id                Int             @id @default(autoincrement())
   flashcardId       Int
-  flashcard         Flashcard       @relation(fields: [flashcardId], references: [id])
+  flashcard         Flashcard       @relation(fields: [flashcardId], references: [id], onDelete: Cascade)
   learningProfileId Int
-  learningProfile   LearningProfile @relation(fields: [learningProfileId], references: [id])
+  learningProfile   LearningProfile @relation(fields: [learningProfileId], references: [id], onDelete: Cascade)
   reviewedAt        DateTime        @default(now())
   eFactor           Float
 
