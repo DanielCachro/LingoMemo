@@ -223,7 +223,7 @@ function InnerStudy({initialFlashcard, initialDone, toReviewToday}: Props) {
 	return (
 		<>
 			<div className='flex h-full flex-col items-center overflow-y-auto page-padding-x page-padding-y'>
-				<div className='max-w-full space-y-48 sm:w-512'>
+				<div className='w-full max-w-full space-y-48 sm:w-512'>
 					<ProgressBar value={doneToday} max={toReviewToday} />
 					{currentFlashcard && (
 						<>

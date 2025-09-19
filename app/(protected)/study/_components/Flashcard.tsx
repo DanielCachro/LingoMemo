@@ -1,7 +1,7 @@
 'use client'
+import type {Flashcard} from '@/types/study'
 import {faMessage, faMinusCircle} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import type {Flashcard} from '@/types/study'
 
 export default function Flashcard({flashcard}: {flashcard: Flashcard}) {
 	const buttonStyle = 'hover:cursor-pointer'
@@ -18,7 +18,7 @@ export default function Flashcard({flashcard}: {flashcard: Flashcard}) {
 			</div>
 			<div className='flex w-full max-w-384 grow flex-col items-center justify-center gap-24 pt-24 pb-48 text-center'>
 				<p>{flashcard.question}</p>
-				<p className='w-full justify-self-center rounded-sm bg-primary-400 px-24 py-16 text-sm text-primary-300 dark:bg-primary-500'>
+				<p className='w-full justify-self-center overflow-auto rounded-sm bg-primary-400 px-24 py-16 text-sm text-primary-300 dark:bg-primary-500'>
 					No comments yet.
 				</p>
 			</div>
