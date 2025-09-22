@@ -4,10 +4,11 @@ import {NextResponse} from 'next/server'
 
 export async function GET() {
 	const user = await getCurrentUser()
-	if (!user) throw new Error('User not authenticated')
+	if (!user) return NextResponse.json({message: 'User not authenticated.'}, {status: 401})
 
 	const activeLearningProfileId = user.activeLearningProfileId
-	if (!activeLearningProfileId) throw new Error('No active learning profile for user')
+	if (!activeLearningProfileId)
+		return NextResponse.json({message: 'No active learning profile for user.'}, {status: 500})
 
 	try {
 		const streak = await prisma.learningProfile.findUnique({

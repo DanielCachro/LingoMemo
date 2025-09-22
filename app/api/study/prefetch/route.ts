@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
 			.filter(id => Number.isFinite(id) && id > 0)
 
 		const flashcards = await getNextFlashcards(limit, excludeIds)
-		return NextResponse.json(flashcards)
+		return NextResponse.json(flashcards, {status: 200})
 	} catch (error) {
 		console.error('prefetch error', error)
 		return NextResponse.json({error: (error as Error).message || 'Unknown error'}, {status: 500})

@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
 		const body = await request.json()
 		const {flashcardId, q} = body as {flashcardId: number; q: FlashcardResponseQuality}
 		const result = await updateFlashcard(flashcardId, q)
-		return NextResponse.json(result)
+		return NextResponse.json(result, {status: 200})
 	} catch (error: unknown) {
 		console.error('API update error', error)
 		return NextResponse.json({error: (error as Error).message || 'Unknown error'}, {status: 500})
