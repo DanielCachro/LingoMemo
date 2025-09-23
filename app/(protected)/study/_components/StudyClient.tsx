@@ -1,7 +1,7 @@
 'use client'
+import {useStreak} from '@/hooks/useStreak'
 import type {Flashcard, FlashcardResponseQuality} from '@/types/study'
-import {QueryClient, QueryClientProvider, useMutation, useQuery, useQueryClient} from '@tanstack/react-query'
-import {useRouter} from 'next/navigation'
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query'
 import {useEffect, useState} from 'react'
 import AnswerDisplay from './AnswerDisplay'
 import Buttons from './Buttons'
@@ -9,8 +9,6 @@ import FlashcardComponent from './Flashcard'
 import FlashcardsStatus from './FlashcardsStatus'
 import Input from './Input'
 import ProgressBar from './ProgressBar'
-
-const queryClient = new QueryClient()
 
 interface Props {
 	initialFlashcard: Flashcard | null
@@ -26,16 +24,8 @@ export type UserAnswer = {
 }
 
 export default function StudyClient({initialFlashcard, initialDone, toReviewToday}: Props) {
-	return (
-		<QueryClientProvider client={queryClient}>
-			<InnerStudy initialFlashcard={initialFlashcard} initialDone={initialDone} toReviewToday={toReviewToday} />
-		</QueryClientProvider>
-	)
-}
-
-function InnerStudy({initialFlashcard, initialDone, toReviewToday}: Props) {
-	const router = useRouter()
 	const queryClient = useQueryClient()
+	const {invalidate: invalidateStreak} = useStreak()
 	const [currentFlashcard, setCurrentFlashcard] = useState<Flashcard | null>(initialFlashcard)
 	const [doneToday, setDoneToday] = useState(initialDone ?? 0)
 
@@ -95,12 +85,12 @@ function InnerStudy({initialFlashcard, initialDone, toReviewToday}: Props) {
 
 			let streakRes = null
 			if (doneToday === toReviewToday) {
-				streakRes = await fetch('/api/profile/streak/total-streak/update', {method: 'POST'})
+				streakRes = await fetch('/api/profile/streak/update', {method: 'POST'})
 				if (!streakRes.ok) {
 					// TODO: show toast
 					alert('Error: Failed to update streak. Please try again.')
 				}
-				router.refresh()
+				invalidateStreak()
 			}
 
 			return {

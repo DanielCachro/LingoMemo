@@ -1,5 +1,6 @@
 'use client'
 
+import { useStreak } from '@/hooks/useStreak'
 import {motion} from 'motion/react'
 import {useLayoutEffect, useState} from 'react'
 
@@ -54,7 +55,9 @@ function getStreakMessage(streakCount: number) {
 	return streakMessage
 }
 
-export default function StreakMessage({streakCount}: {streakCount: number}) {
+export default function StreakMessage() {
+	const {data} = useStreak()
+	const streakCount = data?.streakCount ?? 0
 	const [streakMessage, setStreakMessage] = useState('')
 
 	useLayoutEffect(() => {

@@ -1,7 +1,6 @@
 import {getCurrentUser} from '@/lib/actions/user'
 import {prisma} from '@/prisma/client'
 import {DateTime} from 'luxon'
-import {revalidateTag} from 'next/cache'
 import {NextResponse} from 'next/server'
 
 export async function POST() {
@@ -72,8 +71,6 @@ export async function POST() {
 				streakLastUpdated: DateTime.now().setZone('UTC').toJSDate(),
 			},
 		})
-
-		revalidateTag('totalStreak')
 
 		return NextResponse.json({message: 'Streak updated successfully!', data: updatedProfile}, {status: 200})
 	} catch (error) {

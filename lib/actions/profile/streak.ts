@@ -1,34 +1,46 @@
 'use server'
-import {cookies} from 'next/headers'
+import {getCurrentUser} from '@/lib/actions/user'
+import {prisma} from '@/prisma/client'
+import {DateTime} from 'luxon'
 
-export async function getTotalStreak() {
-	const cookieStore = await cookies()
+export async function getStreakData() {
+	const user = await getCurrentUser()
+	if (!user) throw new Error('User not authenticated.')
 
-	await resetIfBroken()
-	const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/profile/streak/total-streak`, {
-		next: {tags: ['totalStreak']},
-		headers: {
-			cookie: cookieStore.toString(),
-		},
-	})
+	const activeLearningProfileId = user.activeLearningProfileId
+	const activeLearningProfile = user.activeLearningProfile
+	if (!activeLearningProfileId || !activeLearningProfile) throw new Error('No active learning profile for user.')
+	let streakCount = activeLearningProfile.streakCount
+	const longestStreak = activeLearningProfile.longestStreak
 
-	if (!response.ok) {
-		throw new Error('Failed to fetch total streak')
+	const startOfTodayUTC = DateTime.now().setZone('UTC').startOf('day')
+	const streakLastUpdated = activeLearningProfile.streakLastUpdated
+		? DateTime.fromJSDate(activeLearningProfile.streakLastUpdated).setZone('UTC').startOf('day')
+		: null
+
+	// Reset streak if broken
+	if (streakLastUpdated && startOfTodayUTC.diff(streakLastUpdated, 'days').days >= 2 && streakCount !== 0) {
+		try {
+			await prisma.learningProfile.update({
+				where: {
+					id: activeLearningProfileId,
+				},
+				data: {
+					streakCount: 0,
+				},
+			})
+			// Optimistic update streakCount
+			streakCount = 0
+			console.log(`Streak is broken. Resetting streak for profile ID: ${activeLearningProfileId}`)
+		} catch (error) {
+			// If update fails, keep the existing streakCount
+			streakCount = activeLearningProfile.streakCount
+			console.error('Error updating streak:', error)
+			throw new Error((error as Error).message || 'Unknown error')
+		}
 	}
-
-	const data = await response.json()
-	return data.streakCount as number
-}
-
-export async function resetIfBroken() {
-	const cookieStore = await cookies()
-	const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/profile/streak/total-streak/reset-if-broken`, {
-		method: 'POST',
-		headers: {
-			cookie: cookieStore.toString(),
-		},
-	})
-	if (!response.ok) {
-		throw new Error('Failed to reset total streak if broken')
+	return {
+		streakCount,
+		longestStreak,
 	}
 }
