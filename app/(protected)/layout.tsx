@@ -1,7 +1,7 @@
 import BottomNavigation from './BottomNavigation'
 import MainNavigation from './MainNavigation'
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode
