@@ -1,6 +1,6 @@
 'use client'
 
-import {getCurrentWeekDays} from '@/lib/dateRanges'
+import {getWeekdaysCompletion} from '@/lib/actions/profile/week'
 import {cn} from '@/lib/utils'
 import {motion, stagger} from 'motion/react'
 import {useEffect, useState} from 'react'
@@ -39,10 +39,10 @@ function AnimatedCheck() {
 }
 
 interface Props {
-	currentWeekDays: ReturnType<typeof getCurrentWeekDays>
+	weekDaysCompletion: Awaited<ReturnType<typeof getWeekdaysCompletion>>
 }
 
-export default function StaggeredWeekItems({currentWeekDays}: Props) {
+export default function StaggeredWeekItems({weekDaysCompletion}: Props) {
 	const [currentDay, setCurrentDay] = useState<number>(0)
 
 	useEffect(() => {
@@ -51,7 +51,7 @@ export default function StaggeredWeekItems({currentWeekDays}: Props) {
 
 	return (
 		<motion.ul initial='hidden' animate='visible' transition={{delayChildren: stagger(0.1)}} className='flex gap-8'>
-			{currentWeekDays.map(({day, dayLabel, datetime, completed}) => (
+			{weekDaysCompletion.map(({day, dayLabel, datetime, completed}) => (
 				<motion.li
 					variants={{
 						hidden: {opacity: 0, y: 20},
