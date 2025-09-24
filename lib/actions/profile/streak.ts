@@ -1,15 +1,10 @@
 'use server'
-import {getCurrentUser} from '@/lib/actions/user'
+import {getActiveLearingProfile} from '@/lib/actions/user'
 import {prisma} from '@/prisma/client'
 import {DateTime} from 'luxon'
 
 export async function getStreakData() {
-	const user = await getCurrentUser()
-	if (!user) throw new Error('User not authenticated.')
-
-	const activeLearningProfileId = user.activeLearningProfileId
-	const activeLearningProfile = user.activeLearningProfile
-	if (!activeLearningProfileId || !activeLearningProfile) throw new Error('No active learning profile for user.')
+	const {activeLearningProfile, activeLearningProfileId} = await getActiveLearingProfile()
 	let streakCount = activeLearningProfile.streakCount
 	const longestStreak = activeLearningProfile.longestStreak
 

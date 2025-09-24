@@ -1,23 +1,20 @@
 'use server'
-import {getCurrentUser} from '@/lib/actions/user'
+import {getActiveLearingProfile} from '@/lib/actions/user'
 import {prisma} from '@/prisma/client'
 import {DateTime} from 'luxon'
 
-export async function getWeekdaysCompletion() {
-	const user = await getCurrentUser()
-	if (!user) throw new Error('User not authenticated.')
+function getStartOfWeek() {
+	const today = DateTime.now().setZone('UTC').setLocale('en-US')
+	const dayOfWeek = today.weekday // 1 (Monday) to 7 (Sunday)
+	const diffToMonday = dayOfWeek === 1 ? 0 : 1 - dayOfWeek
+	return today.plus({days: diffToMonday}).startOf('day')
+}
 
-	const activeLearningProfileId = user.activeLearningProfileId
-	if (!activeLearningProfileId) throw new Error('No active learning profile for user.')
+export async function getWeekdaysCompletion() {
+	const {activeLearningProfileId} = await getActiveLearingProfile()
 
 	const days = []
-	const today = DateTime.now().setZone('UTC')
-
-	const dayOfWeek = today.weekday
-	const diffToMonday = dayOfWeek === 1 ? 0 : 1 - dayOfWeek
-
-	const monday = DateTime.now().setZone('UTC').setLocale('en-US').plus({days: diffToMonday})
-
+	const monday = getStartOfWeek()
 	for (let i = 0; i < 7; i++) {
 		const date = monday.plus({days: i})
 		const day = date.day
@@ -43,11 +40,7 @@ export async function getWeekdaysCompletion() {
 }
 
 export async function getLast7DaysCompletionCount() {
-	const user = await getCurrentUser()
-	if (!user) throw new Error('User not authenticated.')
-
-	const activeLearningProfileId = user.activeLearningProfileId
-	if (!activeLearningProfileId) throw new Error('No active learning profile for user.')
+	const {activeLearningProfileId} = await getActiveLearingProfile()
 
 	const days = []
 	const today = DateTime.now().setZone('UTC').setLocale('en-US')

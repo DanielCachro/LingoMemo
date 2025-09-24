@@ -1,17 +1,14 @@
-import {getCurrentUser} from '@/lib/actions/user'
+import {getActiveLearingProfile} from '@/lib/actions/user'
 import {prisma} from '@/prisma/client'
 import {DateTime} from 'luxon'
 import {NextResponse} from 'next/server'
 
 export async function POST() {
-	const user = await getCurrentUser()
-	if (!user) return NextResponse.json({message: 'User not authenticated.'}, {status: 401})
+	const {activeLearningProfile, activeLearningProfileId} = await getActiveLearingProfile()
 
-	const activeLearningProfile = user.activeLearningProfile
-	const activeLearningProfileId = user.activeLearningProfileId
-
-	if (!activeLearningProfile || !activeLearningProfileId)
-		return NextResponse.json({message: 'No active learning profile for user.'}, {status: 500})
+	if (!activeLearningProfile || !activeLearningProfileId) {
+		return NextResponse.json({error: 'User not authenticated or active learning profile not found.'}, {status: 401})
+	}
 
 	const startOfTodayUTC = DateTime.now().setZone('UTC').startOf('day')
 	const endOfTodayUTC = DateTime.now().setZone('UTC').endOf('day')

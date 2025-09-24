@@ -16,3 +16,15 @@ export const getCurrentUser = cache(async () => {
 		include: {preferences: true, learningProfiles: true, activeLearningProfile: true},
 	})
 })
+
+export async function getActiveLearingProfile() {
+	'use server'
+	const user = await getCurrentUser()
+	if (!user) throw new Error('User not authenticated.')
+
+	const activeLearningProfile = user.activeLearningProfile
+	const activeLearningProfileId = user.activeLearningProfileId
+	if (!activeLearningProfile || !activeLearningProfileId) throw new Error('No active learning profile for user.')
+
+	return {activeLearningProfile, activeLearningProfileId}
+}
