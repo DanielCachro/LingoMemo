@@ -1,5 +1,4 @@
 'use client'
-import {useStreak} from '@/hooks/useStreak'
 import type {Flashcard, FlashcardResponseQuality} from '@/types/study'
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query'
 import {useEffect, useState} from 'react'
@@ -25,7 +24,6 @@ export type UserAnswer = {
 
 export default function StudyClient({initialFlashcard, initialDone, toReviewToday}: Props) {
 	const queryClient = useQueryClient()
-	const {invalidate: invalidateStreak} = useStreak()
 	const [currentFlashcard, setCurrentFlashcard] = useState<Flashcard | null>(initialFlashcard)
 	const [doneToday, setDoneToday] = useState(initialDone ?? 0)
 
@@ -90,7 +88,7 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 					// TODO: show toast
 					alert('Error: Failed to update streak. Please try again.')
 				}
-				invalidateStreak()
+				queryClient.invalidateQueries({queryKey: ['profile']})
 			}
 
 			return {
