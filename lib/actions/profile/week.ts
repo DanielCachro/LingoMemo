@@ -20,8 +20,6 @@ export async function getWeekdaysCompletion() {
 
 	for (let i = 0; i < 7; i++) {
 		const date = monday.plus({days: i})
-		const startOfDate = date.startOf('day').toJSDate()
-		const endOfDate = date.endOf('day').toJSDate()
 		const day = date.day
 		const dayLabel = date.toLocaleString({weekday: 'short'})
 		const datetime = date.toISODate() ?? undefined
@@ -31,11 +29,47 @@ export async function getWeekdaysCompletion() {
 				select: {reviewedAt: true},
 				where: {
 					learningProfileId: activeLearningProfileId,
-					reviewedAt: {gte: startOfDate, lte: endOfDate},
+					reviewedAt: {
+						gte: date.startOf('day').toJSDate(),
+						lte: date.endOf('day').toJSDate(),
+					},
 				},
 			})) !== null
 
 		days.push({day, dayLabel, datetime, completed: completedThatDay})
+	}
+
+	return days
+}
+
+export async function getLast7DaysCompletionCount() {
+	const user = await getCurrentUser()
+	if (!user) throw new Error('User not authenticated.')
+
+	const activeLearningProfileId = user.activeLearningProfileId
+	if (!activeLearningProfileId) throw new Error('No active learning profile for user.')
+
+	const days = []
+	const today = DateTime.now().setZone('UTC').setLocale('en-US')
+
+	for (let i = 0; i < 7; i++) {
+		const date = today.minus({days: i})
+
+		const day = date.day
+		const month = date.toLocaleString({month: 'short'})
+		const datetime = date.toISODate() ?? undefined
+
+		const cardsCompleted = await prisma.flashcardReviewLog.count({
+			where: {
+				learningProfileId: activeLearningProfileId,
+				reviewedAt: {
+					gte: date.startOf('day').toJSDate(),
+					lte: date.endOf('day').toJSDate(),
+				},
+			},
+		})
+
+		days.unshift({day, month, datetime, cardsCompleted})
 	}
 
 	return days

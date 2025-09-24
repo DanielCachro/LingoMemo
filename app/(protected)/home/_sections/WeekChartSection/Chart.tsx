@@ -1,12 +1,12 @@
 'use client'
-import {getLast7Days} from '@/lib/dateRanges'
+import {getLast7DaysCompletionCount} from '@/lib/actions/profile/week'
 import {cn} from '@/lib/utils'
 import {motion} from 'motion/react'
 import {useEffect, useState} from 'react'
 
 const barMaxHeight = 96
 
-export default function Chart({last7Days}: {last7Days: ReturnType<typeof getLast7Days>}) {
+export default function Chart({last7Days}: {last7Days: Awaited<ReturnType<typeof getLast7DaysCompletionCount>>}) {
 	const maxCards = Math.max(...last7Days.map(day => day.cardsCompleted))
 	const [currentDay, setCurrentDay] = useState<number>()
 

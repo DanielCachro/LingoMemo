@@ -1,8 +1,8 @@
-import {getLast7Days} from '@/lib/dateRanges'
+import {getLast7DaysCompletionCount} from '@/lib/actions/profile/week'
 import Chart from './Chart'
 
-export default function WeekChart() {
-	const last7Days = getLast7Days()
+export default async function WeekChart() {
+	const last7Days = await getLast7DaysCompletionCount()
 
 	return (
 		<section className='flex-col items-center py-48 min-[26.8rem]:flex'>
