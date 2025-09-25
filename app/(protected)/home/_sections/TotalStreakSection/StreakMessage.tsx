@@ -1,6 +1,6 @@
 'use client'
 
-import { useStreak } from '@/hooks/useStreak'
+import {useStreak} from '@/hooks/useStreak'
 import {motion} from 'motion/react'
 import {useLayoutEffect, useState} from 'react'
 
