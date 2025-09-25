@@ -5,7 +5,7 @@ import {DateTime} from 'luxon'
 
 function getStartOfWeek() {
 	const today = DateTime.now().setZone('UTC').setLocale('en-US')
-	const dayOfWeek = today.weekday // 1 (Monday) to 7 (Sunday)
+	const dayOfWeek = today.weekday
 	const diffToMonday = dayOfWeek === 1 ? 0 : 1 - dayOfWeek
 	return today.plus({days: diffToMonday}).startOf('day')
 }
@@ -66,4 +66,24 @@ export async function getLast7DaysCompletionCount() {
 	}
 
 	return days
+}
+
+export async function getWeekFlashcardCount() {
+	const {activeLearningProfileId} = await getActiveLearingProfile()
+	console.log('getting...');
+
+	const monday = getStartOfWeek()
+	const sunday = monday.plus({days: 6})
+
+	const flashcardCount = await prisma.flashcardReviewLog.count({
+		where: {
+			learningProfileId: activeLearningProfileId,
+			reviewedAt: {
+				gte: monday.startOf('day').toJSDate(),
+				lte: sunday.endOf('day').toJSDate(),
+			},
+		},
+	})
+
+	return flashcardCount
 }

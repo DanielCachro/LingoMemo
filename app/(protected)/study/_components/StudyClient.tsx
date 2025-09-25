@@ -102,6 +102,8 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 			const prevCurrentFlashcard = currentFlashcard
 			const prevUserAnswer = userAnswer
 
+			queryClient.invalidateQueries({queryKey: ['weekFlashcardCount']})
+
 			// remove first occurrence from queue if present
 			const newQueue = prevQueue.slice()
 			if (newQueue.length > 0) newQueue.shift()
