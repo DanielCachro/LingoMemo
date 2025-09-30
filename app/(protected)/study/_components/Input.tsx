@@ -13,5 +13,5 @@ export default function Input({...props}: React.InputHTMLAttributes<HTMLInputEle
 }
 
 export function Skeleton() {
-	return <div className='h-48 w-full rounded-sm bg-skeleton'></div>
+	return <div role='status' className='h-48 w-full rounded-sm bg-skeleton'></div>
 }

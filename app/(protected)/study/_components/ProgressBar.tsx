@@ -32,7 +32,7 @@ export default function ProgressBar({value, max}: Props) {
 
 export function Skeleton() {
 	return (
-		<div className='flex w-full items-center gap-12 pt-8'>
+		<div role='status' className='flex w-full items-center gap-12 pt-8'>
 			<div className='h-16 w-16 rounded-full bg-skeleton'></div>
 			<div className='relative h-8 grow rounded-full bg-skeleton'></div>
 			<div className='h-16 w-32 rounded-full bg-skeleton'></div>
