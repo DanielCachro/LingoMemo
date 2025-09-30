@@ -4,10 +4,10 @@ import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query'
 import {useEffect, useState} from 'react'
 import AnswerDisplay from './AnswerDisplay'
 import Buttons from './Buttons'
-import FlashcardComponent from './Flashcard'
+import FlashcardComponent, {Skeleton as FlashcardComponentSkeleton} from './Flashcard'
 import FlashcardsStatus from './FlashcardsStatus'
-import Input from './Input'
-import ProgressBar from './ProgressBar'
+import Input, {Skeleton as InputSkeleton} from './Input'
+import ProgressBar, {Skeleton as ProgressBarSkeleton} from './ProgressBar'
 
 interface Props {
 	initialFlashcard: Flashcard | null
@@ -235,5 +235,17 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 					<Buttons mode='rateAnswer' handleRateAnswer={handleRateAnswer} userAnswer={userAnswer} />
 				))}
 		</>
+	)
+}
+
+export function Skeleton() {
+	return (
+		<div className='flex h-full flex-col items-center overflow-y-auto page-padding-x page-padding-y'>
+			<div className='w-full max-w-full space-y-48 sm:w-512'>
+				<ProgressBarSkeleton />
+				<FlashcardComponentSkeleton />
+				<InputSkeleton />
+			</div>
+		</div>
 	)
 }
