@@ -28,14 +28,14 @@ export default function Flashcard({flashcard}: {flashcard: Flashcard}) {
 
 export function Skeleton() {
 	return (
-		<div className='flex aspect-4/3 flex-col items-center rounded-sm bg-background-300 px-32 dark:bg-background-700 dark:text-primary-100'>
+		<div className='flex aspect-4/3 flex-col items-center rounded-sm bg-skeleton px-32 dark:text-primary-100'>
 			<div className='flex w-full max-w-384 grow flex-col items-center justify-center gap-24 pt-32 pb-48'>
 				<div className='w-full space-y-8'>
-					<div className='h-8 w-11/12 rounded-full bg-background-300 dark:bg-background-600'></div>
-					<div className='h-8 rounded-full bg-background-300 dark:bg-background-600'></div>
-					<div className='h-8 w-9/12 rounded-full bg-background-300 dark:bg-background-600'></div>
+					<div className='h-8 w-11/12 rounded-full bg-skeleton-accent'></div>
+					<div className='h-8 rounded-full bg-skeleton-accent'></div>
+					<div className='h-8 w-9/12 rounded-full bg-skeleton-accent'></div>
 				</div>
-				<div className='h-48 w-full justify-self-center overflow-auto rounded-sm bg-background-300 px-24 py-16 dark:bg-background-600'></div>
+				<div className='h-48 w-full justify-self-center overflow-auto rounded-sm bg-skeleton-accent px-24 py-16'></div>
 			</div>
 		</div>
 	)

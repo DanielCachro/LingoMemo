@@ -157,6 +157,14 @@
 	@apply px-32;
 }
 
+@utility bg-skeleton {
+	@apply bg-background-300 dark:bg-background-700;
+}
+
+@utility bg-skeleton-accent {
+	@apply bg-background-200 dark:bg-background-600;
+}
+
 @utility section-pattern {
 	background-color: var(--color-background-100);
 	background-image: url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23f6b4ab' fill-opacity='0.1' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
