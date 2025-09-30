@@ -70,7 +70,6 @@ export async function getLast7DaysCompletionCount() {
 
 export async function getWeekFlashcardCount() {
 	const {activeLearningProfileId} = await getActiveLearingProfile()
-	console.log('getting...');
 
 	const monday = getStartOfWeek()
 	const sunday = monday.plus({days: 6})
