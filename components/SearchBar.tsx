@@ -34,3 +34,12 @@ export default function SearchBar({className, formAction, onSubmit}: Props) {
 		</search>
 	)
 }
+
+export function Skeleton() {
+	return (
+		<div role='status' className='flex w-full max-w-640 items-center gap-16 rounded-sm bg-skeleton p-16'>
+			<div className='h-24 w-24 animate-pulse rounded-full bg-skeleton-accent' />
+			<div className='h-8 grow animate-pulse rounded-full bg-skeleton-accent' />
+		</div>
+	)
+}
