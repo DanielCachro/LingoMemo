@@ -61,9 +61,11 @@ export async function updateFlashcard(flashcardId: number, q: FlashcardResponseQ
 				},
 			})
 		})
+
 		return {updated: true, alreadyReviewed: false}
 	} catch (err) {
 		if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
+			// not throwing error on unique constraint violation (already reviewed today)
 			return {updated: false, alreadyReviewed: true}
 		}
 		console.error('Error updating flashcard:', err)

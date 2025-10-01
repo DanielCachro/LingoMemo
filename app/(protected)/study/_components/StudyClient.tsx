@@ -1,7 +1,7 @@
 'use client'
 import type {Flashcard, FlashcardResponseQuality} from '@/types/study'
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query'
-import {useEffect, useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 import AnswerDisplay from './AnswerDisplay'
 import Buttons from './Buttons'
 import FlashcardComponent, {Skeleton as FlashcardComponentSkeleton} from './Flashcard'
@@ -26,7 +26,7 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 	const queryClient = useQueryClient()
 	const [currentFlashcard, setCurrentFlashcard] = useState<Flashcard | null>(initialFlashcard)
 	const [doneToday, setDoneToday] = useState(initialDone ?? 0)
-
+	const inFlight = useRef<Set<number>>(new Set())
 	const [userAnswer, setUserAnswer] = useState<UserAnswer>({
 		answer: '',
 		isAnswered: false,
@@ -50,7 +50,12 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 			const missing = Math.max(0, desiredQueueSize - existing.length)
 			if (missing === 0) return existing
 
-			const exclude = existing.map(flashcard => flashcard.id).join(',')
+			const excludeSet = new Set(existing.map(flashcard => flashcard.id))
+			if (currentFlashcard) excludeSet.add(currentFlashcard.id)
+			// not include flashcards that are currently being reviewed (inFlight)
+			inFlight.current.forEach(id => excludeSet.add(id))
+			const exclude = Array.from(excludeSet).join(',')
+
 			const res = await fetch(`/api/study/prefetch?limit=${missing}${exclude ? `&excludeIds=${exclude}` : ''}`)
 			if (!res.ok) throw new Error('Failed to prefetch')
 			const fetched: Flashcard[] = await res.json()
@@ -76,10 +81,13 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 				headers: {'Content-Type': 'application/json'},
 				body: JSON.stringify({flashcardId, q}),
 			})
+
 			if (!flashcardRes.ok) {
 				const text = await flashcardRes.text()
 				throw new Error(text || 'update failed')
 			}
+
+			const flashcard = await flashcardRes.json()
 
 			let streakRes = null
 			if (doneToday === toReviewToday) {
@@ -92,25 +100,27 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 			}
 
 			return {
-				flashcard: await flashcardRes.json(),
+				flashcard,
 				streak: streakRes ? await streakRes.json() : null,
 			}
 		},
-		onMutate: async () => {
+		onMutate: async (variables: {flashcardId: number; q: number}) => {
 			await queryClient.cancelQueries({queryKey: ['nextFlashcards']})
 			const prevQueue = queryClient.getQueryData<Flashcard[]>(['nextFlashcards']) ?? []
 			const prevCurrentFlashcard = currentFlashcard
 			const prevUserAnswer = userAnswer
 
-			queryClient.invalidateQueries({queryKey: ['weekFlashcardCount']})
+			console.log(currentFlashcard)
 
-			// remove first occurrence from queue if present
-			const newQueue = prevQueue.slice()
-			if (newQueue.length > 0) newQueue.shift()
+			const newQueue = prevQueue.filter(flashcard => flashcard.id !== variables.flashcardId)
+
+			console.log(newQueue)
 
 			// optimistic: increment doneToday and set currentFlashcard to next or null
 			setDoneToday(done => done + 1)
-			setCurrentFlashcard(newQueue.length ? newQueue[0] : null)
+			if (prevCurrentFlashcard?.id === variables.flashcardId) {
+				setCurrentFlashcard(newQueue.length ? newQueue[0] : null)
+			}
 			setUserAnswer({answer: '', isAnswered: false, isCorrect: false, hintCount: 0})
 
 			// update cache immediately
@@ -130,14 +140,22 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 			// TODO: show toast
 			alert('Error: Failed to save flashcard review. Please try again.')
 		},
-		onSettled: async () => {
+		onSettled: async (_, __, variables) => {
+			inFlight.current.delete(variables.flashcardId)
 			// refresh the queue from the server
+			await queryClient.invalidateQueries({queryKey: ['weekFlashcardCount']})
 			await queryClient.invalidateQueries({queryKey: ['nextFlashcards']})
 		},
 	})
 
 	function handleRateAnswer(quality: FlashcardResponseQuality) {
 		if (!currentFlashcard) return
+		// prevent double submission of the same flashcard - e.g. by pressing 1,2,3 at the same time
+		// inFlight contains ids of flashcards that have been sent to the server but not yet confirmed
+		// so if the id is in inFlight, we do not send it again and we are excluding it from the next flashcards fetch
+		// id will be removed from inFlight in onSettled of the mutation
+		if (inFlight.current.has(currentFlashcard.id)) return
+		inFlight.current.add(currentFlashcard.id)
 		mutate({flashcardId: currentFlashcard.id, q: quality})
 	}
 
