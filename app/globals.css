@@ -158,11 +158,11 @@
 }
 
 @utility bg-skeleton {
-	@apply bg-background-300 dark:bg-background-700;
+	@apply bg-background-300 dark:bg-background-800;
 }
 
 @utility bg-skeleton-accent {
-	@apply bg-background-200 dark:bg-background-600;
+	@apply bg-background-200 dark:bg-background-700;
 }
 
 @utility section-pattern {
