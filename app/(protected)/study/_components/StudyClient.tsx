@@ -112,14 +112,12 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 			const prevCurrentFlashcard = currentFlashcard
 			const prevUserAnswer = userAnswer
 
-			console.log(currentFlashcard)
-
 			const newQueue = prevQueue.filter(flashcard => flashcard.id !== variables.flashcardId)
+			if (variables.q < 3) {
+				if (prevCurrentFlashcard) newQueue.push(prevCurrentFlashcard)
+			}
 
-			console.log(newQueue)
-
-			// optimistic: increment doneToday and set currentFlashcard to next or null
-			setDoneToday(done => done + 1)
+			if (variables.q >= 3) setDoneToday(done => done + 1)
 			if (prevCurrentFlashcard?.id === variables.flashcardId) {
 				setCurrentFlashcard(newQueue.length ? newQueue[0] : null)
 			}

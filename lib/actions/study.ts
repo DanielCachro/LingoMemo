@@ -27,7 +27,7 @@ export async function updateFlashcard(flashcardId: number, q: FlashcardResponseQ
 	let newInterval = 0
 
 	if (q < 3) {
-		newInterval = 1
+		newInterval = 0
 	} else if (flashcard.interval < 6) {
 		newInterval = 6
 	} else {
@@ -43,15 +43,16 @@ export async function updateFlashcard(flashcardId: number, q: FlashcardResponseQ
 
 	try {
 		await prisma.$transaction(async tx => {
-			await tx.flashcardReviewLog.create({
-				data: {
-					flashcardId: flashcard.id,
-					learningProfileId: activeLearningProfileId,
-					reviewedAt: DateTime.now().toUTC().startOf('day').toJSDate(),
-					eFactor: flashcard.eFactor,
-				},
-			})
-
+			if (newInterval !== 0) {
+				await tx.flashcardReviewLog.create({
+					data: {
+						flashcardId: flashcard.id,
+						learningProfileId: activeLearningProfileId,
+						reviewedAt: DateTime.now().toUTC().startOf('day').toJSDate(),
+						eFactor: flashcard.eFactor,
+					},
+				})
+			}
 			await tx.flashcard.update({
 				where: {id: flashcard.id, learningProfileId: activeLearningProfileId},
 				data: {
