@@ -41,7 +41,7 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 		isError: isQueueError,
 	} = useQuery({
 		queryKey: ['nextFlashcards'],
-		queryFn: async () => {
+		queryFn: async ({signal}) => {
 			let desiredQueueSize = 10
 			const toReview = toReviewToday - doneToday
 			if (toReview < desiredQueueSize) desiredQueueSize = toReview
@@ -56,7 +56,9 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 			inFlight.current.forEach(id => excludeSet.add(id))
 			const exclude = Array.from(excludeSet).join(',')
 
-			const res = await fetch(`/api/study/prefetch?limit=${missing}${exclude ? `&excludeIds=${exclude}` : ''}`)
+			const res = await fetch(`/api/study/prefetch?limit=${missing}${exclude ? `&excludeIds=${exclude}` : ''}`, {
+				signal,
+			})
 			if (!res.ok) throw new Error('Failed to prefetch')
 			const fetched: Flashcard[] = await res.json()
 
