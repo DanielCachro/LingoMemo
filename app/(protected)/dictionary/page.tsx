@@ -11,7 +11,7 @@ interface Props {
 
 export default async function DictionaryPage({searchParams}: Props) {
 	const params = await searchParams
-	const search = params?.search
+	const search = params?.search?.toLowerCase().trim()
 
 	return (
 		<section className='flex h-full flex-col items-center px-16 page-padding-y'>
