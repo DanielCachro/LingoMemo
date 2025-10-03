@@ -1,10 +1,10 @@
 'use server'
 import {getCurrentUser} from '@/lib/actions/user'
+import {getUserTimeZoneString} from '@/lib/time'
 import {prisma} from '@/prisma/client'
 import {DateTime} from 'luxon'
 import {revalidatePath} from 'next/cache'
 import {Flashcard, FlashcardSchema} from './schema'
-import { getUserTimeZoneString } from '@/lib/client/timeRanges'
 
 export async function createFlashcard(flashcard: Flashcard) {
 	const userData = await getCurrentUser()

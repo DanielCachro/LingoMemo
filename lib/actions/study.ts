@@ -1,6 +1,6 @@
 'use server'
 import {getCurrentUser} from '@/lib/actions/user'
-import {getUserDayRangeUTC, getUserTimeZoneString} from '@/lib/client/timeRanges'
+import {getUserDayRangeUTC, getUserTimeZoneString} from '@/lib/time'
 import {prisma} from '@/prisma/client'
 import {FlashcardResponseQuality} from '@/types/study'
 import {Prisma} from '@prisma/client'

@@ -1,6 +1,6 @@
 'use server'
 import {getCurrentUser} from '@/lib/actions/user'
-import {getUserTimeZoneString} from '@/lib/client/timeRanges'
+import {getUserTimeZoneString} from '@/lib/time'
 import {prisma} from '@/prisma/client'
 import {DateTime} from 'luxon'
 
