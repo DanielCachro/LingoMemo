@@ -7,6 +7,6 @@ export async function GET() {
 		return NextResponse.json({user}, {status: 200})
 	} catch (error) {
 		console.error(error)
-		return NextResponse.json({error: 'Nie udało się pobrać użytkownika'}, {status: 500})
+		return NextResponse.json({error: (error as Error).message || 'Unable to retrieve user.'}, {status: 500})
 	}
 }

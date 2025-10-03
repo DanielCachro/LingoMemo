@@ -3,6 +3,7 @@ import {dehydrate, HydrationBoundary, QueryClient} from '@tanstack/react-query'
 import BottomNavigation from './BottomNavigation'
 import MainNavigation from './MainNavigation'
 import QueryClientProvider from './QueryClientProvider'
+import {TimeZoneUpdater} from './TimeZoneUpdater'
 
 export default async function RootLayout({
 	children,
@@ -16,6 +17,7 @@ export default async function RootLayout({
 		<div className={'flex h-dvh flex-col overflow-y-hidden antialiased sm:flex-row'}>
 			<QueryClientProvider>
 				<HydrationBoundary state={dehydrate(queryClient)}>
+					<TimeZoneUpdater />
 					<MainNavigation />
 					<main className='w-full grow overflow-y-auto scrollbar'>{children}</main>
 					<BottomNavigation className='sm:hidden' />

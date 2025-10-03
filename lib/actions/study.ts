@@ -1,5 +1,6 @@
 'use server'
 import {getCurrentUser} from '@/lib/actions/user'
+import {getUserDayRangeUTC, getUserTimeZoneString} from '@/lib/client/timeRanges'
 import {prisma} from '@/prisma/client'
 import {FlashcardResponseQuality} from '@/types/study'
 import {Prisma} from '@prisma/client'
@@ -11,9 +12,12 @@ export async function updateFlashcard(flashcardId: number, q: FlashcardResponseQ
 	const user = await getCurrentUser()
 	const activeLearningProfileId = user?.activeLearningProfileId
 
-	if (activeLearningProfileId == null) {
-		throw new Error('No active learning profile for user')
-	}
+	if (!activeLearningProfileId) throw new Error('No active learning profile for user')
+
+	const userTimeZone = getUserTimeZoneString({
+		timezone: user.timeZone,
+		offsetMinutes: user.utcOffsetMinutes,
+	})
 
 	const flashcard = await prisma.flashcard.findUnique({
 		where: {
@@ -48,7 +52,7 @@ export async function updateFlashcard(flashcardId: number, q: FlashcardResponseQ
 					data: {
 						flashcardId: flashcard.id,
 						learningProfileId: activeLearningProfileId,
-						reviewedAt: DateTime.now().toUTC().startOf('day').toJSDate(),
+						reviewedAt: DateTime.now().setZone(userTimeZone).toUTC().toJSDate(),
 						eFactor: flashcard.eFactor,
 					},
 				})
@@ -57,7 +61,7 @@ export async function updateFlashcard(flashcardId: number, q: FlashcardResponseQ
 				where: {id: flashcard.id, learningProfileId: activeLearningProfileId},
 				data: {
 					interval: newInterval,
-					nextReview: DateTime.now().toUTC().plus({days: newInterval}).toJSDate(),
+					nextReview: DateTime.now().setZone(userTimeZone).toUTC().plus({days: newInterval}).toJSDate(),
 					eFactor: newEFactor,
 				},
 			})
@@ -75,12 +79,14 @@ export async function updateFlashcard(flashcardId: number, q: FlashcardResponseQ
 }
 
 export async function getStudyData() {
-	const endOfTodayUTC = DateTime.now().toUTC().endOf('day').toJSDate()
-	const startOfTodayUTC = DateTime.now().toUTC().startOf('day').toJSDate()
 	const user = await getCurrentUser()
 	const activeLearningProfileId = user?.activeLearningProfileId
 
 	if (!activeLearningProfileId) throw new Error('No active learning profile for user')
+	const {startOfTodayUTC, endOfTodayUTC} = getUserDayRangeUTC({
+		timezone: user.timeZone,
+		offsetMinutes: user.utcOffsetMinutes,
+	})
 
 	const [flashcard, doneToday, toReview] = await Promise.all([
 		prisma.flashcard.findFirst({
@@ -88,7 +94,7 @@ export async function getStudyData() {
 				learningProfileId: activeLearningProfileId,
 				nextReview: {
 					not: null,
-					lte: endOfTodayUTC,
+					lte: endOfTodayUTC.toJSDate(),
 				},
 			},
 			include: {answer: true},
@@ -97,8 +103,8 @@ export async function getStudyData() {
 			where: {
 				learningProfileId: activeLearningProfileId,
 				reviewedAt: {
-					gte: startOfTodayUTC,
-					lt: endOfTodayUTC,
+					gte: startOfTodayUTC.toJSDate(),
+					lt: endOfTodayUTC.toJSDate(),
 				},
 			},
 		}),
@@ -107,7 +113,7 @@ export async function getStudyData() {
 				learningProfileId: activeLearningProfileId,
 				nextReview: {
 					not: null,
-					lte: endOfTodayUTC,
+					lte: endOfTodayUTC.toJSDate(),
 				},
 			},
 		}),
@@ -121,16 +127,20 @@ export async function getStudyData() {
 export async function getNextFlashcards(limit = 5, excludeIds: number[] = []) {
 	if (limit < 1 || limit > 20) throw new Error('Limit must be between 1 and 20')
 
-	const endOfTodayUTC = DateTime.now().toUTC().endOf('day').toJSDate()
 	const user = await getCurrentUser()
 	const activeLearningProfileId = user?.activeLearningProfileId
 	if (!activeLearningProfileId) return []
+
+	const {endOfTodayUTC} = getUserDayRangeUTC({
+		timezone: user.timeZone,
+		offsetMinutes: user.utcOffsetMinutes,
+	})
 
 	const where: Prisma.FlashcardWhereInput = {
 		learningProfileId: activeLearningProfileId,
 		nextReview: {
 			not: null,
-			lte: endOfTodayUTC,
+			lte: endOfTodayUTC.toJSDate(),
 		},
 	}
 

@@ -16,6 +16,8 @@ async function create(userId: string, userMetadata: z.infer<typeof userMetadataS
 				id: userId,
 				name: userMetadata.full_name,
 				email: userMetadata.email,
+				timeZone: 'Etc/UTC',
+				utcOffsetMinutes: 0,
 				preferences: {
 					create: {
 						theme: 'Automatic',

@@ -4,10 +4,12 @@ import {prisma} from '@/prisma/client'
 import {DateTime} from 'luxon'
 import {revalidatePath} from 'next/cache'
 import {Flashcard, FlashcardSchema} from './schema'
+import { getUserTimeZoneString } from '@/lib/client/timeRanges'
 
 export async function createFlashcard(flashcard: Flashcard) {
 	const userData = await getCurrentUser()
 	if (!userData) throw new Error('User not authenticated')
+	const userTimeZone = getUserTimeZoneString({timezone: userData.timeZone, offsetMinutes: userData.utcOffsetMinutes})
 
 	const parsed = FlashcardSchema.safeParse(flashcard)
 	if (!parsed.success) {
@@ -74,7 +76,7 @@ export async function createFlashcard(flashcard: Flashcard) {
 					synonyms: flashcardData.synonyms ?? [],
 					answerId,
 					learningProfileId: userData.activeLearningProfileId!,
-					nextReview: DateTime.now().toUTC().toJSDate(),
+					nextReview: DateTime.now().setZone(userTimeZone).toUTC().toJSDate(),
 				},
 			})
 		})

@@ -1,20 +1,26 @@
 'use server'
-import {getActiveLearingProfile} from '@/lib/actions/user'
+import {getCurrentUser} from '@/lib/actions/user'
+import {getUserTimeZoneString} from '@/lib/client/timeRanges'
 import {prisma} from '@/prisma/client'
 import {DateTime} from 'luxon'
 
-function getStartOfWeek() {
-	const today = DateTime.now().setZone('UTC').setLocale('en-US')
+function getStartOfWeek(timezone: string) {
+	const today = DateTime.now().setZone(timezone).setLocale('en-US')
 	const dayOfWeek = today.weekday
 	const diffToMonday = dayOfWeek === 1 ? 0 : 1 - dayOfWeek
 	return today.plus({days: diffToMonday}).startOf('day')
 }
 
 export async function getWeekdaysCompletion() {
-	const {activeLearningProfileId} = await getActiveLearingProfile()
+	const user = await getCurrentUser()
+	if (!user) throw new Error('User not authenticated')
+	const activeLearningProfileId = user.activeLearningProfileId
+	if (!activeLearningProfileId) throw new Error('No active learning profile found')
+
+	const userTimeZone = getUserTimeZoneString({timezone: user.timeZone, offsetMinutes: user.utcOffsetMinutes})
 
 	const days = []
-	const monday = getStartOfWeek()
+	const monday = getStartOfWeek(userTimeZone)
 	for (let i = 0; i < 7; i++) {
 		const date = monday.plus({days: i})
 		const day = date.day
@@ -27,8 +33,8 @@ export async function getWeekdaysCompletion() {
 				where: {
 					learningProfileId: activeLearningProfileId,
 					reviewedAt: {
-						gte: date.startOf('day').toJSDate(),
-						lte: date.endOf('day').toJSDate(),
+						gte: date.startOf('day').toUTC().toJSDate(),
+						lte: date.endOf('day').toUTC().toJSDate(),
 					},
 				},
 			})) !== null
@@ -40,10 +46,15 @@ export async function getWeekdaysCompletion() {
 }
 
 export async function getLast7DaysCompletionCount() {
-	const {activeLearningProfileId} = await getActiveLearingProfile()
+	const user = await getCurrentUser()
+	if (!user) throw new Error('User not authenticated')
+	const activeLearningProfileId = user.activeLearningProfileId
+	if (!activeLearningProfileId) throw new Error('No active learning profile found')
+
+	const userTimeZone = getUserTimeZoneString({timezone: user.timeZone, offsetMinutes: user.utcOffsetMinutes})
 
 	const days = []
-	const today = DateTime.now().setZone('UTC').setLocale('en-US')
+	const today = DateTime.now().setZone(userTimeZone).setLocale('en-US')
 
 	for (let i = 0; i < 7; i++) {
 		const date = today.minus({days: i})
@@ -56,8 +67,8 @@ export async function getLast7DaysCompletionCount() {
 			where: {
 				learningProfileId: activeLearningProfileId,
 				reviewedAt: {
-					gte: date.startOf('day').toJSDate(),
-					lte: date.endOf('day').toJSDate(),
+					gte: date.startOf('day').toUTC().toJSDate(),
+					lte: date.endOf('day').toUTC().toJSDate(),
 				},
 			},
 		})
@@ -69,17 +80,22 @@ export async function getLast7DaysCompletionCount() {
 }
 
 export async function getWeekFlashcardCount() {
-	const {activeLearningProfileId} = await getActiveLearingProfile()
+	const user = await getCurrentUser()
+	if (!user) throw new Error('User not authenticated')
+	const activeLearningProfileId = user.activeLearningProfileId
+	if (!activeLearningProfileId) throw new Error('No active learning profile found')
 
-	const monday = getStartOfWeek()
+	const userTimeZone = getUserTimeZoneString({timezone: user.timeZone, offsetMinutes: user.utcOffsetMinutes})
+
+	const monday = getStartOfWeek(userTimeZone)
 	const sunday = monday.plus({days: 6})
 
 	const flashcardCount = await prisma.flashcardReviewLog.count({
 		where: {
 			learningProfileId: activeLearningProfileId,
 			reviewedAt: {
-				gte: monday.startOf('day').toJSDate(),
-				lte: sunday.endOf('day').toJSDate(),
+				gte: monday.startOf('day').toUTC().toJSDate(),
+				lte: sunday.endOf('day').toUTC().toJSDate(),
 			},
 		},
 	})

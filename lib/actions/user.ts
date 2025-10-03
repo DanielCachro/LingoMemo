@@ -17,6 +17,25 @@ export const getCurrentUser = cache(async () => {
 	})
 })
 
+export const setUserTimeZone = async (timeZone: string | undefined, offsetMinutes: number) => {
+	const user = await getCurrentUser()
+	if (!user) throw new Error('User not authenticated.')
+
+	if (user.timeZone === timeZone && user.utcOffsetMinutes === offsetMinutes) {
+		return {updated: false}
+	}
+
+	await prisma.user.update({
+		where: {id: user.id},
+		data: {
+			timeZone,
+			utcOffsetMinutes: offsetMinutes,
+		},
+	})
+
+	return {updated: true}
+}
+
 export async function getActiveLearingProfile() {
 	'use server'
 	const user = await getCurrentUser()

@@ -1,16 +1,32 @@
 'use server'
-import {getActiveLearingProfile} from '@/lib/actions/user'
+import {getCurrentUser} from '@/lib/actions/user'
+import {getUserDayRangeUTC, getUserTimeZoneString} from '@/lib/client/timeRanges'
 import {prisma} from '@/prisma/client'
 import {DateTime} from 'luxon'
 
 export async function getStreakData() {
-	const {activeLearningProfile, activeLearningProfileId} = await getActiveLearingProfile()
+	const user = await getCurrentUser()
+	if (!user) throw new Error('User not authenticated')
+
+	const activeLearningProfile = user.activeLearningProfile
+	const activeLearningProfileId = user.activeLearningProfileId
+
+	if (!activeLearningProfile || !activeLearningProfileId) throw new Error('No active learning profile found.')
 	let streakCount = activeLearningProfile.streakCount
 	const longestStreak = activeLearningProfile.longestStreak
 
-	const startOfTodayUTC = DateTime.now().setZone('UTC').startOf('day')
+	const {startOfTodayUTC} = getUserDayRangeUTC({
+		timezone: user.timeZone,
+		offsetMinutes: user.utcOffsetMinutes,
+	})
+
+	const userTimeZone = getUserTimeZoneString({
+		timezone: user.timeZone,
+		offsetMinutes: user.utcOffsetMinutes,
+	})
+
 	const streakLastUpdated = activeLearningProfile.streakLastUpdated
-		? DateTime.fromJSDate(activeLearningProfile.streakLastUpdated).setZone('UTC').startOf('day')
+		? DateTime.fromJSDate(activeLearningProfile.streakLastUpdated).setZone(userTimeZone).startOf('day').toUTC()
 		: null
 
 	// Reset streak if broken

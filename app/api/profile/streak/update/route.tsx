@@ -1,20 +1,31 @@
-import {getActiveLearingProfile} from '@/lib/actions/user'
+import {getCurrentUser} from '@/lib/actions/user'
+import {getUserDayRangeUTC, getUserTimeZoneString} from '@/lib/client/timeRanges'
 import {prisma} from '@/prisma/client'
 import {DateTime} from 'luxon'
 import {NextResponse} from 'next/server'
 
 export async function POST() {
-	const {activeLearningProfile, activeLearningProfileId} = await getActiveLearingProfile()
+	const user = await getCurrentUser()
+	if (!user) return NextResponse.json({error: 'User not authenticated.'}, {status: 401})
 
-	if (!activeLearningProfile || !activeLearningProfileId) {
-		return NextResponse.json({error: 'User not authenticated or active learning profile not found.'}, {status: 401})
-	}
+	const activeLearningProfile = user.activeLearningProfile
+	const activeLearningProfileId = user.activeLearningProfileId
 
-	const startOfTodayUTC = DateTime.now().setZone('UTC').startOf('day')
-	const endOfTodayUTC = DateTime.now().setZone('UTC').endOf('day')
+	if (!activeLearningProfile || !activeLearningProfileId)
+		return NextResponse.json({error: 'No active learning profile found.'}, {status: 400})
+
+	const userTimeZone = getUserTimeZoneString({
+		timezone: user.timeZone,
+		offsetMinutes: user.utcOffsetMinutes,
+	})
+
+	const {startOfTodayUTC, endOfTodayUTC} = getUserDayRangeUTC({
+		timezone: user.timeZone,
+		offsetMinutes: user.utcOffsetMinutes,
+	})
 
 	const lastUpdated = activeLearningProfile.streakLastUpdated
-		? DateTime.fromJSDate(activeLearningProfile.streakLastUpdated).setZone('UTC').startOf('day')
+		? DateTime.fromJSDate(activeLearningProfile.streakLastUpdated).setZone(userTimeZone).startOf('day').toUTC()
 		: null
 
 	if (lastUpdated && lastUpdated.hasSame(startOfTodayUTC, 'day')) {
@@ -65,7 +76,7 @@ export async function POST() {
 			data: {
 				streakCount: newStreakCount,
 				longestStreak: newLongestStreak,
-				streakLastUpdated: DateTime.now().setZone('UTC').toJSDate(),
+				streakLastUpdated: DateTime.now().setZone(userTimeZone).toUTC().toJSDate(),
 			},
 		})
 
