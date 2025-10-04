@@ -76,7 +76,7 @@ export async function POST() {
 			data: {
 				streakCount: newStreakCount,
 				longestStreak: newLongestStreak,
-				streakLastUpdated: DateTime.now().setZone(userTimeZone).toUTC().toJSDate(),
+				streakLastUpdated: DateTime.now().toUTC().toJSDate(),
 			},
 		})
 
