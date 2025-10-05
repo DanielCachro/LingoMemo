@@ -8,10 +8,12 @@ import type {UserAnswer} from './StudyClient'
 function HighlightIncorrectElements({
 	userAnswer,
 	correctAnswer,
+	caseSensitive = true,
 	className = 'text-error-400',
 }: {
 	userAnswer: string
 	correctAnswer: string
+	caseSensitive?: boolean
 	className: string
 }) {
 	const userAnswerLength = userAnswer.length
@@ -21,7 +23,11 @@ function HighlightIncorrectElements({
 	// check in which indexes userAnswer and correctAnswer differ
 	const diffIndexes: number[] = []
 	for (let i = 0; i < shorterLength; i++) {
-		if (userAnswer.charAt(i) !== correctAnswer.charAt(i)) diffIndexes.push(i)
+		if (caseSensitive) {
+			if (userAnswer.charAt(i) !== correctAnswer.charAt(i)) diffIndexes.push(i)
+		} else {
+			if (userAnswer.charAt(i).toLowerCase() !== correctAnswer.charAt(i).toLowerCase()) diffIndexes.push(i)
+		}
 	}
 
 	// create a mask of length userAnswerLength, where true means that the character at that index should be highlighted
@@ -90,6 +96,7 @@ export default function AnswerDisplay({
 						<HighlightIncorrectElements
 							userAnswer={userAnswer.answer}
 							correctAnswer={answer.text}
+							caseSensitive={false}
 							className='text-error-400 dark:text-error-400'
 						/>
 					</p>

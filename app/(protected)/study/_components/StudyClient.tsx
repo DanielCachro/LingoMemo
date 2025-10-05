@@ -172,7 +172,7 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 		const correctAnswer = currentFlashcard?.answer.text.trim()
 		if (!correctAnswer) return
 
-		if (userAnswer.answer === correctAnswer) {
+		if (userAnswer.answer.toLowerCase().trim() === correctAnswer.toLowerCase().trim()) {
 			setUserAnswer(prevAnswer => {
 				const newAnswer = {...prevAnswer, isAnswered: true, isCorrect: true}
 				return newAnswer
