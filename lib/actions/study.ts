@@ -47,7 +47,9 @@ export async function updateFlashcard(flashcardId: number, q: FlashcardResponseQ
 					data: {
 						flashcardId: flashcard.id,
 						learningProfileId: activeLearningProfileId,
-						reviewedAt: DateTime.now().toUTC().toJSDate(),
+						// reviewedAt is set to the start of the day to avoid multiple reviews in one day thanks to a unique constraint
+						// this is acceptable as we only care about the date, not the exact time
+						reviewedAt: DateTime.now().toUTC().startOf('day').toJSDate(),
 						eFactor: flashcard.eFactor,
 					},
 				})
