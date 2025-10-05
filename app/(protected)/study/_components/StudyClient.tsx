@@ -1,4 +1,5 @@
 'use client'
+import {cn} from '@/lib/utils'
 import type {Flashcard, FlashcardResponseQuality} from '@/types/study'
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query'
 import {useEffect, useRef, useState} from 'react'
@@ -237,8 +238,11 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 	return (
 		<>
 			<div className='flex h-dvh flex-col items-center overflow-y-auto page-padding-x page-padding-y'>
-				<div className='w-full max-w-full space-y-48 sm:w-512'>
-					<ProgressBar value={doneToday} max={toReviewToday} />
+				<div
+					className={cn('w-full max-w-full space-y-48 sm:w-512', {
+						'mt-64': toReviewToday === 0,
+					})}>
+					{toReviewToday !== 0 && <ProgressBar value={doneToday} max={toReviewToday} />}
 					{currentFlashcard && (
 						<>
 							<FlashcardComponent flashcard={currentFlashcard} />
@@ -262,6 +266,8 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 						<FlashcardsStatus status='error' />
 					) : !currentFlashcard && queueEnabled ? (
 						<p className='animate-pulse'>Loading more flashcards...</p>
+					) : toReviewToday === 0 ? (
+						<FlashcardsStatus status='empty' />
 					) : !queueEnabled ? (
 						<FlashcardsStatus status='done' />
 					) : null}
