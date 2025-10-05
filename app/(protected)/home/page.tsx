@@ -10,7 +10,7 @@ export default function Home() {
 			<TotalStreakSection />
 			<WeekChartSection />
 			<FadeInChildren delay={1.25} delayStep={0} duration={0.4}>
-				<div className='items-end justify-center gap-48 lg:flex'>
+				<div className='items-end justify-center lg:flex'>
 					<StudyCtaSection />
 					<UserStatsSection />
 				</div>

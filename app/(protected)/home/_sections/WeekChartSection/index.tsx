@@ -24,7 +24,7 @@ export default async function WeekChart() {
 	}
 
 	return (
-		<section className='flex-col items-center py-48 min-[26.8rem]:flex'>
+		<section className='flex-col items-center overflow-hidden py-48 min-[26.8rem]:flex'>
 			<div>
 				<FadeInChildren delay={0.7} delayStep={0} duration={0.3}>
 					<p className='ml-24 pb-8 text-lg font-bold sm:m-0'>{chartMessage}</p>
