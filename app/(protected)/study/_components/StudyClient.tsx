@@ -6,8 +6,8 @@ import AnswerDisplay from './AnswerDisplay'
 import Buttons from './Buttons'
 import FlashcardComponent, {Skeleton as FlashcardComponentSkeleton} from './Flashcard'
 import FlashcardsStatus from './FlashcardsStatus'
-import Input, {Skeleton as InputSkeleton} from './Input'
 import ProgressBar, {Skeleton as ProgressBarSkeleton} from './ProgressBar'
+import Textarea, {Skeleton as TextareaSkeleton} from './Textarea'
 
 interface Props {
 	initialFlashcard: Flashcard | null
@@ -23,6 +23,8 @@ export type UserAnswer = {
 }
 
 export default function StudyClient({initialFlashcard, initialDone, toReviewToday}: Props) {
+	const [isDesktop, setIsDesktop] = useState(false)
+	const textfieldRef = useRef<HTMLTextAreaElement | null>(null)
 	const queryClient = useQueryClient()
 	const [currentFlashcard, setCurrentFlashcard] = useState<Flashcard | null>(initialFlashcard)
 	const [doneToday, setDoneToday] = useState(initialDone ?? 0)
@@ -159,7 +161,7 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 		mutate({flashcardId: currentFlashcard.id, q: quality})
 	}
 
-	function handleUserAnswerChange(event: React.ChangeEvent<HTMLInputElement>) {
+	function handleUserAnswerChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
 		setUserAnswer(prevAnswer => {
 			return {...prevAnswer, answer: event.target.value}
 		})
@@ -207,6 +209,20 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 			}))
 	}
 
+	// detect if device has fine pointer (mouse) or not (touch)
+	// if it has fine pointer, focus the textfield automatically and assume it's desktop to set autoFocus on the textarea
+	useEffect(() => {
+		if (typeof window !== 'undefined') {
+			const hasFinePointer = window.matchMedia('(pointer: fine)').matches
+
+			if (hasFinePointer) {
+				textfieldRef.current?.focus()
+			}
+
+			setIsDesktop(hasFinePointer)
+		}
+	}, [])
+
 	// if currentFlashcard is null, try to take from queue
 	useEffect(() => {
 		if (!currentFlashcard && queue && queue.length > 0) {
@@ -220,14 +236,19 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 
 	return (
 		<>
-			<div className='flex h-full flex-col items-center overflow-y-auto page-padding-x page-padding-y'>
+			<div className='flex h-dvh flex-col items-center overflow-y-auto page-padding-x page-padding-y'>
 				<div className='w-full max-w-full space-y-48 sm:w-512'>
 					<ProgressBar value={doneToday} max={toReviewToday} />
 					{currentFlashcard && (
 						<>
 							<FlashcardComponent flashcard={currentFlashcard} />
 							{!userAnswer.isAnswered ? (
-								<Input value={userAnswer.answer} onChange={handleUserAnswerChange} />
+								<Textarea
+									ref={textfieldRef}
+									value={userAnswer.answer}
+									onChange={handleUserAnswerChange}
+									autoFocus={isDesktop}
+								/>
 							) : (
 								<AnswerDisplay
 									answer={currentFlashcard.answer}
@@ -262,7 +283,7 @@ export function Skeleton() {
 			<div className='w-full max-w-full space-y-48 sm:w-512'>
 				<ProgressBarSkeleton />
 				<FlashcardComponentSkeleton />
-				<InputSkeleton />
+				<TextareaSkeleton />
 			</div>
 		</div>
 	)
