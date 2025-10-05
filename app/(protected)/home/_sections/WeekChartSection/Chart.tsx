@@ -4,11 +4,10 @@ import {cn} from '@/lib/utils'
 import {motion} from 'motion/react'
 import {useEffect, useState} from 'react'
 
-const barMaxHeight = 96
-
 export default function Chart({last7Days}: {last7Days: Awaited<ReturnType<typeof getLast7DaysCompletionCount>>}) {
 	const maxCards = Math.max(...last7Days.map(day => day.cardsCompleted))
 	const [currentDay, setCurrentDay] = useState<number>()
+	const barMaxHeight = 96
 
 	useEffect(() => {
 		setCurrentDay(new Date().getDate())
@@ -21,10 +20,10 @@ export default function Chart({last7Days}: {last7Days: Awaited<ReturnType<typeof
 			viewport={{once: true, amount: 0.75}}
 			transition={{delayChildren: 0.7}}
 			className='flex min-w-max justify-start gap-8 pr-24 sm:p-0'
-			style={{direction: 'ltr'}}>
+			style={{direction: 'ltr', minHeight: `${barMaxHeight / 12}rem`}}>
 			<figcaption className='sr-only'>Chart showing the number of cards completed over the last 7 days</figcaption>
 			{last7Days.map(day => {
-				const height = maxCards > 0 ? ((day.cardsCompleted + 1) / maxCards) * (barMaxHeight / 16) : 1
+				const height = day.cardsCompleted > 0 ? (day.cardsCompleted / maxCards) * (barMaxHeight / 16) : 0.5
 
 				return (
 					<motion.div
