@@ -27,7 +27,7 @@ export default function NavigationItem({
 		<li
 			className={cn(
 				'relative transition-colors duration-100 hover:text-primary-500 has-focus-visible:text-primary-500 hover:dark:text-primary-600 dark:has-focus-visible:text-primary-500',
-				pathname.endsWith(item.href) &&
+				pathname.startsWith(item.href) &&
 					cn(
 						'text-primary-500 hover:text-primary-400 has-focus-visible:text-primary-400 dark:text-primary-600 dark:hover:text-primary-500 dark:has-focus-visible:text-primary-500',
 						activeItemClassName,
@@ -37,7 +37,7 @@ export default function NavigationItem({
 			<Link href={item.href} className='flex items-center gap-8'>
 				{item.icon}
 				<span>{item.title}</span>
-				{indicatorLayoutId && pathname.endsWith(item.href) && (
+				{indicatorLayoutId && pathname.startsWith(item.href) && (
 					<motion.div
 						layoutId={indicatorLayoutId}
 						className={cn(

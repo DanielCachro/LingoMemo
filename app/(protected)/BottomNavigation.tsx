@@ -18,7 +18,7 @@ export default function BottomNavigation({className}: Props) {
 				className,
 				{hidden: pathname.startsWith('/study')},
 			)}>
-			<NavigationItems className='flex justify-center gap-32'>
+			<NavigationItems className='flex flex-wrap justify-center gap-x-32'>
 				{item => (
 					<NavigationItems.NavigationItem
 						key={item.title}

@@ -1,4 +1,4 @@
-import {faBook, faGraduationCap, faHome} from '@fortawesome/free-solid-svg-icons'
+import {faBook, faGraduationCap, faHome, faWindowRestore} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
 export const navigationItems = [
@@ -11,6 +11,11 @@ export const navigationItems = [
 		title: 'Study',
 		href: '/study',
 		icon: <FontAwesomeIcon icon={faGraduationCap} />,
+	},
+	{
+		title: 'Flashcards',
+		href: '/flashcards',
+		icon: <FontAwesomeIcon icon={faWindowRestore} />,
 	},
 	{
 		title: 'Dictionary',
