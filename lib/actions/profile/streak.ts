@@ -15,7 +15,7 @@ export async function getStreakData() {
 	let streakCount = activeLearningProfile.streakCount
 	const longestStreak = activeLearningProfile.longestStreak
 
-	const {startOfTodayUTC} = getUserDayRangeUTC({
+	const {startOfTodayUTC, endOfTodayUTC} = getUserDayRangeUTC({
 		timezone: user.timeZone,
 		offsetMinutes: user.utcOffsetMinutes,
 	})
@@ -40,16 +40,47 @@ export async function getStreakData() {
 					streakCount: 0,
 				},
 			})
-			// Optimistic update streakCount
 			streakCount = 0
 			console.log(`Streak is broken. Resetting streak for profile ID: ${activeLearningProfileId}`)
 		} catch (error) {
-			// If update fails, keep the existing streakCount
 			streakCount = activeLearningProfile.streakCount
 			console.error('Error updating streak:', error)
 			throw new Error((error as Error).message || 'Unknown error')
 		}
 	}
+
+	const toReviewToday = await prisma.flashcard.count({
+		where: {
+			learningProfileId: activeLearningProfileId,
+			nextReview: {
+				not: null,
+				lte: endOfTodayUTC.toJSDate(),
+			},
+		},
+	})
+
+	// Update streak if no flashcard reviews planned for today
+	if (toReviewToday === 0 && streakLastUpdated && startOfTodayUTC.diff(streakLastUpdated, 'days').days === 1) {
+		try {
+			await prisma.learningProfile.update({
+				where: {
+					id: activeLearningProfileId,
+				},
+				data: {
+					streakCount: streakCount + 1,
+					longestStreak: Math.max(longestStreak, streakCount + 1),
+					streakLastUpdated: DateTime.now().toUTC().toJSDate(),
+				},
+			})
+			streakCount = streakCount + 1
+			console.log(`No reviews planned for today. Incrementing streak for profile ID: ${activeLearningProfileId}`)
+		} catch (error) {
+			streakCount = activeLearningProfile.streakCount
+			console.error('Error updating streak:', error)
+			throw new Error((error as Error).message || 'Unknown error')
+		}
+	}
+
 	return {
 		streakCount,
 		longestStreak,
