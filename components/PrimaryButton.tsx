@@ -20,12 +20,16 @@ export default function PrimaryButton({
 	pressed = false,
 	...props
 }: Props) {
-	let type: string = ''
+	let type: 'inline' | 'icon' = 'inline'
 
-	if (isValidElement(children) && children.type === 'svg') {
-		type = 'icon'
-	} else {
-		type = 'inline'
+	if (isValidElement(children)) {
+		if (children.type === 'svg') {
+			type = 'icon'
+		} else if (typeof children.type === 'object' && 'displayName' in children.type) {
+			if ((children.type as {displayName: string}).displayName === 'FontAwesomeIcon') {
+				type = 'icon'
+			}
+		}
 	}
 
 	return (
