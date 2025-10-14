@@ -3,7 +3,7 @@ import {navigationItems} from '@/lib/navigationItems'
 import {cn} from '@/lib/utils'
 import {motion} from 'motion/react'
 import Link from 'next/link'
-import {usePathname} from 'next/navigation'
+import {useSelectedLayoutSegment} from 'next/navigation'
 
 interface Props {
 	className?: string
@@ -22,12 +22,13 @@ export default function NavigationItem({
 	indicatorClassName,
 	indicatorPosition = 'top',
 }: Props) {
-	const pathname = usePathname()
+	const segment = useSelectedLayoutSegment()
+	const isActive = `/${segment}` === item.href
 	return (
 		<li
 			className={cn(
 				'relative transition-colors duration-100 hover:text-primary-500 has-focus-visible:text-primary-500 hover:dark:text-primary-600 dark:has-focus-visible:text-primary-500',
-				pathname.startsWith(item.href) &&
+				isActive &&
 					cn(
 						'text-primary-500 hover:text-primary-400 has-focus-visible:text-primary-400 dark:text-primary-600 dark:hover:text-primary-500 dark:has-focus-visible:text-primary-500',
 						activeItemClassName,
@@ -37,7 +38,7 @@ export default function NavigationItem({
 			<Link href={item.href} className='flex items-center gap-8'>
 				{item.icon}
 				<span>{item.title}</span>
-				{indicatorLayoutId && pathname.startsWith(item.href) && (
+				{indicatorLayoutId && isActive && (
 					<motion.div
 						layoutId={indicatorLayoutId}
 						className={cn(

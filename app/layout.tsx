@@ -19,12 +19,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
 	children,
+	modal,
 }: Readonly<{
 	children: React.ReactNode
+	modal: React.ReactNode
 }>) {
 	return (
 		<html lang='en'>
-			<body className={`${nunito.variable}`}>{children}</body>
+			<body className={`${nunito.variable}`}>
+				<div id='modal-root' />
+				{children}
+				{modal}
+			</body>
 		</html>
 	)
 }

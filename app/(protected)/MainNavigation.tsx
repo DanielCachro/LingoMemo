@@ -1,8 +1,7 @@
 import NavigationItems from '@/components/NavigationItems'
-import PrimaryButton from '@/components/PrimaryButton'
-import {faSliders} from '@fortawesome/free-solid-svg-icons'
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+
 import Link from 'next/link'
+import PreferencesButton from './PreferencesButton'
 import TotalStreakDisplay from './TotalStreakDisplay'
 
 export default async function MainNavigation() {
@@ -12,9 +11,7 @@ export default async function MainNavigation() {
 				<Link href={'/home'} className='group'>
 					<TotalStreakDisplay />
 				</Link>
-				<PrimaryButton>
-					<FontAwesomeIcon icon={faSliders} />
-				</PrimaryButton>
+				<PreferencesButton />
 			</div>
 			<nav>
 				<NavigationItems className='hidden flex-col gap-16 sm:flex'>
