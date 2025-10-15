@@ -3,7 +3,7 @@
 import {useMediaQuery} from '@/hooks/useMediaQuery'
 import {cn} from '@/lib/utils'
 import {AnimatePresence, motion, useAnimationControls} from 'motion/react'
-import {useSelectedLayoutSegments} from 'next/navigation'
+import {usePathname} from 'next/navigation'
 import {useEffect, useRef, useState} from 'react'
 import {createPortal} from 'react-dom'
 
@@ -19,9 +19,10 @@ export default function Modal({children, header, heading, className}: ModalWithH
 	const CLOSED = () => window.innerHeight * 1.5
 	const dialogRef = useRef<HTMLDialogElement>(null)
 	const [isOpen, setIsOpen] = useState(true)
+	const [modalNavCount, setModalNavCount] = useState(-1)
+	const pathname = usePathname()
 	const isDesktop = useMediaQuery('(min-width: 40rem)')
 	const controls = useAnimationControls()
-	const selectedSegments = useSelectedLayoutSegments()
 
 	const animations = isDesktop
 		? {initial: {scale: 0.95, opacity: 0}, animate: {scale: 1, opacity: 1}, exit: {scale: 0.95, opacity: 0}}
@@ -51,13 +52,15 @@ export default function Modal({children, header, heading, className}: ModalWithH
 		}
 	}, [isOpen, controls, animations.animate])
 
+	useEffect(() => {
+		// Count how many navigations have occurred within the modal
+		setModalNavCount(prevCount => prevCount + 1)
+	}, [pathname])
+
 	return createPortal(
 		<AnimatePresence
 			onExitComplete={() => {
-				// Close as many segments as are open in the modal
-				// Handling it this way because the router.push() function causes hard navigation, which results in slow closing of modal window and a poor user experience.
-				const segmentsToClose = selectedSegments.length + 1
-				window.history.go(-segmentsToClose)
+				window.history.go(-modalNavCount)
 			}}>
 			{isOpen && (
 				<motion.dialog
@@ -92,7 +95,7 @@ export default function Modal({children, header, heading, className}: ModalWithH
 								<p className='w-full text-center font-bold'>{heading}</p>
 							</div>
 						)}
-						<div className='px-16 py-32'>{children}</div>
+						<div>{children}</div>
 					</div>
 				</motion.dialog>
 			)}
