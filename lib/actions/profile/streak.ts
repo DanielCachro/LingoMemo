@@ -25,12 +25,18 @@ export async function getStreakData() {
 		offsetMinutes: user.utcOffsetMinutes,
 	})
 
-	const streakLastUpdated = activeLearningProfile.streakLastUpdated
-		? DateTime.fromJSDate(activeLearningProfile.streakLastUpdated).setZone(userTimeZone).startOf('day').toUTC()
+	const lastStudyCompletion = await prisma.studyCompletionLog.findFirst({
+		select: {completedAt: true},
+		where: {learningProfileId: activeLearningProfileId},
+		orderBy: {completedAt: 'desc'},
+	})
+
+	const studyLastCompletedDate = lastStudyCompletion?.completedAt
+		? DateTime.fromJSDate(lastStudyCompletion.completedAt).setZone(userTimeZone).startOf('day').toUTC()
 		: null
 
 	// Reset streak if broken
-	if (streakLastUpdated && startOfTodayUTC.diff(streakLastUpdated, 'days').days >= 2 && streakCount !== 0) {
+	if (studyLastCompletedDate && startOfTodayUTC.diff(studyLastCompletedDate, 'days').days >= 2 && streakCount !== 0) {
 		try {
 			await prisma.learningProfile.update({
 				where: {
@@ -60,18 +66,33 @@ export async function getStreakData() {
 	})
 
 	// Update streak if no flashcard reviews planned for today
-	if (toReviewToday === 0 && streakLastUpdated && startOfTodayUTC.diff(streakLastUpdated, 'days').days === 1) {
+	// New user don't have studyCompletionLog entry, so we dont need to worry that we will increment streak for them at first login
+	if (
+		toReviewToday === 0 &&
+		studyLastCompletedDate &&
+		startOfTodayUTC.diff(studyLastCompletedDate, 'days').days !== 0
+	) {
 		try {
-			await prisma.learningProfile.update({
-				where: {
-					id: activeLearningProfileId,
-				},
-				data: {
-					streakCount: streakCount + 1,
-					longestStreak: Math.max(longestStreak, streakCount + 1),
-					streakLastUpdated: DateTime.now().toUTC().toJSDate(),
-				},
-			})
+			await prisma.$transaction([
+				prisma.learningProfile.update({
+					where: {
+						id: activeLearningProfileId,
+					},
+					data: {
+						streakCount: streakCount + 1,
+						longestStreak: Math.max(longestStreak, streakCount + 1),
+					},
+				}),
+				prisma.studyCompletionLog.create({
+					data: {
+						learningProfileId: activeLearningProfileId,
+						// completedAt is set to the start of the day to avoid multiple reviews in one day thanks to a unique constraint
+						// this is acceptable as we only care about the date, not the exact time
+						completedAt: DateTime.now().toUTC().startOf('day').toJSDate(),
+					},
+				}),
+			])
+
 			streakCount = streakCount + 1
 			console.log(`No reviews planned for today. Incrementing streak for profile ID: ${activeLearningProfileId}`)
 		} catch (error) {

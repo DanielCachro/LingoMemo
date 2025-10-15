@@ -28,11 +28,11 @@ export async function getWeekdaysCompletion() {
 		const datetime = date.toISODate() ?? undefined
 
 		const completedThatDay =
-			(await prisma.flashcardReviewLog.findFirst({
-				select: {reviewedAt: true},
+			(await prisma.studyCompletionLog.findFirst({
+				select: {completedAt: true},
 				where: {
 					learningProfileId: activeLearningProfileId,
-					reviewedAt: {
+					completedAt: {
 						gte: date.startOf('day').toUTC().toJSDate(),
 						lte: date.endOf('day').toUTC().toJSDate(),
 					},

@@ -1,5 +1,5 @@
 import {getCurrentUser} from '@/lib/actions/user'
-import {getUserDayRangeUTC, getUserTimeZoneString} from '@/lib/time'
+import {getUserDayRangeUTC} from '@/lib/time'
 import {prisma} from '@/prisma/client'
 import {DateTime} from 'luxon'
 import {NextResponse} from 'next/server'
@@ -14,21 +14,25 @@ export async function POST() {
 	if (!activeLearningProfile || !activeLearningProfileId)
 		return NextResponse.json({error: 'No active learning profile found.'}, {status: 400})
 
-	const userTimeZone = getUserTimeZoneString({
-		timezone: user.timeZone,
-		offsetMinutes: user.utcOffsetMinutes,
-	})
-
 	const {startOfTodayUTC, endOfTodayUTC} = getUserDayRangeUTC({
 		timezone: user.timeZone,
 		offsetMinutes: user.utcOffsetMinutes,
 	})
 
-	const lastUpdated = activeLearningProfile.streakLastUpdated
-		? DateTime.fromJSDate(activeLearningProfile.streakLastUpdated).setZone(userTimeZone).startOf('day').toUTC()
-		: null
+	const studyCompletedToday = (await prisma.studyCompletionLog.findFirst({
+		select: {completedAt: true},
+		where: {
+			learningProfileId: activeLearningProfileId,
+			completedAt: {
+				gte: startOfTodayUTC.toJSDate(),
+				lte: endOfTodayUTC.toJSDate(),
+			},
+		},
+	}))
+		? true
+		: false
 
-	if (lastUpdated && lastUpdated.hasSame(startOfTodayUTC, 'day')) {
+	if (studyCompletedToday) {
 		console.log('Streak has already been updated today.')
 		return NextResponse.json({message: 'Streak has already been updated today.'}, {status: 200})
 	}
@@ -39,7 +43,7 @@ export async function POST() {
 				learningProfileId: activeLearningProfileId,
 				reviewedAt: {
 					gte: startOfTodayUTC.toJSDate(),
-					lt: endOfTodayUTC.toJSDate(),
+					lte: endOfTodayUTC.toJSDate(),
 				},
 			},
 		})
@@ -53,32 +57,46 @@ export async function POST() {
 		return NextResponse.json({message: 'No reviews done today. Streak not updated.'}, {status: 200})
 	}
 
-	const yesterday = startOfTodayUTC.minus({days: 1})
+	const startOfYesterdayUTC = startOfTodayUTC.minus({days: 1})
+	const studyCompletedYesterday = (await prisma.studyCompletionLog.findFirst({
+		where: {
+			learningProfileId: activeLearningProfileId,
+			completedAt: {
+				gte: startOfYesterdayUTC.toJSDate(),
+				lte: startOfTodayUTC.toJSDate(),
+			},
+		},
+	}))
+		? true
+		: false
 
 	let newStreakCount = activeLearningProfile.streakCount
-	let newLongestStreak = activeLearningProfile.longestStreak
-
-	if (lastUpdated && lastUpdated.hasSame(yesterday, 'day')) {
+	if (studyCompletedYesterday) {
 		newStreakCount++
 	} else {
 		newStreakCount = 1
 	}
 
-	if (newStreakCount > newLongestStreak) {
-		newLongestStreak = newStreakCount
-	}
+	const newLongestStreak = Math.max(activeLearningProfile.longestStreak, newStreakCount)
 
 	try {
-		const updatedProfile = await prisma.learningProfile.update({
-			where: {
-				id: activeLearningProfileId,
-			},
-			data: {
-				streakCount: newStreakCount,
-				longestStreak: newLongestStreak,
-				streakLastUpdated: DateTime.now().toUTC().toJSDate(),
-			},
-		})
+		const [updatedProfile] = await prisma.$transaction([
+			prisma.learningProfile.update({
+				where: {id: activeLearningProfileId},
+				data: {
+					streakCount: newStreakCount,
+					longestStreak: newLongestStreak,
+				},
+			}),
+			prisma.studyCompletionLog.create({
+				data: {
+					learningProfileId: activeLearningProfileId,
+					// completedAt is set to the start of the day to avoid multiple reviews in one day thanks to a unique constraint
+					// this is acceptable as we only care about the date, not the exact time
+					completedAt: DateTime.now().toUTC().startOf('day').toJSDate(),
+				},
+			}),
+		])
 
 		return NextResponse.json({message: 'Streak updated successfully!', data: updatedProfile}, {status: 200})
 	} catch (error) {

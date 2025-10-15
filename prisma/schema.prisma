@@ -76,17 +76,17 @@ model Preferences {
 }
 
 model LearningProfile {
-  id                 Int                  @id @default(autoincrement())
-  sourceLang         SourceLanguages
-  targetLang         TargetLanguages
-  streakCount        Int                  @default(0)
-  streakLastUpdated  DateTime?
-  longestStreak      Int                  @default(0)
-  userId             String
-  user               User?                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  activeForUser      User?                @relation("ActiveLearningProfile")
-  flashcards         Flashcard[]
-  FlashcardReviewLog FlashcardReviewLog[]
+  id                     Int                  @id @default(autoincrement())
+  sourceLang             SourceLanguages
+  targetLang             TargetLanguages
+  streakCount            Int                  @default(0)
+  longestStreak          Int                  @default(0)
+  userId                 String
+  user                   User?                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activeForUser          User?                @relation("ActiveLearningProfile")
+  flashcards             Flashcard[]
+  FlashcardReviewLog     FlashcardReviewLog[]
+  FlashcardCompletionLog StudyCompletionLog[]
 
   @@unique([userId, sourceLang, targetLang])
 }
@@ -140,4 +140,13 @@ model FlashcardReviewLog {
   @@unique([flashcardId, learningProfileId, reviewedAt])
   @@index([flashcardId, reviewedAt])
   @@index([learningProfileId, reviewedAt])
+}
+
+model StudyCompletionLog {
+  id                Int             @id @default(autoincrement())
+  completedAt       DateTime        @default(now())
+  learningProfileId Int
+  learningProfile   LearningProfile @relation(fields: [learningProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([learningProfileId, completedAt])
 }

@@ -101,7 +101,7 @@ export async function getStudyData() {
 				learningProfileId: activeLearningProfileId,
 				reviewedAt: {
 					gte: startOfTodayUTC.toJSDate(),
-					lt: endOfTodayUTC.toJSDate(),
+					lte: endOfTodayUTC.toJSDate(),
 				},
 			},
 		}),
