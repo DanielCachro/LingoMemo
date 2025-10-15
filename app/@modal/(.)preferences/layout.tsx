@@ -7,7 +7,7 @@ export default async function PreferencesLayout({children}: {children: React.Rea
 			<Breadcrumbs
 				rootSegment='preferences'
 				variant='bordered'
-				className='mt-12 ml-16 w-fit text-background-500 dark:text-background-400'
+				className='mx-16 mt-12 text-background-500 dark:text-background-400'
 			/>
 			<div className='px-16 py-32'>{children}</div>
 		</Modal>

@@ -30,16 +30,21 @@ export default function Breadcrumbs({variant = 'light', rootSegment, className}:
 		<nav
 			aria-label='breadcrumbs'
 			className={cn(
-				'w-fit text-sm',
+				'w-fit max-w-full text-sm',
 				{
 					'rounded-sm border-[1px] border-background-300 px-8 py-4 dark:border-background-700': variant === 'bordered',
 				},
 				className,
 			)}>
-			<ol className='flex'>
+			<ol className='flex flex-wrap'>
 				{segments.map((segment, index) => (
 					<li className='flex' key={`${index}-${segment}`}>
-						{index > 0 && (
+						<Link
+							href={segment.href}
+							className='pointer-coarse:active:text-background-600 pointer-coarse:dark:active:text-background-300 pointer-fine:hover:text-background-600 pointer-fine:dark:hover:text-background-300'>
+							{segment.formatted}
+						</Link>
+						{index < segments.length - 1 && (
 							<FontAwesomeIcon
 								icon={faChevronRight}
 								size='xs'
@@ -47,11 +52,6 @@ export default function Breadcrumbs({variant = 'light', rootSegment, className}:
 								className='self-center px-4 text-background-300 dark:text-background-600'
 							/>
 						)}
-						<Link
-							href={segment.href}
-							className='pointer-coarse:active:text-background-600 pointer-coarse:dark:active:text-background-300 pointer-fine:hover:text-background-600 pointer-fine:dark:hover:text-background-300'>
-							{segment.formatted}
-						</Link>
 					</li>
 				))}
 			</ol>
