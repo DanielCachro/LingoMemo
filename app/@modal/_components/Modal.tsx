@@ -2,7 +2,7 @@
 
 import {useMediaQuery} from '@/hooks/useMediaQuery'
 import {cn} from '@/lib/utils'
-import {AnimatePresence, motion, useAnimationControls} from 'motion/react'
+import {AnimatePresence, motion, useAnimationControls, useDragControls} from 'motion/react'
 import {usePathname} from 'next/navigation'
 import {useEffect, useRef, useState} from 'react'
 import {createPortal} from 'react-dom'
@@ -22,7 +22,8 @@ export default function Modal({children, header, heading, className}: ModalWithH
 	const [modalNavCount, setModalNavCount] = useState(-1)
 	const pathname = usePathname()
 	const isDesktop = useMediaQuery('(min-width: 40rem)')
-	const controls = useAnimationControls()
+	const animationControls = useAnimationControls()
+	const dragControls = useDragControls()
 
 	const animations = isDesktop
 		? {initial: {scale: 0.95, opacity: 0}, animate: {scale: 1, opacity: 1}, exit: {scale: 0.95, opacity: 0}}
@@ -41,16 +42,16 @@ export default function Modal({children, header, heading, className}: ModalWithH
 		if (offsetY > closeThreshold || velocityY > 800) {
 			handleClose()
 		} else {
-			controls.start({y: OPEN})
+			animationControls.start({y: OPEN})
 		}
 	}
 
 	useEffect(() => {
 		if (isOpen) {
 			dialogRef.current?.showModal()
-			controls.start(animations.animate)
+			animationControls.start(animations.animate)
 		}
-	}, [isOpen, controls, animations.animate])
+	}, [isOpen, animationControls, animations.animate])
 
 	useEffect(() => {
 		// Count how many navigations have occurred within the modal
@@ -70,31 +71,35 @@ export default function Modal({children, header, heading, className}: ModalWithH
 					onClick={handleClose}
 					onDragEnd={onDragEnd}
 					initial={animations.initial}
-					animate={controls}
+					animate={animationControls}
 					exit={animations.exit}
 					transition={{type: 'tween', ease: 'easeOut', duration: isDesktop ? 0.2 : 0.3}}
 					drag={isDesktop ? false : 'y'}
+					dragListener={false}
+					dragControls={dragControls}
 					className={cn(
-						'top-1/2 bottom-0 left-1/2 h-full max-h-full w-full max-w-full -translate-x-1/2 -translate-y-1/2 rounded-sm bg-background-100 text-background-800 sm:top-1/5 sm:h-fit sm:max-w-512 md:max-w-640 lg:max-w-768 dark:bg-background-900 dark:text-background-200',
+						'top-1/2 bottom-0 left-1/2 h-full max-h-full w-full max-w-full -translate-x-1/2 -translate-y-1/2 rounded-sm border-background-200 bg-background-100 text-background-800 scrollbar backdrop:bg-background-950/60 sm:top-64 sm:h-fit sm:max-h-768 sm:max-w-512 sm:translate-y-0 sm:border-[2px] sm:shadow-2xl md:max-w-640 lg:max-w-768 dark:border-background-800 dark:bg-background-900 dark:text-background-200',
 						className,
 					)}>
 					<div onClick={e => e.stopPropagation()} className='h-full w-full'>
-						<div className='flex w-full justify-center py-8 sm:hidden'>
-							<span className='h-4 w-32 rounded-full bg-background-400 dark:bg-background-700' />
-						</div>
-						{header !== 'none' && (
-							<div
-								className={cn(
-									'flex items-center border-b-[1px] border-background-200 px-16 py-8 dark:border-background-700',
-									{
-										'block sm:hidden': header === 'mobile',
-										'hidden sm:block': header === 'desktop',
-										block: header === 'both',
-									},
-								)}>
-								<p className='w-full text-center font-bold'>{heading}</p>
+						<div onPointerDown={event => dragControls.start(event)} style={{touchAction: 'none'}}>
+							<div className='flex w-full justify-center py-8 sm:hidden'>
+								<span className='h-4 w-32 rounded-full bg-background-400 dark:bg-background-700' />
 							</div>
-						)}
+							{header !== 'none' && (
+								<div
+									className={cn(
+										'flex items-center border-b-[1px] border-background-200 px-16 py-8 dark:border-background-700',
+										{
+											'block sm:hidden': header === 'mobile',
+											'hidden sm:block': header === 'desktop',
+											block: header === 'both',
+										},
+									)}>
+									<p className='w-full text-center font-bold'>{heading}</p>
+								</div>
+							)}
+						</div>
 						<div>{children}</div>
 					</div>
 				</motion.dialog>
