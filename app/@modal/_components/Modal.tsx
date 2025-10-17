@@ -78,10 +78,10 @@ export default function Modal({children, header, heading, className}: ModalWithH
 					dragListener={false}
 					dragControls={dragControls}
 					className={cn(
-						'top-1/2 bottom-0 left-1/2 h-full max-h-full w-full max-w-full -translate-x-1/2 -translate-y-1/2 rounded-sm border-background-200 bg-background-100 text-background-800 scrollbar backdrop:bg-background-950/60 sm:top-64 sm:h-fit sm:max-h-768 sm:max-w-512 sm:translate-y-0 sm:border-[2px] sm:shadow-2xl md:max-w-640 lg:max-w-768 dark:border-background-800 dark:bg-background-900 dark:text-background-200',
+						'top-1/2 bottom-0 left-1/2 h-full max-h-full w-full max-w-full -translate-x-1/2 -translate-y-1/2 rounded-sm border-background-200 bg-background-100 text-background-800 scrollbar backdrop:bg-background-950/60 sm:top-64 sm:h-fit sm:max-w-512 sm:translate-y-0 sm:border-[2px] sm:shadow-2xl md:max-w-640 lg:max-w-768 dark:border-background-800 dark:bg-background-900 dark:text-background-200',
 						className,
 					)}>
-					<div onClick={e => e.stopPropagation()} className='h-full w-full'>
+					<div onClick={e => e.stopPropagation()} className='grid h-full w-full grid-rows-[auto_1fr] sm:max-h-768'>
 						<div onPointerDown={event => dragControls.start(event)} style={{touchAction: 'none'}}>
 							<div className='flex w-full justify-center py-8 sm:hidden'>
 								<span className='h-4 w-32 rounded-full bg-background-400 dark:bg-background-700' />
@@ -100,7 +100,7 @@ export default function Modal({children, header, heading, className}: ModalWithH
 								</div>
 							)}
 						</div>
-						<div>{children}</div>
+						<div className='overflow-y-auto'>{children}</div>
 					</div>
 				</motion.dialog>
 			)}

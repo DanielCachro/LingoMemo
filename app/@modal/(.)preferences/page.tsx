@@ -1,6 +1,6 @@
+import LinkTile from '@/components/Tiles/LinkTile'
 import {faPalette, faUsers} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import LinkTile from './_components/LinkTile'
 
 export default function PreferencesModal() {
 	return (
