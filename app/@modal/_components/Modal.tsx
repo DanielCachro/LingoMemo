@@ -7,15 +7,31 @@ import {usePathname} from 'next/navigation'
 import {useEffect, useRef, useState} from 'react'
 import {createPortal} from 'react-dom'
 
-interface ModalWithHeader {
+interface ModalProps {
 	header: 'mobile' | 'desktop' | 'both' | 'none'
 	heading: string
 	children: React.ReactNode
+	mobileScreenCoverage?: 'full' | '1/2' | '2/3' | '1/3'
+	closingType?: 'navigateBack' | 'dialogClose'
+	onClose?: () => void
 	className?: string
 }
 
-export default function Modal({children, header, heading, className}: ModalWithHeader) {
-	const OPEN = 0
+export default function Modal({
+	children,
+	header,
+	heading,
+	mobileScreenCoverage = 'full',
+	closingType = 'navigateBack',
+	onClose,
+	className,
+}: ModalProps) {
+	const OPEN = () => {
+		if (mobileScreenCoverage === 'full') return 0
+		const heightRatioParts = mobileScreenCoverage.split('/')
+		const [numerator, denominator] = heightRatioParts.map(Number)
+		return window.innerHeight * ((denominator - numerator) / denominator)
+	}
 	const CLOSED = () => window.innerHeight * 1.5
 	const dialogRef = useRef<HTMLDialogElement>(null)
 	const [isOpen, setIsOpen] = useState(true)
@@ -27,7 +43,7 @@ export default function Modal({children, header, heading, className}: ModalWithH
 
 	const animations = isDesktop
 		? {initial: {scale: 0.95, opacity: 0}, animate: {scale: 1, opacity: 1}, exit: {scale: 0.95, opacity: 0}}
-		: {initial: {y: CLOSED()}, animate: {y: OPEN}, exit: {y: CLOSED()}}
+		: {initial: {y: CLOSED()}, animate: {y: OPEN()}, exit: {y: CLOSED()}}
 
 	function handleClose() {
 		setIsOpen(false)
@@ -42,7 +58,7 @@ export default function Modal({children, header, heading, className}: ModalWithH
 		if (offsetY > closeThreshold || velocityY > 800) {
 			handleClose()
 		} else {
-			animationControls.start({y: OPEN})
+			animationControls.start({y: OPEN()})
 		}
 	}
 
@@ -61,7 +77,12 @@ export default function Modal({children, header, heading, className}: ModalWithH
 	return createPortal(
 		<AnimatePresence
 			onExitComplete={() => {
-				window.history.go(-modalNavCount)
+				if (closingType === 'dialogClose') {
+					dialogRef.current?.close()
+					onClose?.()
+				} else {
+					window.history.go(-modalNavCount)
+				}
 			}}>
 			{isOpen && (
 				<motion.dialog
@@ -78,9 +99,16 @@ export default function Modal({children, header, heading, className}: ModalWithH
 					dragListener={false}
 					dragControls={dragControls}
 					className={cn(
-						'top-1/2 bottom-0 left-1/2 h-full max-h-full w-full max-w-full -translate-x-1/2 -translate-y-1/2 rounded-sm border-background-200 bg-background-100 text-background-800 scrollbar backdrop:bg-background-950/60 sm:top-64 sm:h-fit sm:max-w-512 sm:translate-y-0 sm:border-[2px] sm:shadow-2xl md:max-w-640 lg:max-w-768 dark:border-background-800 dark:bg-background-900 dark:text-background-200',
+						'left-1/2 h-full max-h-full w-full max-w-full -translate-x-1/2 rounded-sm border-background-200 bg-background-100 text-background-800 scrollbar backdrop:bg-background-950/60 sm:top-64 sm:h-fit sm:max-w-512 sm:translate-y-0 sm:border-[2px] sm:shadow-2xl md:max-w-640 lg:max-w-768 dark:border-background-800 dark:bg-background-900 dark:text-background-200',
 						className,
-					)}>
+					)}
+					style={
+						!isDesktop && mobileScreenCoverage !== 'full'
+							? {
+									height: `${window.innerHeight * (Number(mobileScreenCoverage.split('/')[0]) / Number(mobileScreenCoverage.split('/')[1]))}px`,
+								}
+							: {}
+					}>
 					<div onClick={e => e.stopPropagation()} className='grid h-full w-full grid-rows-[auto_1fr] sm:max-h-768'>
 						<div onPointerDown={event => dragControls.start(event)} style={{touchAction: 'none'}}>
 							<div className='flex w-full justify-center py-8 sm:hidden'>
