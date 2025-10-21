@@ -77,8 +77,9 @@ model Preferences {
 
 model LearningProfile {
   id                     Int                  @id @default(autoincrement())
-  sourceLang             SourceLanguages
-  targetLang             TargetLanguages
+  profileName            String?
+  sourceLang             SourceLanguages?
+  targetLang             TargetLanguages?
   streakCount            Int                  @default(0)
   longestStreak          Int                  @default(0)
   userId                 String

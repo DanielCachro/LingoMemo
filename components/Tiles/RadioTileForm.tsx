@@ -7,6 +7,7 @@ import RadioTile from './RadioTile'
 
 interface RadioTileFormProps {
 	radios: {children: ReactNode; value: string}[]
+	initialSelectedRadio: string
 	radioGroupName?: string
 	onSubmit: (selectedOption: string) => void
 	additionalButtons?: {id: string; type: 'primary' | 'secondary'; children: ReactNode; onClick: () => void}[]
@@ -17,6 +18,7 @@ interface RadioTileFormProps {
 
 export default function RadioTileForm({
 	radios,
+	initialSelectedRadio,
 	onSubmit,
 	radioGroupName,
 	additionalButtons,
@@ -24,9 +26,12 @@ export default function RadioTileForm({
 	radioGroupClassName,
 	buttonsGroupClassName,
 }: RadioTileFormProps) {
-	const [selectedRadio, setSelectedRadio] = useState<string>('1')
+	const [selectedRadio, setSelectedRadio] = useState<string>(initialSelectedRadio)
 	const fallbackId = useId()
 	const name = radioGroupName || fallbackId
+
+	console.log(selectedRadio);
+	console.log(initialSelectedRadio);
 
 	const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
 		setSelectedRadio(event.target.value)

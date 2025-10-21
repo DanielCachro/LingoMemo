@@ -4,6 +4,7 @@ import 'server-only'
 import {prisma} from '@/prisma/client'
 import {cache} from 'react'
 import {createClient} from '../supabase/server'
+import { revalidatePath } from 'next/cache'
 
 export const getCurrentUser = cache(async () => {
 	const supabase = await createClient()
@@ -37,13 +38,26 @@ export const setUserTimeZone = async (timeZone: string | undefined, offsetMinute
 }
 
 export async function getActiveLearingProfile() {
-	'use server'
 	const user = await getCurrentUser()
 	if (!user) throw new Error('User not authenticated.')
 
 	const activeLearningProfile = user.activeLearningProfile
 	const activeLearningProfileId = user.activeLearningProfileId
-	if (!activeLearningProfile || !activeLearningProfileId) throw new Error('No active learning profile for user.')
+	if (!activeLearningProfile || !activeLearningProfileId) throw new Error('No active learning profile found.')
 
 	return {activeLearningProfile, activeLearningProfileId}
+}
+
+export async function setActiveLearningProfile(profileId: number) {
+	const user = await getCurrentUser()
+	if (!user) throw new Error('User not authenticated.')
+
+	await prisma.user.update({
+		where: {id: user.id},
+		data: {
+			activeLearningProfileId: profileId,
+		},
+	})
+	
+	revalidatePath('/home', 'layout')
 }
