@@ -8,9 +8,16 @@ import RadioTile from './RadioTile'
 interface RadioTileFormProps {
 	radios: {children: ReactNode; value: string}[]
 	initialSelectedRadio: string
-	radioGroupName?: string
 	onSubmit: (selectedOption: string) => void
-	additionalButtons?: {id: string; type: 'primary' | 'secondary'; children: ReactNode; onClick: () => void}[]
+	submitButtonText?: ReactNode
+	radioGroupName?: string
+	additionalButtons?: {
+		id: string
+		type: 'primary' | 'secondary'
+		onClick: () => void
+		disabled?: boolean
+		children: ReactNode
+	}[]
 	className?: string
 	radioGroupClassName?: string
 	buttonsGroupClassName?: string
@@ -20,6 +27,7 @@ export default function RadioTileForm({
 	radios,
 	initialSelectedRadio,
 	onSubmit,
+	submitButtonText = 'Submit',
 	radioGroupName,
 	additionalButtons,
 	className,
@@ -60,16 +68,16 @@ export default function RadioTileForm({
 				{additionalButtons &&
 					additionalButtons.map(button =>
 						button.type === 'primary' ? (
-							<PrimaryButton type='button' key={button.id} onClick={button.onClick}>
+							<PrimaryButton type='button' key={button.id} onClick={button.onClick} disabled={button.disabled}>
 								{button.children}
 							</PrimaryButton>
 						) : (
-							<SecondaryButton type='button' key={button.id} onClick={button.onClick}>
+							<SecondaryButton type='button' key={button.id} onClick={button.onClick} disabled={button.disabled}>
 								{button.children}
 							</SecondaryButton>
 						),
 					)}
-				<PrimaryButton type='submit'>Switch to This Profile</PrimaryButton>
+				<PrimaryButton type='submit'>{submitButtonText}</PrimaryButton>
 			</div>
 		</form>
 	)

@@ -18,7 +18,8 @@ export default function ProfileSelect({
 }) {
 	const router = useRouter()
 
-	const [isPending, startTransition] = useTransition()
+	const [isDeletePending, deleteStartTransition] = useTransition()
+	const [isChangePending, changeStartTransition] = useTransition()
 
 	const handleDelete = async (profileId: number) => {
 		try {
@@ -28,8 +29,25 @@ export default function ProfileSelect({
 			console.error(error)
 		}
 
-		startTransition(() => {
+		deleteStartTransition(() => {
 			router.refresh()
+		})
+	}
+
+	const handleSwitch = async (selectedOption: string) => {
+		changeStartTransition(async () => {
+			try {
+				await setActiveLearningProfile(Number(selectedOption), {
+					revalidateAfter: true,
+					pathToRevalidate: '/home',
+					type: 'layout',
+				})
+			} catch (error) {
+				// TODO: Show toast
+				console.error(error)
+			}
+
+			router.push('/home')
 		})
 	}
 
@@ -39,7 +57,11 @@ export default function ProfileSelect({
 			children: (
 				<div className='space-y-24'>
 					<ProfileDetails profile={profile} />
-					<DeleteProfileButton profile={profile} onDelete={handleDelete} />
+					<DeleteProfileButton
+						profile={profile}
+						onDelete={handleDelete}
+						disabled={isDeletePending || isChangePending}
+					/>
 				</div>
 			),
 		}
@@ -47,20 +69,20 @@ export default function ProfileSelect({
 
 	return (
 		<>
-			{isPending && <RadioTileFormSkeleton />}
-			{!isPending && (
+			{isDeletePending && <RadioTileFormSkeleton />}
+			{!isDeletePending && (
 				<RadioTileForm
 					radios={radios}
 					initialSelectedRadio={activeLearningProfileId}
+					submitButtonText={
+						isChangePending ? (
+							<span className='animate-pulse'>Switching Profile...</span>
+						) : (
+							'Switch to This Profile'
+						)
+					}
 					radioGroupName='learning-profile'
-					onSubmit={async selectedOption => {
-						await setActiveLearningProfile(Number(selectedOption), {
-							revalidateAfter: true,
-							pathToRevalidate: '/home',
-							type: 'layout',
-						})
-						router.push('/home')
-					}}
+					onSubmit={selectedOption => handleSwitch(selectedOption)}
 					additionalButtons={[
 						{
 							id: 'create-new',

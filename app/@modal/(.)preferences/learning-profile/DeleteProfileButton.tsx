@@ -3,17 +3,16 @@
 import PrimaryButton from '@/components/PrimaryButton'
 import SecondaryButton from '@/components/SecondaryButton'
 import {LearningProfile} from '@prisma/client'
-import {useState} from 'react'
+import {ButtonHTMLAttributes, useState} from 'react'
 import Modal from '../../_components/Modal'
 import ProfileDetails from './ProfileDetails'
 
-export default function DeleteProfileButton({
-	profile,
-	onDelete,
-}: {
+interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
 	profile: LearningProfile
 	onDelete: (id: number) => Promise<void>
-}) {
+}
+
+export default function DeleteProfileButton({profile, onDelete, ...props}: Props) {
 	const [showDialog, setShowDialog] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
 
@@ -63,7 +62,8 @@ export default function DeleteProfileButton({
 				className='rounded-sm bg-error-600 px-12 py-8 font-bold text-error-100 transition-colors duration-50 hover:cursor-pointer hover:bg-error-500 dark:bg-error-700 dark:hover:bg-error-600'
 				onClick={() => {
 					setShowDialog(true)
-				}}>
+				}}
+				{...props}>
 				Delete Profile
 			</button>
 		</>
