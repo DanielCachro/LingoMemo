@@ -30,9 +30,6 @@ export default function RadioTileForm({
 	const fallbackId = useId()
 	const name = radioGroupName || fallbackId
 
-	console.log(selectedRadio);
-	console.log(initialSelectedRadio);
-
 	const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
 		setSelectedRadio(event.target.value)
 	}
@@ -75,5 +72,20 @@ export default function RadioTileForm({
 				<PrimaryButton type='submit'>Switch to This Profile</PrimaryButton>
 			</div>
 		</form>
+	)
+}
+
+export function Skeleton() {
+	return (
+		<div className='flex h-full flex-col justify-between gap-48'>
+			<div className='animate-pulse space-y-12'>
+				<div className='h-128 w-full rounded-sm bg-skeleton' />
+				<div className='h-128 w-full rounded-sm bg-skeleton' />
+			</div>
+			<div className='animate-pulse space-y-12'>
+				<div className='h-48 w-full rounded-sm bg-skeleton' />
+				<div className='h-48 w-full rounded-sm bg-skeleton' />
+			</div>
+		</div>
 	)
 }

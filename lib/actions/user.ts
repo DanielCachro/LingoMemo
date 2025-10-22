@@ -2,9 +2,10 @@
 import 'server-only'
 
 import {prisma} from '@/prisma/client'
+import type {RevalidationConfig} from '@/types/revalidate'
+import {revalidatePath} from 'next/cache'
 import {cache} from 'react'
 import {createClient} from '../supabase/server'
-import { revalidatePath } from 'next/cache'
 
 export const getCurrentUser = cache(async () => {
 	const supabase = await createClient()
@@ -48,7 +49,10 @@ export async function getActiveLearingProfile() {
 	return {activeLearningProfile, activeLearningProfileId}
 }
 
-export async function setActiveLearningProfile(profileId: number) {
+export async function setActiveLearningProfile(
+	profileId: number,
+	config: RevalidationConfig = {revalidateAfter: false},
+) {
 	const user = await getCurrentUser()
 	if (!user) throw new Error('User not authenticated.')
 
@@ -58,6 +62,8 @@ export async function setActiveLearningProfile(profileId: number) {
 			activeLearningProfileId: profileId,
 		},
 	})
-	
-	revalidatePath('/home', 'layout')
+
+	if (config.revalidateAfter) {
+		revalidatePath(config.pathToRevalidate, config.type)
+	}
 }
