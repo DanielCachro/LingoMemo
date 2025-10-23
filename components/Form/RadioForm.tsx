@@ -3,9 +3,9 @@ import PrimaryButton from '@/components/PrimaryButton'
 import SecondaryButton from '@/components/SecondaryButton'
 import {cn} from '@/lib/utils'
 import {ChangeEvent, FormEvent, ReactNode, useId, useState} from 'react'
-import RadioTile from './RadioTile'
+import Radio from './Radio'
 
-interface RadioTileFormProps {
+interface Props {
 	radios: {children: ReactNode; value: string}[]
 	initialSelectedRadio: string
 	onSubmit: (selectedOption: string) => void
@@ -23,7 +23,7 @@ interface RadioTileFormProps {
 	buttonsGroupClassName?: string
 }
 
-export default function RadioTileForm({
+export default function RadioForm({
 	radios,
 	initialSelectedRadio,
 	onSubmit,
@@ -33,7 +33,7 @@ export default function RadioTileForm({
 	className,
 	radioGroupClassName,
 	buttonsGroupClassName,
-}: RadioTileFormProps) {
+}: Props) {
 	const [selectedRadio, setSelectedRadio] = useState<string>(initialSelectedRadio)
 	const fallbackId = useId()
 	const name = radioGroupName || fallbackId
@@ -53,14 +53,14 @@ export default function RadioTileForm({
 			<div className={cn('-mr-16 min-h-0 overflow-y-auto pr-16', radioGroupClassName)}>
 				<div className='sm:p-6 flex flex-col space-y-12'>
 					{radios.map(radio => (
-						<RadioTile
+						<Radio
 							key={radio.value}
 							name={name}
 							value={radio.value}
 							checked={selectedRadio === radio.value}
 							onChange={handleChange}>
 							{radio.children}
-						</RadioTile>
+						</Radio>
 					))}
 				</div>
 			</div>

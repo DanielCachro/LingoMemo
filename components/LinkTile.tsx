@@ -4,13 +4,13 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import Link from 'next/link'
 import {JSX} from 'react'
 
-interface LinkTileProps {
+interface Props {
 	icon: JSX.Element
 	title: string
 	href: string
 }
 
-export default function LinkTile({icon, title, href}: LinkTileProps) {
+export default function LinkTile({icon, title, href}: Props) {
 	return (
 		<SlabBorder className='hover:bg-background-50 dark:hover:bg-background-800'>
 			<Link

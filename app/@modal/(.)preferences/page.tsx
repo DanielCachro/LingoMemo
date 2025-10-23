@@ -1,4 +1,4 @@
-import LinkTile from '@/components/Tiles/LinkTile'
+import LinkTile from '@/components/LinkTile'
 import {faPalette, faUsers} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
@@ -7,13 +7,13 @@ export default function PreferencesModal() {
 		<ul className='space-y-12'>
 			<li>
 				<LinkTile
+					icon={<FontAwesomeIcon icon={faUsers} />}
 					title='Learning Profile'
 					href='preferences/learning-profile'
-					icon={<FontAwesomeIcon icon={faUsers} />}
 				/>
 			</li>
 			<li>
-				<LinkTile title='Theme' href='preferences/theme' icon={<FontAwesomeIcon icon={faPalette} />} />
+				<LinkTile icon={<FontAwesomeIcon icon={faPalette} />} title='Theme' href='preferences/theme' />
 			</li>
 		</ul>
 	)

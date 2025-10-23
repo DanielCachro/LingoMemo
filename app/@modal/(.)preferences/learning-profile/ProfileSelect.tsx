@@ -1,6 +1,6 @@
 'use client'
 
-import RadioTileForm, {Skeleton as RadioTileFormSkeleton} from '@/components/Tiles/RadioTileForm'
+import RadioForm, {Skeleton as RadioFormSkeleton} from '@/components/Form/RadioForm'
 import {deleteLearningProfile} from '@/lib/actions/profile/manage'
 import {setActiveLearningProfile} from '@/lib/actions/user'
 import {LearningProfile} from '@prisma/client'
@@ -69,9 +69,9 @@ export default function ProfileSelect({
 
 	return (
 		<>
-			{isDeletePending && <RadioTileFormSkeleton />}
+			{isDeletePending && <RadioFormSkeleton />}
 			{!isDeletePending && (
-				<RadioTileForm
+				<RadioForm
 					radios={radios}
 					initialSelectedRadio={activeLearningProfileId}
 					submitButtonText={

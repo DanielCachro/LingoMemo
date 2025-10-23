@@ -1,7 +1,7 @@
 import {cn} from '@/lib/utils'
 import {ChangeEventHandler} from 'react'
 
-interface RadioTileProps {
+interface Props {
 	children: React.ReactNode
 	name: string
 	value: string
@@ -9,7 +9,7 @@ interface RadioTileProps {
 	onChange: ChangeEventHandler<HTMLInputElement>
 }
 
-export default function RadioTile({children, name, value, checked, onChange}: RadioTileProps) {
+export default function Radio({children, name, value, checked, onChange}: Props) {
 	return (
 		<label
 			className={cn(
