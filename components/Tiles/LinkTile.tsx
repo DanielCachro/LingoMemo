@@ -1,20 +1,21 @@
+import SlabBorder from '@/components/SlabBorder'
 import {faChevronRight} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import Link from 'next/link'
 import {JSX} from 'react'
 
 interface LinkTileProps {
-	title: string
 	icon: JSX.Element
+	title: string
 	href: string
 }
 
-export default function LinkTile({title, icon, href}: LinkTileProps) {
+export default function LinkTile({icon, title, href}: LinkTileProps) {
 	return (
-		<div className='relative'>
+		<SlabBorder className='hover:bg-background-50 dark:hover:bg-background-800'>
 			<Link
 				href={href}
-				className='group bold relative z-10 flex items-center gap-12 rounded-sm border-2 border-background-300 bg-background-100 p-16 font-bold transition-colors duration-100 hover:bg-background-50 dark:border-background-700 dark:bg-background-900 dark:hover:bg-background-800'>
+				className='group bold flex items-center gap-12 border-background-300 p-16 font-bold transition-colors duration-100'>
 				{icon}
 				<span>{title}</span>
 				<FontAwesomeIcon
@@ -22,9 +23,6 @@ export default function LinkTile({title, icon, href}: LinkTileProps) {
 					className='ml-auto transition-transform duration-100 group-hover:translate-x-4'
 				/>
 			</Link>
-			<div className='absolute top-[2px] left-0 z-0 h-full w-full rounded-sm bg-background-300 transition-colors duration-50 dark:bg-background-700'></div>
-		</div>
+		</SlabBorder>
 	)
 }
-
-
