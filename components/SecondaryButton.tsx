@@ -11,7 +11,14 @@ interface Props extends HTMLMotionProps<'button'> {
 	pressed?: boolean
 }
 
-export default function SecondaryButton({children, className, wrapperClassName, shadowClassName, pressed = false, ...props}: Props) {
+export default function SecondaryButton({
+	children,
+	className,
+	wrapperClassName,
+	shadowClassName,
+	pressed = false,
+	...props
+}: Props) {
 	return (
 		<PrimaryButton
 			{...props}

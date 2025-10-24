@@ -28,7 +28,7 @@ export default function DeleteProfileButton({profile, onDelete, ...props}: Props
 					onClose={() => setShowDialog(false)}>
 					<div className='space-y-16 p-24'>
 						<p>You are about to delete profile</p>
-						<div className='rounded-sm border-2 border-background-800 p-16'>
+						<div className='rounded-sm border-2 border-background-200 p-16 dark:border-background-800'>
 							<ProfileDetails profile={profile} />
 						</div>
 						<p>Are you sure?</p>

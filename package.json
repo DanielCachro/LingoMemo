@@ -13,6 +13,7 @@
 		"@fortawesome/free-brands-svg-icons": "^7.0.0",
 		"@fortawesome/free-solid-svg-icons": "^7.0.0",
 		"@fortawesome/react-fontawesome": "^0.2.3",
+		"@headlessui/react": "^2.2.9",
 		"@prisma/client": "^6.14.0",
 		"@supabase/ssr": "^0.7.0",
 		"@supabase/supabase-js": "^2.56.0",
