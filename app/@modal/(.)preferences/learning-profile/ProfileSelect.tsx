@@ -3,6 +3,8 @@
 import RadioForm, {Skeleton as RadioFormSkeleton} from '@/components/Form/RadioForm'
 import {deleteLearningProfile} from '@/lib/actions/profile/manage'
 import {setActiveLearningProfile} from '@/lib/actions/user'
+import {faSpinner} from '@fortawesome/free-solid-svg-icons'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {LearningProfile} from '@prisma/client'
 import {useRouter} from 'next/navigation'
 import {useTransition} from 'react'
@@ -76,7 +78,9 @@ export default function ProfileSelect({
 					initialSelectedRadio={activeLearningProfileId}
 					submitButtonText={
 						isChangePending ? (
-							<span className='animate-pulse'>Switching Profile...</span>
+							<span className='animate-pulse'>
+								<FontAwesomeIcon icon={faSpinner} spin /> Swithing Profile...
+							</span>
 						) : (
 							'Switch to This Profile'
 						)
