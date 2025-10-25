@@ -1,5 +1,5 @@
-import CreateProfileForm from './CreateProfileForm'
+import Form from './Form'
 
 export default function CreateLanguageProfileModal() {
-	return <CreateProfileForm />
+	return <Form />
 }

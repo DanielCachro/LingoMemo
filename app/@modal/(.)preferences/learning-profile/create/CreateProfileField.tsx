@@ -1,0 +1,58 @@
+
+'use client'
+import Input from '@/components/Form/Input'
+import type {Option} from '@/components/Form/Select'
+import Select from '@/components/Form/Select'
+import {Field, Label} from '@headlessui/react'
+
+interface SelectFieldProps {
+	type: 'select'
+	options: Option[]
+}
+
+interface TextFieldProps {
+	type: 'input'
+	onChange: () => void
+}
+
+type Props = {
+	name: string
+	onFocus: () => void
+	label?: string
+	placeholder?: string
+	errorMessage?: string
+} & (SelectFieldProps | TextFieldProps)
+
+export default function CreateProfileField(props: Props) {
+	const {name, onFocus, label, errorMessage} = props
+
+	function renderField() {
+		if (props.type === 'select') {
+			const {options, placeholder = 'Please choose a language'} = props
+			return (
+				<Select
+					name={name}
+					placeholder={placeholder}
+					options={options}
+					onFocus={onFocus}
+					error={errorMessage !== undefined}
+				/>
+			)
+		}
+
+		if (props.type === 'input') {
+			const {placeholder, onChange} = props
+			return <Input type='text' name={name} placeholder={placeholder} onFocus={onFocus} onChange={onChange} />
+		}
+
+		return null
+	}
+
+	return (
+		<Field className='flex flex-col gap-8'>
+			{label && <Label className='font-bold'>{label}</Label>}
+			{renderField()}
+			{errorMessage && <p className='text-sm text-error-500'>{errorMessage}</p>}
+		</Field>
+	)
+}
