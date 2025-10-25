@@ -22,7 +22,7 @@ export default function ProfileDetails({profile}: {profile: LearningProfile}) {
 		return (
 			<div>
 				<p>Self-study:</p>
-				<p className='font-bold'>{profile.profileName}</p>
+				<p className='overflow-auto font-bold'>{profile.profileName}</p>
 			</div>
 		)
 	}

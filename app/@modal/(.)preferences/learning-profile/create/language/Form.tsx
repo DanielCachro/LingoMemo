@@ -1,6 +1,7 @@
 'use client'
 import {createLearningProfile} from '@/lib/actions/profile/manage'
 import {languageCodeToName} from '@/lib/utils'
+import {faLanguage} from '@fortawesome/free-solid-svg-icons'
 import {SourceLanguages, TargetLanguages} from '@prisma/client'
 import CreateProfileField from '../CreateProfileField'
 import CreateProfileForm from '../CreateProfileForm'
@@ -18,6 +19,9 @@ const targetLanguages = Object.values(TargetLanguages).map(lang => ({
 export default function Form() {
 	return (
 		<CreateProfileForm
+			heading='Creating Language Profile'
+			subheading='Select your learning languages'
+			icon={faLanguage}
 			onSubmit={async event => {
 				const formData = new FormData(event.currentTarget as HTMLFormElement)
 				const data = Object.fromEntries(formData.entries())
@@ -38,6 +42,7 @@ export default function Form() {
 							type='select'
 							name='sourceLanguage'
 							label='From the source language:'
+							placeholder='Please choose a language'
 							options={sourceLanguages}
 							onFocus={() => {
 								setFormErrors(prevErrors => {
@@ -55,7 +60,8 @@ export default function Form() {
 						<CreateProfileField
 							type='select'
 							name='targetLanguage'
-							label='From the target language:'
+							label='I want to learn:'
+							placeholder='Please choose a language'
 							options={targetLanguages}
 							onFocus={() => {
 								setFormErrors(prevErrors => {

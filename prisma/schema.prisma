@@ -90,6 +90,7 @@ model LearningProfile {
   FlashcardCompletionLog StudyCompletionLog[]
 
   @@unique([userId, sourceLang, targetLang])
+  @@unique([userId, profileName])
 }
 
 model AnswerLicense {

@@ -1,4 +1,3 @@
-
 'use client'
 import Input from '@/components/Form/Input'
 import type {Option} from '@/components/Form/Select'
@@ -12,12 +11,12 @@ interface SelectFieldProps {
 
 interface TextFieldProps {
 	type: 'input'
-	onChange: () => void
+	onChange?: () => void
 }
 
 type Props = {
 	name: string
-	onFocus: () => void
+	onFocus?: () => void
 	label?: string
 	placeholder?: string
 	errorMessage?: string
@@ -28,7 +27,7 @@ export default function CreateProfileField(props: Props) {
 
 	function renderField() {
 		if (props.type === 'select') {
-			const {options, placeholder = 'Please choose a language'} = props
+			const {options, placeholder = 'Please choose an option'} = props
 			return (
 				<Select
 					name={name}
@@ -41,8 +40,17 @@ export default function CreateProfileField(props: Props) {
 		}
 
 		if (props.type === 'input') {
-			const {placeholder, onChange} = props
-			return <Input type='text' name={name} placeholder={placeholder} onFocus={onFocus} onChange={onChange} />
+			const {placeholder = 'Please enter a value', onChange} = props
+			return (
+				<Input
+					type='text'
+					name={name}
+					placeholder={placeholder}
+					onFocus={onFocus}
+					onChange={onChange}
+					error={errorMessage !== undefined}
+				/>
+			)
 		}
 
 		return null
