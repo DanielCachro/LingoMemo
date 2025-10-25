@@ -5,7 +5,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {Listbox, ListboxButton, ListboxOption, ListboxOptions} from '@headlessui/react'
 import {useState} from 'react'
 
-interface Option {
+export type Option = {
 	value: string
 	label: string
 	disabled?: boolean

@@ -1,20 +1,27 @@
 'use client'
-import Select from '@/components/Form/Select'
 import PrimaryButton from '@/components/PrimaryButton'
 import SlabBorder from '@/components/SlabBorder'
 import {createLearningProfile} from '@/lib/actions/profile/manage'
 import {languageCodeToName} from '@/lib/utils'
 import {faLanguage, faSpinner} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {Field, Label} from '@headlessui/react'
 import {SourceLanguages, TargetLanguages} from '@prisma/client'
 import {useRouter} from 'next/navigation'
 import {useState, useTransition} from 'react'
+import CreateProfileSelect from './CreateProfileSelect'
+
+const sourceLanguages = Object.values(SourceLanguages).map(lang => ({
+	value: lang,
+	label: languageCodeToName(lang),
+}))
+
+const targetLanguages = Object.values(TargetLanguages).map(lang => ({
+	value: lang,
+	label: languageCodeToName(lang),
+}))
 
 export default function CreateProfileForm() {
 	const [formErrors, setFormErrors] = useState<Awaited<ReturnType<typeof createLearningProfile>> | null>(null)
-	const sourceLanguages = Object.values(SourceLanguages)
-	const targetLanguages = Object.values(TargetLanguages)
 	const [isPending, startTransition] = useTransition()
 	const router = useRouter()
 
@@ -36,6 +43,10 @@ export default function CreateProfileForm() {
 		})
 	}
 
+	const sourceError = formErrors?.errors.find(error => error.location === 'sourceLang')
+	const targetError = formErrors?.errors.find(error => error.location === 'targetLang')
+	const formError = formErrors?.errors.find(error => error.location === 'form')
+
 	return (
 		<form className='flex h-full flex-col justify-between sm:gap-128' onSubmit={handleSubmit}>
 			<SlabBorder className='space-y-32 p-24'>
@@ -48,64 +59,37 @@ export default function CreateProfileForm() {
 						<p>Select your learning languages</p>
 					</div>
 				</div>
-
-				<Field className='flex flex-col gap-8'>
-					<Label className='font-bold'>From the source language:</Label>
-					<Select
-						name='sourceLanguage'
-						placeholder='Please choose a language'
-						options={sourceLanguages.map(lang => ({value: lang, label: languageCodeToName(lang)}))}
-						onFocus={() => {
-							setFormErrors(prevErrors => {
-								if (!prevErrors) return null
-								return {
-									...prevErrors,
-									errors: prevErrors.errors.filter(
-										error => error.location !== 'sourceLang' && error.location !== 'form',
-									),
-								}
-							})
-						}}
-						error={formErrors?.errors.some(error => error.location === 'sourceLang')}
-					/>
-					{formErrors?.errors.find(error => error.location === 'sourceLang') && (
-						<p className='text-sm text-error-500'>
-							{formErrors.errors.find(error => error.location === 'sourceLang')?.message}
-						</p>
-					)}
-				</Field>
-
-				<Field className='flex flex-col gap-8'>
-					<Label className='font-bold'>I want to learn:</Label>
-					<Select
-						name='targetLanguage'
-						placeholder='Please choose a language'
-						options={targetLanguages.map(lang => ({value: lang, label: languageCodeToName(lang)}))}
-						onFocus={() => {
-							setFormErrors(prevErrors => {
-								if (!prevErrors) return null
-								return {
-									...prevErrors,
-									errors: prevErrors.errors.filter(
-										error => error.location !== 'targetLang' && error.location !== 'form',
-									),
-								}
-							})
-						}}
-						error={formErrors?.errors.some(error => error.location === 'targetLang')}
-					/>
-					{formErrors?.errors.find(error => error.location === 'targetLang') && (
-						<p className='text-sm text-error-500'>
-							{formErrors.errors.find(error => error.location === 'targetLang')?.message}
-						</p>
-					)}
-				</Field>
-				
-				{formErrors?.errors.find(error => error.location === 'form') && (
-					<p className='text-sm text-error-500'>
-						{formErrors.errors.find(error => error.location === 'form')?.message}
-					</p>
-				)}
+				<CreateProfileSelect
+					name='sourceLanguage'
+					label='From the source language:'
+					options={sourceLanguages}
+					onFocus={() => {
+						setFormErrors(prevErrors => {
+							if (!prevErrors) return null
+							return {
+								...prevErrors,
+								errors: prevErrors.errors.filter(error => error.location !== 'sourceLang' && error.location !== 'form'),
+							}
+						})
+					}}
+					errorMessage={sourceError?.message}
+				/>
+				<CreateProfileSelect
+					name='targetLanguage'
+					label='From the target language:'
+					options={targetLanguages}
+					onFocus={() => {
+						setFormErrors(prevErrors => {
+							if (!prevErrors) return null
+							return {
+								...prevErrors,
+								errors: prevErrors.errors.filter(error => error.location !== 'targetLang' && error.location !== 'form'),
+							}
+						})
+					}}
+					errorMessage={targetError?.message}
+				/>
+				{formError && <p className='text-sm text-error-500'>{formError?.message}</p>}
 			</SlabBorder>
 			<PrimaryButton type='submit'>
 				{isPending ? (

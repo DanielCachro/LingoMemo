@@ -52,23 +52,23 @@ const createLanguageProfileSchema = z.object({
 	sourceLang: z.enum(SourceLanguages),
 	targetLang: z.enum(TargetLanguages),
 })
-type CreateLanguageProfileType = z.infer<typeof createLanguageProfileSchema>
+type CreateLanguageProfile = z.infer<typeof createLanguageProfileSchema>
 
 const createSelfStudyProfileSchema = z.object({
 	type: z.literal('self-study'),
 	profileName: z.string().min(2).max(50),
 })
-type CreateSelfStudyProfileType = z.infer<typeof createSelfStudyProfileSchema>
+type CreateSelfStudyProfile = z.infer<typeof createSelfStudyProfileSchema>
 
-interface CreateLearningProfileErrorType {
+interface CreateLearningProfileError {
 	message: string
 	location: 'sourceLang' | 'targetLang' | 'profileName' | 'form'
 }
 
 export async function createLearningProfile(
-	params: CreateLanguageProfileType | CreateSelfStudyProfileType,
+	params: CreateLanguageProfile | CreateSelfStudyProfile,
 	config: RevalidationConfig = {revalidateAfter: false},
-): Promise<{errors: CreateLearningProfileErrorType[]} | void> {
+): Promise<{errors: CreateLearningProfileError[]} | void> {
 	const user = await getCurrentUser()
 	if (!user) throw new Error('User not authenticated')
 
@@ -78,7 +78,7 @@ export async function createLearningProfile(
 		if (params.type === 'language') {
 			const {sourceLang, targetLang} = params
 
-			const errors: CreateLearningProfileErrorType[] = []
+			const errors: CreateLearningProfileError[] = []
 			if (!sourceLang) errors.push({message: 'Source language is required.', location: 'sourceLang'})
 			if (!targetLang) errors.push({message: 'Target language is required.', location: 'targetLang'})
 			if (errors.length > 0) {
