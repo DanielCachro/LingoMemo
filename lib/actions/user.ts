@@ -13,10 +13,17 @@ export const getCurrentUser = cache(async () => {
 
 	if (!data?.user) return null
 
-	return prisma.user.findUnique({
+	const user = await prisma.user.findUnique({
 		where: {id: data.user.id},
 		include: {preferences: true, learningProfiles: true, activeLearningProfile: true},
 	})
+
+	if (!user) {
+		await supabase.auth.signOut()
+		return null
+	}
+
+	return user
 })
 
 export const setUserTimeZone = async (timeZone: string | undefined, offsetMinutes: number) => {
