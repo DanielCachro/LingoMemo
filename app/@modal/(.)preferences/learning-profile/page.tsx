@@ -15,7 +15,7 @@ export default async function LearningProfileModal() {
 
 	return (
 		<ProfileSelect
-			// Use a key to force remount when removing profile
+			// Using key to force remount when removing profile
 			// This ensures that the initialSelectedRadio is properly set
 			key={`profile-select-${learningProfiles.map(profile => profile.id).join('&')}`}
 			learningProfiles={learningProfiles}

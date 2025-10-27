@@ -1,6 +1,6 @@
 'use client'
 
-import RadioForm, {Skeleton as RadioFormSkeleton} from '@/components/Form/RadioForm'
+import RadioForm, {Skeleton as RadioFormSkeleton, RadioOption} from '@/components/Form/RadioForm'
 import {deleteLearningProfile} from '@/lib/actions/profile/manage'
 import {setActiveLearningProfile} from '@/lib/actions/user'
 import {faSpinner} from '@fortawesome/free-solid-svg-icons'
@@ -19,7 +19,6 @@ export default function ProfileSelect({
 	activeLearningProfileId: string
 }) {
 	const router = useRouter()
-
 	const [isDeletePending, deleteStartTransition] = useTransition()
 	const [isChangePending, changeStartTransition] = useTransition()
 
@@ -36,7 +35,7 @@ export default function ProfileSelect({
 		})
 	}
 
-	const handleSwitch = async (selectedOption: string) => {
+	const handleChangeProfile = async (selectedOption: string) => {
 		changeStartTransition(async () => {
 			try {
 				await setActiveLearningProfile(Number(selectedOption), {
@@ -53,7 +52,7 @@ export default function ProfileSelect({
 		})
 	}
 
-	const radios = learningProfiles.map(profile => {
+	const options: RadioOption[] = learningProfiles.map(profile => {
 		return {
 			value: String(profile.id),
 			children: (
@@ -74,8 +73,8 @@ export default function ProfileSelect({
 			{isDeletePending && <RadioFormSkeleton />}
 			{!isDeletePending && (
 				<RadioForm
-					radios={radios}
-					initialSelectedRadio={activeLearningProfileId}
+					options={options}
+					initialSelectedRadioValue={activeLearningProfileId}
 					submitButtonText={
 						isChangePending ? (
 							<span className='animate-pulse'>
@@ -86,7 +85,7 @@ export default function ProfileSelect({
 						)
 					}
 					radioGroupName='learning-profile'
-					onSubmit={selectedOption => handleSwitch(selectedOption)}
+					onSubmit={selectedOption => handleChangeProfile(selectedOption)}
 					additionalButtons={[
 						{
 							id: 'create-new',

@@ -3,12 +3,14 @@ import PrimaryButton from '@/components/PrimaryButton'
 import SecondaryButton from '@/components/SecondaryButton'
 import {cn} from '@/lib/utils'
 import {ChangeEvent, FormEvent, ReactNode, useId, useState} from 'react'
-import Radio from './Radio'
+import RadioButton from './RadioButton'
+
+export type RadioOption = {children: ReactNode; value: string}
 
 interface Props {
-	radios: {children: ReactNode; value: string}[]
-	initialSelectedRadio: string
+	options: RadioOption[]
 	onSubmit: (selectedOption: string) => void
+	initialSelectedRadioValue?: string
 	submitButtonText?: ReactNode
 	radioGroupName?: string
 	additionalButtons?: {
@@ -24,8 +26,8 @@ interface Props {
 }
 
 export default function RadioForm({
-	radios,
-	initialSelectedRadio,
+	options,
+	initialSelectedRadioValue,
 	onSubmit,
 	submitButtonText = 'Submit',
 	radioGroupName,
@@ -34,7 +36,7 @@ export default function RadioForm({
 	radioGroupClassName,
 	buttonsGroupClassName,
 }: Props) {
-	const [selectedRadio, setSelectedRadio] = useState<string>(initialSelectedRadio)
+	const [selectedRadio, setSelectedRadio] = useState<string>(initialSelectedRadioValue || options[0].value)
 	const fallbackId = useId()
 	const name = radioGroupName || fallbackId
 
@@ -48,19 +50,19 @@ export default function RadioForm({
 	}
 
 	return (
-		<form onSubmit={handleSubmit} className={cn('flex h-full flex-col justify-between', className)}>
+		<form onSubmit={handleSubmit} className={cn('flex h-full flex-col justify-between space-y-48', className)}>
 			{/* -mr-16 and pr-16 to add a gap between the content and the scroll bar */}
 			<div className={cn('-mr-16 min-h-0 overflow-y-auto pr-16', radioGroupClassName)}>
 				<div className='sm:p-6 flex flex-col space-y-12'>
-					{radios.map(radio => (
-						<Radio
-							key={radio.value}
+					{options.map(option => (
+						<RadioButton
+							key={option.value}
 							name={name}
-							value={radio.value}
-							checked={selectedRadio === radio.value}
+							value={option.value}
+							checked={selectedRadio === option.value}
 							onChange={handleChange}>
-							{radio.children}
-						</Radio>
+							{option.children}
+						</RadioButton>
 					))}
 				</div>
 			</div>
