@@ -1,8 +1,13 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 :root {
 	--background: var(--color-background-100);
 	--foreground: var(--color-background-800);
+}
+:root[data-theme='dark'] {
+	--background: var(--color-background-900);
+	--foreground: var(--color-background-200);
 }
 
 @theme inline {
@@ -195,13 +200,6 @@
 	list-style-type: none;
 	& li::marker {
 		content: counter(list-item) ') ';
-	}
-}
-
-@media (prefers-color-scheme: dark) {
-	:root {
-		--background: var(--color-background-900);
-		--foreground: var(--color-background-200);
 	}
 }
 

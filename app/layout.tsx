@@ -6,6 +6,8 @@ import {config} from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
 
+import {ThemeProvider} from 'next-themes'
+
 const nunito = Nunito({
 	variable: '--font-nunito',
 	subsets: ['latin-ext'],
@@ -25,11 +27,15 @@ export default function RootLayout({
 	modal: React.ReactNode
 }>) {
 	return (
-		<html lang='en'>
+		<html suppressHydrationWarning lang='en'>
 			<body className={`${nunito.variable}`}>
-				<div id='modal-root' />
-				{children}
-				{modal}
+				<ThemeProvider>
+					<>
+						<div id='modal-root' />
+						{children}
+						{modal}
+					</>
+				</ThemeProvider>
 			</body>
 		</html>
 	)
