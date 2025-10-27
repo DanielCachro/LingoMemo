@@ -19,9 +19,7 @@ async function create(userId: string, userMetadata: z.infer<typeof userMetadataS
 				timeZone: 'Etc/UTC',
 				utcOffsetMinutes: 0,
 				preferences: {
-					create: {
-						theme: 'Automatic',
-					},
+					create: {},
 				},
 				learningProfiles: {
 					create: [

@@ -14,12 +14,6 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-enum Theme {
-  Light
-  Dark
-  Automatic
-}
-
 enum SourceLanguages {
   en
 }
@@ -70,7 +64,6 @@ model User {
 
 model Preferences {
   id     Int    @id @default(autoincrement())
-  theme  Theme
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
