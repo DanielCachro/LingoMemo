@@ -2,6 +2,7 @@ import {cn} from '@/lib/utils'
 import {faSearch} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {FormEvent, HTMLAttributes} from 'react'
+import Input from './Form/Input'
 
 interface Props extends HTMLAttributes<HTMLElement> {
 	className?: string
@@ -20,7 +21,7 @@ export default function SearchBar({className, formAction, onSubmit}: Props) {
 				<button tabIndex={-1} type='submit' className='pr-12 pl-16'>
 					<FontAwesomeIcon icon={faSearch} />
 				</button>
-				<input
+				<Input
 					type='search'
 					name='search'
 					placeholder='search'
@@ -28,7 +29,7 @@ export default function SearchBar({className, formAction, onSubmit}: Props) {
 					autoCorrect='off'
 					autoCapitalize='off'
 					spellCheck='false'
-					className='w-full py-16 pr-16 placeholder-background-500 focus:outline-none [&::-webkit-search-cancel-button]:appearance-none'
+					className='border-0 pl-0 [&::-webkit-search-cancel-button]:appearance-none'
 				/>
 			</form>
 		</search>
