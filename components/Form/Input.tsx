@@ -2,10 +2,11 @@ import {cn} from '@/lib/utils'
 import {Input as HeadlessInput, InputProps} from '@headlessui/react'
 
 interface Props extends InputProps {
+	className?: string
 	error?: boolean
 }
 
-export default function Input({error, ...props}: Props) {
+export default function Input({error, className, ...props}: Props) {
 	return (
 		<HeadlessInput
 			className={cn(
@@ -13,6 +14,7 @@ export default function Input({error, ...props}: Props) {
 				{
 					'border-error-400 dark:border-error-700': error,
 				},
+				className,
 			)}
 			{...props}
 		/>
