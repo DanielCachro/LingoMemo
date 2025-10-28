@@ -25,7 +25,7 @@ export default function StudyStatus({status}: {status: keyof typeof statusMap}) 
 	return (
 		<div
 			className={cn(
-				'mx-24 flex h-fit flex-wrap-reverse items-center justify-center gap-16 rounded-sm border-2 border-background-700 p-16 text-center [@media(min-width:320px)]:p-32 [@media(min-width:452px)]:text-left',
+				'mx-24 flex h-fit flex-wrap-reverse items-center justify-center gap-16 rounded-sm border-2 border-background-200 p-16 text-center dark:border-background-700 [@media(min-width:320px)]:p-32 [@media(min-width:452px)]:text-left',
 				{
 					'sm:gap-16': status === 'done',
 					'sm:gap-32': status === 'empty',

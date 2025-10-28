@@ -27,7 +27,7 @@ const themeOptions: RadioOption[] = [
 		children: (
 			<p className='space-x-12'>
 				<FontAwesomeIcon icon={faWandMagicSparkles} />
-				<span>Automatic</span>
+				<span>System</span>
 			</p>
 		),
 	},
