@@ -1,20 +1,34 @@
 'use client'
 import SearchBar from '@/components/SearchBar'
 import {useRouter} from 'next/navigation'
-import {FormEvent} from 'react'
+import {FormEvent, useTransition} from 'react'
+import {Skeleton as EntrySkeleton} from './Entry'
 
-export default function SearchBarWrapper() {
+export default function SearchBarWrapper({targetLang}: {targetLang: string}) {
 	const router = useRouter()
+	const [isPending, startTransition] = useTransition()
 
-	function onSubmit(e: FormEvent<HTMLFormElement>) {
+	async function onSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault()
 		const formData = new FormData(e.currentTarget)
 		const search = formData.get('search')?.toString()?.trim()
-		if (search) {
-			router.push(`?search=${encodeURIComponent(search)}`)
-		} else {
-			router.push('?')
-		}
+
+		const params = new URLSearchParams()
+		startTransition(() => {
+			if (search) {
+				params.set('search', search)
+				params.set('lang', targetLang)
+
+				router.push(`?${params.toString()}`)
+			} else {
+				router.push('?')
+			}
+		})
 	}
-	return <SearchBar onSubmit={onSubmit} />
+	return (
+		<div className='space-y-48'>
+			<SearchBar onSubmit={onSubmit} />
+			{isPending && <EntrySkeleton />}
+		</div>
+	)
 }

@@ -1,4 +1,3 @@
-import {getCurrentUser} from '@/lib/actions/user'
 import type {DictionaryEntry, NotFoundEntry} from '../_lib/types'
 import Entry from './Entry'
 
@@ -18,12 +17,9 @@ async function fetchAudioUrls(search: string) {
 	}
 }
 
-async function fetchEntry(search: string): Promise<DictionaryEntry | NotFoundEntry> {
-	const user = await getCurrentUser()
-	const target_lang = user?.activeLearningProfile?.targetLang || 'en'
-
+async function fetchEntry(search: string, targetLang: string): Promise<DictionaryEntry | NotFoundEntry> {
 	try {
-		const result = await fetch(`https://freedictionaryapi.com/api/v1/entries/${target_lang}/${search}`)
+		const result = await fetch(`https://freedictionaryapi.com/api/v1/entries/${targetLang}/${search}`)
 
 		if (!result.ok) {
 			return {notFound: true, word: search}
@@ -35,7 +31,7 @@ async function fetchEntry(search: string): Promise<DictionaryEntry | NotFoundEnt
 			}
 
 			let audio: string[] = []
-			if (target_lang === 'en') {
+			if (targetLang === 'en') {
 				audio = await fetchAudioUrls(search)
 			}
 
@@ -76,9 +72,10 @@ async function fetchEntry(search: string): Promise<DictionaryEntry | NotFoundEnt
 
 interface Props {
 	search: string
+	targetLang: string
 }
 
-export default async function EntryLoader({search}: Props) {
-	const entry = await fetchEntry(search)
+export default async function EntryLoader({search, targetLang}: Props) {
+	const entry = await fetchEntry(search, targetLang)
 	return <Entry entry={entry} />
 }

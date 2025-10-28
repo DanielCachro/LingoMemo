@@ -5,6 +5,16 @@ import {DateTime} from 'luxon'
 import {revalidatePath} from 'next/cache'
 import {Flashcard, FlashcardSchema} from './schema'
 
+export async function getTargetLang() {
+	const user = await getCurrentUser()
+	if (!user) throw new Error('User not authenticated')
+
+	const activeLearningProfile = user.activeLearningProfile
+	if (!activeLearningProfile) throw new Error('No active learning profile found.')
+
+	return activeLearningProfile.targetLang || 'en'
+}
+
 export async function createFlashcard(flashcard: Flashcard) {
 	const userData = await getCurrentUser()
 	if (!userData) throw new Error('User not authenticated')
