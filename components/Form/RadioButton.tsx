@@ -1,25 +1,16 @@
-import {cn} from '@/lib/utils'
-import {ChangeEventHandler} from 'react'
+import {Radio} from '@headlessui/react'
 
 interface Props {
 	children: React.ReactNode
-	name: string
 	value: string
-	checked: boolean
-	onChange: ChangeEventHandler<HTMLInputElement>
 }
 
-export default function RadioButton({children, name, value, checked, onChange}: Props) {
+export default function RadioButton({children, value}: Props) {
 	return (
-		<label
-			className={cn(
-				'rounded-sm border-2 border-background-300 p-16 transition-colors duration-100 dark:border-background-700 pointer-fine:hover:cursor-pointer pointer-fine:hover:border-primary-300 pointer-fine:hover:bg-primary-100 dark:pointer-fine:hover:border-primary-600 dark:pointer-fine:hover:bg-primary-400',
-				{
-					'border-primary-400 bg-primary-200 dark:border-primary-700 dark:bg-primary-500': checked,
-				},
-			)}>
-			<input type='radio' name={name} value={value} checked={checked} onChange={onChange} className='hidden' />
+		<Radio
+			value={value}
+			className='rounded-sm border-2 border-background-300 p-16 transition-colors duration-100 data-checked:border-primary-400 data-checked:bg-primary-200 dark:border-background-700 data-checked:dark:border-primary-700 data-checked:dark:bg-primary-500 pointer-fine:hover:cursor-pointer pointer-fine:hover:border-primary-300 pointer-fine:hover:bg-primary-100 dark:pointer-fine:hover:border-primary-600 dark:pointer-fine:hover:bg-primary-400'>
 			{children}
-		</label>
+		</Radio>
 	)
 }

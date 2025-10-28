@@ -2,7 +2,8 @@
 import PrimaryButton from '@/components/PrimaryButton'
 import SecondaryButton from '@/components/SecondaryButton'
 import {cn} from '@/lib/utils'
-import {ChangeEvent, FormEvent, ReactNode, useId, useState} from 'react'
+import {RadioGroup} from '@headlessui/react'
+import {FormEvent, ReactNode, useId, useState} from 'react'
 import RadioButton from './RadioButton'
 
 export type RadioOption = {children: ReactNode; value: string}
@@ -40,10 +41,6 @@ export default function RadioForm({
 	const fallbackId = useId()
 	const name = radioGroupName || fallbackId
 
-	const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-		setSelectedRadio(event.target.value)
-	}
-
 	const handleSubmit = (event: FormEvent) => {
 		event.preventDefault()
 		onSubmit(selectedRadio)
@@ -52,20 +49,17 @@ export default function RadioForm({
 	return (
 		<form onSubmit={handleSubmit} className={cn('flex h-full flex-col justify-between space-y-48', className)}>
 			{/* -mr-16 and pr-16 to add a gap between the content and the scroll bar */}
-			<div className={cn('-mr-16 min-h-0 overflow-y-auto pr-16', radioGroupClassName)}>
-				<div className='sm:p-6 flex flex-col space-y-12'>
-					{options.map(option => (
-						<RadioButton
-							key={option.value}
-							name={name}
-							value={option.value}
-							checked={selectedRadio === option.value}
-							onChange={handleChange}>
-							{option.children}
-						</RadioButton>
-					))}
-				</div>
-			</div>
+			<RadioGroup
+				name={name}
+				value={selectedRadio}
+				onChange={setSelectedRadio}
+				className={cn('sm:p-6 -mr-16 flex min-h-0 flex-col space-y-12 overflow-y-auto pr-16', radioGroupClassName)}>
+				{options.map(option => (
+					<RadioButton key={option.value} value={option.value}>
+						{option.children}
+					</RadioButton>
+				))}
+			</RadioGroup>
 			<div className={cn('flex flex-col space-y-12', buttonsGroupClassName)}>
 				{additionalButtons &&
 					additionalButtons.map(button =>

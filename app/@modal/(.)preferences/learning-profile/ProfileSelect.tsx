@@ -7,7 +7,7 @@ import {faSpinner} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {LearningProfile} from '@prisma/client'
 import {useRouter} from 'next/navigation'
-import {useTransition} from 'react'
+import {KeyboardEvent, useTransition} from 'react'
 import DeleteProfileButton from './DeleteProfileButton'
 import ProfileDetails from './ProfileDetails'
 
@@ -60,6 +60,11 @@ export default function ProfileSelect({
 					<ProfileDetails profile={profile} />
 					<DeleteProfileButton
 						profile={profile}
+						onKeyDown={(event: KeyboardEvent<HTMLButtonElement>) => {
+							if (event.key === 'Enter') {
+								event.stopPropagation()
+							}
+						}}
 						onDelete={handleDelete}
 						disabled={isDeletePending || isChangePending}
 					/>

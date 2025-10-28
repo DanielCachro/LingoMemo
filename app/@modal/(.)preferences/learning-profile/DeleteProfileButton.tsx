@@ -3,7 +3,7 @@
 import PrimaryButton from '@/components/PrimaryButton'
 import SecondaryButton from '@/components/SecondaryButton'
 import {LearningProfile} from '@prisma/client'
-import {ButtonHTMLAttributes, useState} from 'react'
+import {ButtonHTMLAttributes, KeyboardEvent, useState} from 'react'
 import Modal from '../../_components/Modal'
 import ProfileDetails from './ProfileDetails'
 
@@ -35,6 +35,11 @@ export default function DeleteProfileButton({profile, onDelete, ...props}: Props
 						<div className='space-x-16'>
 							<SecondaryButton
 								className='w-128'
+								onKeyDown={(event: KeyboardEvent<HTMLButtonElement>) => {
+									if (event.key === 'Enter') {
+										event.stopPropagation()
+									}
+								}}
 								onClick={async () => {
 									try {
 										setIsLoading(true)
@@ -50,7 +55,15 @@ export default function DeleteProfileButton({profile, onDelete, ...props}: Props
 								disabled={isLoading}>
 								{isLoading ? <span className='animate-pulse'>Deleting...</span> : 'Yes, Delete'}
 							</SecondaryButton>
-							<PrimaryButton className='w-128' onClick={() => setShowDialog(false)} disabled={isLoading}>
+							<PrimaryButton
+								className='w-128'
+								onKeyDown={(event: KeyboardEvent<HTMLButtonElement>) => {
+									if (event.key === 'Enter') {
+										event.stopPropagation()
+									}
+								}}
+								onClick={() => setShowDialog(false)}
+								disabled={isLoading}>
 								No
 							</PrimaryButton>
 						</div>
