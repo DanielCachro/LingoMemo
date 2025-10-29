@@ -1,5 +1,6 @@
 import AudioIcon from '@/components/AudioIcon'
 import AudioPlayback from '@/components/AudioPlayback'
+import {getActiveLearningProfile} from '@/lib/actions/user'
 import Link from 'next/link'
 import {findFlashcardId} from '../_lib/actions'
 import type {DictionaryEntry, NotFoundEntry} from '../_lib/types'
@@ -77,12 +78,17 @@ async function Definition({
 	word: string
 }) {
 	const flashcardId = await findFlashcardId(definition.definition, word)
+	const {activeLearningProfile} = await getActiveLearningProfile()
 
 	return (
 		<div className='space-y-32 rounded-sm border-2 border-background-300 p-24 dark:border-background-700'>
 			<p className='space-x-4'>
 				<span>{definition.definition}</span>
-				<FlashcardButtons definition={definition} flashcardId={flashcardId} />
+				<FlashcardButtons
+					definition={definition}
+					flashcardId={flashcardId}
+					userTargetLang={activeLearningProfile.targetLang}
+				/>
 			</p>
 			<Examples examples={definition.examples} />
 			{definition.synonyms.length > 0 && <Synonyms synonyms={definition.synonyms} />}
@@ -136,7 +142,14 @@ export default function Entry({entry}: {entry: DictionaryEntry | NotFoundEntry})
 	return (
 		<>
 			{!('notFound' in entry) && (
-				<EntryProvider data={{word: entry.word, phonetic: entry.phonetic, audio: entry.audio, source: entry.source}}>
+				<EntryProvider
+					data={{
+						entryLang: entry.entryLang,
+						word: entry.word,
+						phonetic: entry.phonetic,
+						audio: entry.audio,
+						source: entry.source,
+					}}>
 					<AudioPlayback audio={entry.audio[0]} />
 					<Header entry={entry} />
 					<div className='space-y-64 pb-48'>

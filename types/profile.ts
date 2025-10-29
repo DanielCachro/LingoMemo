@@ -1,0 +1,1 @@
+export type LearningProfileTypes = 'language' | 'self-study'

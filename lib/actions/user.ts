@@ -45,7 +45,7 @@ export const setUserTimeZone = async (timeZone: string | undefined, offsetMinute
 	return {updated: true}
 }
 
-export async function getActiveLearingProfile() {
+export async function getActiveLearningProfile() {
 	const user = await getCurrentUser()
 	if (!user) throw new Error('User not authenticated.')
 

@@ -1,4 +1,6 @@
 import {prefetchStreak} from '@/hooks/useStreak'
+import {getActiveLearningProfile} from '@/lib/actions/user'
+import type {LearningProfileTypes} from '@/types/profile'
 import {dehydrate, HydrationBoundary, QueryClient} from '@tanstack/react-query'
 import BottomNavigation from './BottomNavigation'
 import MainNavigation from './MainNavigation'
@@ -13,14 +15,20 @@ export default async function RootLayout({
 	const queryClient = new QueryClient()
 	await prefetchStreak(queryClient)
 
+	const {activeLearningProfile} = await getActiveLearningProfile()
+	let activeLearningProfileType: LearningProfileTypes = 'language'
+	if (!activeLearningProfile.targetLang) {
+		activeLearningProfileType = 'self-study'
+	}
+
 	return (
 		<div className={'flex h-dvh flex-col overflow-y-hidden antialiased sm:flex-row'}>
 			<QueryClientProvider>
 				<HydrationBoundary state={dehydrate(queryClient)}>
 					<TimeZoneUpdater />
-					<MainNavigation />
+					<MainNavigation activeLearningProfileType={activeLearningProfileType} />
 					<main className='w-full grow overflow-y-auto scrollbar'>{children}</main>
-					<BottomNavigation className='sm:hidden' />
+					<BottomNavigation activeLearningProfileType={activeLearningProfileType} className='sm:hidden' />
 				</HydrationBoundary>
 			</QueryClientProvider>
 		</div>

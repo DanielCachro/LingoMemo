@@ -1,4 +1,5 @@
 export type DictionaryEntry = {
+	entryLang: string
 	word: string
 	phonetic: string
 	audio: string[]

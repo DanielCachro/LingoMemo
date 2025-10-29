@@ -2,6 +2,7 @@
 
 import {faCircleExclamation, faCirclePlus, faMinusCircle, faSpinner} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {$Enums} from '@prisma/client'
 import {useState, useTransition} from 'react'
 import {createFlashcard, deleteFlashcard} from '../_lib/actions'
 import type {DictionaryDefinition} from '../_lib/types'
@@ -10,14 +11,19 @@ import {useEntry} from './EntryProvider'
 type Props = {
 	flashcardId: number | null
 	definition: DictionaryDefinition
+	userTargetLang?: $Enums.TargetLanguages | null
 }
 
-export function FlashcardButtons({flashcardId, definition}: Props) {
+export function FlashcardButtons({flashcardId, definition, userTargetLang}: Props) {
 	const entry = useEntry()
 
 	const [isPending, startTransition] = useTransition()
 	const [error, setError] = useState<string | null>(null)
 	const [flashcardExists, setFlashcardExists] = useState(flashcardId ? true : false)
+
+	if (!userTargetLang || userTargetLang !== entry.entryLang) {
+		return null
+	}
 
 	const handleCreate = async () => {
 		startTransition(async () => {

@@ -1,5 +1,6 @@
 import {cn} from '@/lib/utils'
 import Image from 'next/image'
+import {redirect} from 'next/navigation'
 import EntryLoader from './_components/EntryLoader'
 import SearchBarWrapper from './_components/SearchBarWrapper'
 import {getTargetLang} from './_lib/actions'
@@ -15,7 +16,9 @@ export default async function DictionaryPage({searchParams}: Props) {
 
 	let targetLang = ''
 	if (!lang) {
-		targetLang = await getTargetLang()
+		const userTargetLang = await getTargetLang()
+		if (!userTargetLang) redirect('/home')
+		targetLang = userTargetLang
 	} else {
 		targetLang = lang
 	}

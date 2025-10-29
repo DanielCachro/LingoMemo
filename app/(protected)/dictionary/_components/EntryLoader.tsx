@@ -36,6 +36,7 @@ async function fetchEntry(search: string, targetLang: string): Promise<Dictionar
 			}
 
 			return {
+				entryLang: targetLang,
 				word: data.word,
 				phonetic: data.entries
 					.flatMap((e: {pronunciations?: {text?: string}[]}) => e.pronunciations ?? [])

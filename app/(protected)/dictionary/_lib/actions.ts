@@ -12,7 +12,7 @@ export async function getTargetLang() {
 	const activeLearningProfile = user.activeLearningProfile
 	if (!activeLearningProfile) throw new Error('No active learning profile found.')
 
-	return activeLearningProfile.targetLang || 'en'
+	return activeLearningProfile.targetLang
 }
 
 export async function createFlashcard(flashcard: Flashcard) {
