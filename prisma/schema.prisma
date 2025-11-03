@@ -113,6 +113,7 @@ model Flashcard {
   synonyms           String[]
   eFactor            Float                @default(2.5)
   interval           Int                  @default(0)
+  createdAt          DateTime             @default(now())
   nextReview         DateTime?            @default(now())
   answerId           Int
   answer             Answer               @relation(fields: [answerId], references: [id])

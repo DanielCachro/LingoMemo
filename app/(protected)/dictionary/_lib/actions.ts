@@ -84,6 +84,7 @@ export async function createFlashcard(flashcard: Flashcard) {
 					synonyms: flashcardData.synonyms ?? [],
 					answerId,
 					learningProfileId: userData.activeLearningProfileId!,
+					createdAt: DateTime.now().toUTC().toJSDate(),
 					nextReview: DateTime.now().toUTC().toJSDate(),
 				},
 			})
