@@ -1,33 +1,34 @@
 import {cn} from '@/lib/utils'
 import {faSearch} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {FormEvent, HTMLAttributes} from 'react'
+import {FormEvent} from 'react'
 import Input from './Form/Input'
 
-interface Props extends HTMLAttributes<HTMLElement> {
+interface Props {
 	className?: string
+	placeholder?: string
 	formAction?: (formData: FormData) => void | Promise<void>
 	onSubmit?: (event: FormEvent<HTMLFormElement>) => void | Promise<void>
 }
 
-export default function SearchBar({className, formAction, onSubmit}: Props) {
+export default function SearchBar({className, placeholder, formAction, onSubmit}: Props) {
 	return (
 		<search
 			className={cn(
-				'rounded-sm border-2 border-background-300 bg-background-200 focus-within:border-background-400 dark:border-background-700 dark:bg-background-800 dark:focus-within:border-background-600',
+				'rounded-sm border-2 border-background-300 bg-background-50 focus-within:border-background-400 dark:border-background-700 dark:bg-background-900 dark:focus-within:border-background-600',
 				className,
 			)}>
 			<form className='flex' action={formAction} onSubmit={onSubmit}>
-				<button tabIndex={-1} type='submit' className='pr-12 pl-16'>
+				<button tabIndex={-1} type='submit' className='pr-12 pl-16 text-background-400'>
 					<FontAwesomeIcon icon={faSearch} />
 				</button>
 				<Input
 					type='search'
 					name='search'
-					placeholder='search'
+					placeholder={placeholder || 'Search...'}
 					autoComplete='off'
 					autoCorrect='off'
-					autoCapitalize='off'
+					autoCapitalize='none'
 					spellCheck='false'
 					className='border-0 pl-0 [&::-webkit-search-cancel-button]:appearance-none'
 				/>
