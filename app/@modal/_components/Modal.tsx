@@ -35,7 +35,7 @@ export default function Modal({
 	const CLOSED = () => window.innerHeight * 1.5
 	const dialogRef = useRef<HTMLDialogElement>(null)
 	const [isOpen, setIsOpen] = useState(true)
-	const [modalNavCount, setModalNavCount] = useState(-1)
+	const [modalNavCount, setModalNavCount] = useState(process.env.NODE_ENV === 'development' ? -1 : 0)
 	const pathname = usePathname()
 	const isDesktop = useMediaQuery('(min-width: 40rem)')
 	const animationControls = useAnimationControls()
