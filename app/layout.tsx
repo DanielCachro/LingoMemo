@@ -7,6 +7,7 @@ import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
 
 import {ThemeProvider} from 'next-themes'
+import QueryClientProvider from './QueryClientProvider'
 
 const nunito = Nunito({
 	variable: '--font-nunito',
@@ -29,13 +30,13 @@ export default function RootLayout({
 	return (
 		<html suppressHydrationWarning lang='en'>
 			<body className={`${nunito.variable}`}>
-				<ThemeProvider>
-					<>
+				<QueryClientProvider>
+					<ThemeProvider>
 						<div id='modal-root' />
 						{children}
 						{modal}
-					</>
-				</ThemeProvider>
+					</ThemeProvider>
+				</QueryClientProvider>
 			</body>
 		</html>
 	)

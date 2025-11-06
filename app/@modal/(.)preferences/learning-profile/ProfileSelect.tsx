@@ -6,6 +6,7 @@ import {setActiveLearningProfile} from '@/lib/actions/user'
 import {faSpinner} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {LearningProfile} from '@prisma/client'
+import {useQueryClient} from '@tanstack/react-query'
 import {useRouter} from 'next/navigation'
 import {KeyboardEvent, useTransition} from 'react'
 import DeleteProfileButton from './DeleteProfileButton'
@@ -19,6 +20,7 @@ export default function ProfileSelect({
 	activeLearningProfileId: string
 }) {
 	const router = useRouter()
+	const queryClient = useQueryClient()
 	const [isDeletePending, deleteStartTransition] = useTransition()
 	const [isChangePending, changeStartTransition] = useTransition()
 
@@ -43,11 +45,11 @@ export default function ProfileSelect({
 					pathToRevalidate: '/home',
 					type: 'layout',
 				})
+				queryClient.removeQueries()
 			} catch (error) {
 				// TODO: Show toast
 				console.error(error)
 			}
-
 			router.push('/home')
 		})
 	}
