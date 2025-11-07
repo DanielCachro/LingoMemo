@@ -7,6 +7,7 @@ import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
 
 import {ThemeProvider} from 'next-themes'
+import {ModalDataProvider} from './ModalDataProvider'
 import QueryClientProvider from './QueryClientProvider'
 
 const nunito = Nunito({
@@ -32,9 +33,11 @@ export default function RootLayout({
 			<body className={`${nunito.variable}`}>
 				<QueryClientProvider>
 					<ThemeProvider>
-						<div id='modal-root' />
-						{children}
-						{modal}
+						<ModalDataProvider>
+							<div id='modal-root' />
+							{children}
+							{modal}
+						</ModalDataProvider>
 					</ThemeProvider>
 				</QueryClientProvider>
 			</body>
