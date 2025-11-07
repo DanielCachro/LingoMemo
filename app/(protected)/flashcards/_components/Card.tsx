@@ -1,5 +1,6 @@
 'use client'
 import AudioIcon from '@/components/AudioIcon'
+import Checkbox from '@/components/Form/Chceckbox'
 import {cn} from '@/lib/utils'
 import {faChevronDown, faPenToSquare, faTrashCan} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
@@ -68,7 +69,7 @@ export default function Card() {
 								className='text-error-500 transition-colors duration-150 hover:cursor-pointer hover:text-error-400'
 							/>
 						</div>
-						<div className='h-16 w-16 rounded-full border-[1px] border-background-300 transition-colors duration-150 hover:cursor-pointer hover:border-primary-500 dark:hover:border-primary-600' />
+						<Checkbox />
 					</div>
 				</div>
 				<p className='text-background-700 dark:text-background-300'>(transitive) To direct or be in charge of.</p>
