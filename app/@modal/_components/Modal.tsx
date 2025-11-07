@@ -10,7 +10,7 @@ import {createPortal} from 'react-dom'
 interface ModalProps {
 	header: 'mobile' | 'desktop' | 'both' | 'none'
 	heading: string
-	children: React.ReactNode
+	children: (closeModal: () => void) => React.ReactNode
 	mobileScreenCoverage?: 'full' | '1/2' | '2/3' | '1/3'
 	closingType?: 'navigateBack' | 'dialogClose'
 	onClose?: () => void
@@ -128,7 +128,7 @@ export default function Modal({
 								</div>
 							)}
 						</div>
-						<div className='overflow-y-auto'>{children}</div>
+						<div className='overflow-y-auto'>{children(handleClose)}</div>
 					</div>
 				</motion.dialog>
 			)}
