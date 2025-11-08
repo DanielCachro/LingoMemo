@@ -24,24 +24,36 @@ export default function FlashcardsSortModal() {
 	const savedSort = getData<FlashcardsSort>('flashcardsSort')
 	const [items, setItems] = useState(savedSort || initialItems)
 
+	function handleSubmit(closeModal: () => void) {
+		const orderChanged =
+			JSON.stringify(items.map(item => item.value)) !== JSON.stringify(initialItems.map(item => item.value))
+		if (orderChanged) {
+			setData<FlashcardsSort>('flashcardsSort', items)
+		} else {
+			clearData('flashcardsSort')
+		}
+		closeModal()
+	}
+
+	function handleReset() {
+		setItems(initialItems)
+	}
+
+	const handleKeyboardReorder = (currentIndex: number, direction: 'up' | 'down') => {
+		const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1
+
+		if (newIndex < 0 || newIndex >= items.length) return
+
+		const reorderedItems = [...items]
+		const [movedItem] = reorderedItems.splice(currentIndex, 1)
+		reorderedItems.splice(newIndex, 0, movedItem)
+
+		setItems(reorderedItems)
+	}
+
 	return (
 		<Modal header='none' heading='Sort' mobileScreenCoverage='2/3'>
 			{closeModal => {
-				function handleSubmit() {
-					const orderChanged =
-						JSON.stringify(items.map(item => item.value)) !== JSON.stringify(initialItems.map(item => item.value))
-					if (orderChanged) {
-						setData<FlashcardsSort>('flashcardsSort', items)
-					} else {
-						clearData('flashcardsSort')
-					}
-					closeModal()
-				}
-
-				function handleReset() {
-					setItems(initialItems)
-				}
-
 				return (
 					<div className='flex h-full flex-col justify-between space-y-16 p-16 pt-0'>
 						<div className='flex justify-between sm:mt-16'>
@@ -58,11 +70,22 @@ export default function FlashcardsSortModal() {
 								values={items}
 								onReorder={setItems}
 								className='space-y-8 overflow-hidden pt-16 text-base font-medium'>
-								{items.map(item => (
+								{items.map((item, index) => (
 									<Reorder.Item
 										key={item.value}
 										value={item}
 										style={{cursor: 'grab'}}
+										tabIndex={0}
+										onKeyDown={(event: React.KeyboardEvent<HTMLLIElement>) => {
+											if (event.key === 'ArrowUp') {
+												event.preventDefault()
+												handleKeyboardReorder(index, 'up')
+											}
+											if (event.key === 'ArrowDown') {
+												event.preventDefault()
+												handleKeyboardReorder(index, 'down')
+											}
+										}}
 										className='rounded-sm bg-transparent px-8 py-12 focus-visible:bg-transparent pointer-fine:hover:bg-primary-100'>
 										<>
 											<FontAwesomeIcon icon={faGripVertical} className='text-gray-500 mr-12' />
@@ -72,7 +95,7 @@ export default function FlashcardsSortModal() {
 								))}
 							</Reorder.Group>
 						</div>
-						<PrimaryButton onClick={handleSubmit}>Change Sort Order</PrimaryButton>
+						<PrimaryButton onClick={() => handleSubmit(closeModal)}>Change Sort Order</PrimaryButton>
 					</div>
 				)
 			}}
