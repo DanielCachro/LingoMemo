@@ -23,32 +23,34 @@ export default function FlashcardsFilterModal() {
 	const {setData, getData} = useModalData()
 	const [savedFilter, setSavedFilter] = useState<FlashcardsFilter>(getData<FlashcardsFilter>('flashcardsFilter') || {})
 
+	function handleSubmit(event: React.FormEvent<HTMLFormElement>, closeModal: () => void) {
+		event.preventDefault()
+
+		const formData = new FormData(event.currentTarget)
+		const data: FlashcardsFilter = {
+			hasNote: formData.get('hasNote') === 'on' ? true : false,
+			createdAtFrom: formData.get('createdAtFrom')?.toString() || undefined,
+			createdAtTo: formData.get('createdAtTo')?.toString() || undefined,
+			nextReviewDateFrom: formData.get('nextReviewDateFrom')?.toString() || undefined,
+			nextReviewDateTo: formData.get('nextReviewDateTo')?.toString() || undefined,
+			efactorFrom: formData.get('efactorFrom') ? Number(formData.get('efactorFrom')) : undefined,
+			efactorTo: formData.get('efactorTo') ? Number(formData.get('efactorTo')) : undefined,
+		}
+		setData<FlashcardsFilter>('flashcardsFilter', data)
+		closeModal()
+	}
+
+	function handleReset() {
+		setSavedFilter({})
+	}
+
 	return (
 		<Modal header='none' heading='Filter' mobileScreenCoverage='2/3'>
 			{closeModal => {
-				function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-					event.preventDefault()
-
-					const formData = new FormData(event.currentTarget)
-					const data: FlashcardsFilter = {
-						hasNote: formData.get('hasNote') === 'on' ? true : false,
-						createdAtFrom: formData.get('createdAtFrom')?.toString() || undefined,
-						createdAtTo: formData.get('createdAtTo')?.toString() || undefined,
-						nextReviewDateFrom: formData.get('nextReviewDateFrom')?.toString() || undefined,
-						nextReviewDateTo: formData.get('nextReviewDateTo')?.toString() || undefined,
-						efactorFrom: formData.get('efactorFrom') ? Number(formData.get('efactorFrom')) : undefined,
-						efactorTo: formData.get('efactorTo') ? Number(formData.get('efactorTo')) : undefined,
-					}
-					setData<FlashcardsFilter>('flashcardsFilter', data)
-					closeModal()
-				}
-
-				function handleReset() {
-					setSavedFilter({})
-				}
-
 				return (
-					<form className='flex h-full flex-col justify-between space-y-16 p-16 pt-0' onSubmit={handleSubmit}>
+					<form
+						className='flex h-full flex-col justify-between space-y-16 p-16 pt-0'
+						onSubmit={event => handleSubmit(event, closeModal)}>
 						<div className='flex justify-between sm:mt-16'>
 							<h3 className='text-xl font-bold'>Filter</h3>
 							<button
