@@ -5,6 +5,7 @@ import Input from '@/components/Form/Input'
 import PrimaryButton from '@/components/PrimaryButton'
 import {Field, Fieldset, Label, Legend} from '@headlessui/react'
 import dynamic from 'next/dynamic'
+import {useState} from 'react'
 import FormBlock from '../_components/FormBlock'
 const Modal = dynamic(() => import('../../_components/Modal'), {ssr: false})
 
@@ -20,10 +21,10 @@ export type FlashcardsFilter = {
 
 export default function FlashcardsFilterModal() {
 	const {setData, getData} = useModalData()
-	const savedFilter = getData<FlashcardsFilter>('flashcardsFilter')
+	const [savedFilter, setSavedFilter] = useState<FlashcardsFilter>(getData<FlashcardsFilter>('flashcardsFilter') || {})
 
 	return (
-		<Modal header='both' heading='Filter' mobileScreenCoverage='2/3'>
+		<Modal header='none' heading='Filter' mobileScreenCoverage='2/3'>
 			{closeModal => {
 				function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
 					event.preventDefault()
@@ -42,12 +43,30 @@ export default function FlashcardsFilterModal() {
 					closeModal()
 				}
 
+				function handleReset() {
+					setSavedFilter({})
+				}
+
 				return (
 					<form className='flex h-full flex-col justify-between space-y-16 p-16 pt-0' onSubmit={handleSubmit}>
+						<div className='flex justify-between sm:mt-16'>
+							<h3 className='text-xl font-bold'>Filter</h3>
+							<button
+								type='button'
+								onClick={handleReset}
+								className='cursor-pointer text-primary-500 pointer-fine:hover:text-primary-400'>
+								Reset
+							</button>
+						</div>
 						<Fieldset className='-mr-16 flex min-h-0 flex-col space-y-24 overflow-y-auto pr-16 text-xl font-bold'>
 							<Legend className='sr-only'>Filter</Legend>
 							<FormBlock title='General' className='mt-16'>
-								<Checkbox name='hasNote' label='Has Note' defaultChecked={savedFilter?.hasNote} />
+								<Checkbox
+									name='hasNote'
+									label='Has Note'
+									checked={!!savedFilter.hasNote}
+									onChange={checked => setSavedFilter(prev => ({...prev, hasNote: checked}))}
+								/>
 							</FormBlock>
 							<FormBlock title='Created At Date'>
 								<div className='flex gap-12'>
@@ -57,7 +76,8 @@ export default function FlashcardsFilterModal() {
 											type='date'
 											name='createdAtFrom'
 											placeholder='dd/mm/yyy'
-											defaultValue={savedFilter?.createdAtFrom}
+											value={savedFilter.createdAtFrom || ''}
+											onChange={e => setSavedFilter(prev => ({...prev, createdAtFrom: e.target.value}))}
 										/>
 									</Field>
 									<Field className='w-1/2'>
@@ -66,7 +86,8 @@ export default function FlashcardsFilterModal() {
 											type='date'
 											name='createdAtTo'
 											placeholder='dd/mm/yyy'
-											defaultValue={savedFilter?.createdAtTo}
+											value={savedFilter.createdAtTo || ''}
+											onChange={e => setSavedFilter(prev => ({...prev, createdAtTo: e.target.value}))}
 										/>
 									</Field>
 								</div>
@@ -79,7 +100,8 @@ export default function FlashcardsFilterModal() {
 											type='date'
 											name='nextReviewDateFrom'
 											placeholder='dd/mm/yyy'
-											defaultValue={savedFilter?.nextReviewDateFrom}
+											value={savedFilter.nextReviewDateFrom || ''}
+											onChange={e => setSavedFilter(prev => ({...prev, nextReviewDateFrom: e.target.value}))}
 										/>
 									</Field>
 									<Field className='w-1/2'>
@@ -88,7 +110,8 @@ export default function FlashcardsFilterModal() {
 											type='date'
 											name='nextReviewDateTo'
 											placeholder='dd/mm/yyy'
-											defaultValue={savedFilter?.nextReviewDateTo}
+											value={savedFilter.nextReviewDateTo || ''}
+											onChange={e => setSavedFilter(prev => ({...prev, nextReviewDateTo: e.target.value}))}
 										/>
 									</Field>
 								</div>
@@ -104,7 +127,8 @@ export default function FlashcardsFilterModal() {
 											max={2.5}
 											step={0.1}
 											placeholder='1.3'
-											defaultValue={savedFilter?.efactorFrom}
+											value={savedFilter.efactorFrom || ''}
+											onChange={e => setSavedFilter(prev => ({...prev, efactorFrom: +e.target.value}))}
 										/>
 									</Field>
 									<Field className='w-1/2'>
@@ -116,7 +140,8 @@ export default function FlashcardsFilterModal() {
 											max={2.5}
 											step={0.1}
 											placeholder='2.5'
-											defaultValue={savedFilter?.efactorTo}
+											value={savedFilter.efactorTo || ''}
+											onChange={e => setSavedFilter(prev => ({...prev, efactorTo: +e.target.value}))}
 										/>
 									</Field>
 								</div>
