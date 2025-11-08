@@ -111,13 +111,13 @@ export default function Modal({
 					}>
 					<div onClick={e => e.stopPropagation()} className='grid h-full w-full grid-rows-[auto_1fr] sm:max-h-768'>
 						<div onPointerDown={event => dragControls.start(event)} style={{touchAction: 'none'}}>
-							<div className='flex w-full justify-center py-8 sm:hidden'>
+							<div className='flex w-full justify-center py-16 sm:hidden'>
 								<span className='h-4 w-32 rounded-full bg-background-400 dark:bg-background-700' />
 							</div>
 							{header !== 'none' && (
 								<div
 									className={cn(
-										'flex items-center border-b-[1px] border-background-200 px-16 py-8 dark:border-background-700',
+										'flex items-center border-b-[1px] border-background-200 px-16 pb-8 dark:border-background-700',
 										{
 											'block sm:hidden': header === 'mobile',
 											'hidden sm:block': header === 'desktop',
