@@ -9,7 +9,7 @@ type ModalWrapperBaseProps = {
 	title: string
 	buttonContent: ReactNode
 	onReset?: () => void
-	children: React.ReactNode
+	children: ReactNode
 }
 
 type ModalWrapperFormProps = ModalWrapperBaseProps & {

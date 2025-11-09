@@ -1,11 +1,50 @@
+'use client'
 import type {FlashcardsFilter} from '@/app/@modal/flashcards/(.)filter/page'
 import type {FlashcardsSort} from '@/app/@modal/flashcards/(.)sort/page'
+import {FlashcardsApiResponse} from '@/app/api/flashcards/route'
+import {useModalData} from '@/app/ModalDataProvider'
 import SearchBar from '@/components/SearchBar'
 import {faFilter, faUpDown} from '@fortawesome/free-solid-svg-icons'
+import {useInfiniteQuery} from '@tanstack/react-query'
+import {useInView} from 'motion/react'
+import {Fragment, useEffect, useRef} from 'react'
+import FlashcardsStatus from '../../study/_components/FlashcardsStatus'
 import Card from './Card'
 import SearchOptionsLinkButton from './SearchOptionsLinkButton'
 
-export default function Cards({filter, sort}: {filter: FlashcardsFilter; sort: FlashcardsSort}) {
+export default function Cards() {
+	const {getData} = useModalData()
+	const filter = getData<FlashcardsFilter>('flashcardsFilter') || {}
+	const sort = getData<FlashcardsSort>('flashcardsSort') || []
+
+	const fetchFlashcards = async ({pageParam}: {pageParam?: number}): Promise<FlashcardsApiResponse> => {
+		const res = await fetch(`/api/flashcards?limit=10&cursor=${pageParam}`, {
+			headers: {'Content-Type': 'application/json'},
+			method: 'POST',
+			body: JSON.stringify({filter, sort}),
+		})
+		if (!res.ok) {
+			throw new Error('Error fetching flashcards')
+		}
+		const data = await res.json()
+		return data as FlashcardsApiResponse
+	}
+
+	// TODO: FIX: Data not refreshing after navigating back to the page
+	const {data, error, fetchNextPage, isFetchingNextPage, status} = useInfiniteQuery({
+		queryKey: ['flashcrads', filter, sort],
+		queryFn: fetchFlashcards,
+		initialPageParam: 0,
+		getNextPageParam: (lastPage, pages) => lastPage.cursor,
+	})
+
+	const ref = useRef(null)
+	const isInView = useInView(ref)
+
+	useEffect(() => {
+		fetchNextPage()
+	}, [isInView, fetchNextPage])
+
 	return (
 		<div className='space-y-16'>
 			<div className='flex gap-4'>
@@ -20,7 +59,30 @@ export default function Cards({filter, sort}: {filter: FlashcardsFilter; sort: F
 					isActive={Object.values(filter).some(Boolean)}
 				/>
 			</div>
-			<Card />
+
+			{status === 'pending' ? (
+				<p>Loading...</p>
+			) : status === 'error' ? (
+				// TODO: Move FlashcardsStatus to /components and make it reusable
+				<div className='mt-96'>
+					<>
+						{console.log(error)}
+						<FlashcardsStatus status='error' />
+					</>
+				</div>
+			) : (
+				data &&
+				data.pages.map((page, index) => (
+					<Fragment key={index}>
+						{page.flashcards.map(flashcard => (
+							<Card key={flashcard.id} flashcard={flashcard} />
+						))}
+					</Fragment>
+				))
+			)}
+
+			{/* <Card /> */}
+			<div ref={ref}>{isFetchingNextPage ? 'Loading more...' : undefined}</div>
 		</div>
 	)
 }

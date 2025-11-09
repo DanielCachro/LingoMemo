@@ -4,7 +4,9 @@ import Checkbox from '@/components/Form/Chceckbox'
 import {cn} from '@/lib/utils'
 import {faChevronDown, faPenToSquare, faTrashCan} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {Prisma} from '@prisma/client'
 import {AnimatePresence, motion, stagger, Variants} from 'motion/react'
+import Link from 'next/link'
 import {useState} from 'react'
 
 function DetailsBlock({title, children}: {title: string; children: React.ReactNode}) {
@@ -18,7 +20,7 @@ function DetailsBlock({title, children}: {title: string; children: React.ReactNo
 	)
 }
 
-export default function Card() {
+export default function Card({flashcard}: {flashcard: Prisma.FlashcardGetPayload<{include: {answer: true}}>}) {
 	const [showDetails, setShowDetails] = useState(false)
 
 	const detailsVariants: Variants = {
@@ -51,12 +53,13 @@ export default function Card() {
 			<div className='space-y-12'>
 				<div className='flex justify-between'>
 					<div className='flex gap-12'>
-						<p className='font-bold'>manage</p>
+						<p className='font-bold'>{`{${flashcard.eFactor}} ${flashcard.answer.text} `}</p>
 						<div className='space-x-4'>
-							<AudioIcon audio='https://api.dictionaryapi.dev/media/pronunciations/en/flash-au.mp3' />
-							<AudioIcon audio='https://api.dictionaryapi.dev/media/pronunciations/en/flash-au.mp3' />
+							{flashcard.answer.audio.map((audio, index) => (
+								<AudioIcon key={index} audio={audio} />
+							))}
 						</div>
-						<p className='text-background-400 dark:text-background-500'>/ˈmænɪdʒ/</p>
+						<p className='text-background-400 dark:text-background-500'>{flashcard.answer.phonetic}</p>
 					</div>
 					<div className='flex items-center gap-8'>
 						<div className='space-x-4'>
@@ -72,7 +75,7 @@ export default function Card() {
 						<Checkbox />
 					</div>
 				</div>
-				<p className='text-background-700 dark:text-background-300'>(transitive) To direct or be in charge of.</p>
+				<p className='text-background-700 dark:text-background-300'>{flashcard.question}</p>
 				<div aria-hidden='true' className='h-[1px] rounded-full bg-background-300 dark:bg-background-700' />
 				<button
 					className={cn(
@@ -93,20 +96,33 @@ export default function Card() {
 					<motion.div variants={detailsVariants} initial='hidden' animate='show' exit='exit' className='space-y-12'>
 						<DetailsBlock title='Note'>
 							<p className='rounded-sm border-[1px] border-background-200 bg-background-100 p-16 text-background-700 dark:border-background-700 dark:bg-background-800 dark:text-background-300'>
-								The word &quot;seek&quot; is a verb for trying to find, obtain, or achieve something, and as a more
-								formal alternative to &quot;look for,&quot; its past tense is &quot;sought,&quot; as in, &quot;they
-								sought legal counsel.&quot;
+								{flashcard.note || 'No additional notes for this flashcard.'}
 							</p>
 						</DetailsBlock>
 						<DetailsBlock title='Examples'>
-							<ol className='ml-8 list-inside list-disc text-background-700 dark:text-background-300'>
-								<li>I seek wisdom.</li>
-								<li>He is seeking employment in a new field</li>
-								<li>The rescue team will continue to seek for another three days before calling off the search.</li>
-							</ol>
+							{flashcard.examples.length > 0 ? (
+								<ol className='ml-8 list-inside list-disc text-background-700 dark:text-background-300'>
+									{flashcard.examples.map((example, index) => (
+										<li key={index}>{example}</li>
+									))}
+								</ol>
+							) : (
+								<p>No examples available.</p>
+							)}
 						</DetailsBlock>
 						<DetailsBlock title='Synonyms'>
-							<p className='text-background-700 dark:text-background-300'>look for, search for</p>
+							<p className='text-background-700 dark:text-background-300'>
+								{flashcard.synonyms.map((synonym, index) => (
+									<span
+										key={`${synonym.slice(0, 10).trim()}-${index}`}
+										className='text-primary-500 dark:text-primary-600'>
+										<Link href={`dictionary?search=${synonym}`} className='hover:underline'>
+											{synonym}
+										</Link>
+										{index < flashcard.synonyms.length - 1 && ', '}
+									</span>
+								))}
+							</p>
 						</DetailsBlock>
 					</motion.div>
 				)}
