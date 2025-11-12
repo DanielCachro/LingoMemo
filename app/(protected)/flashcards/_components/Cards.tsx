@@ -5,7 +5,7 @@ import {FlashcardsApiResponse} from '@/app/api/flashcards/route'
 import {useModalData} from '@/app/ModalDataProvider'
 import SearchBar from '@/components/SearchBar'
 import {faFilter, faUpDown} from '@fortawesome/free-solid-svg-icons'
-import {useInfiniteQuery} from '@tanstack/react-query'
+import {useInfiniteQuery, useQueryClient} from '@tanstack/react-query'
 import {useInView} from 'motion/react'
 import {Fragment, useEffect, useRef} from 'react'
 import FlashcardsStatus from '../../study/_components/FlashcardsStatus'
@@ -13,6 +13,7 @@ import Card from './Card'
 import SearchOptionsLinkButton from './SearchOptionsLinkButton'
 
 export default function Cards() {
+	const queryClient = useQueryClient()
 	const {getData} = useModalData()
 	const filter = getData<FlashcardsFilter>('flashcardsFilter') || {}
 	const sort = getData<FlashcardsSort>('flashcardsSort') || []
@@ -30,10 +31,11 @@ export default function Cards() {
 		return data as FlashcardsApiResponse
 	}
 
-	// TODO: FIX: Data not refreshing after navigating back to the page
 	const {data, error, fetchNextPage, isFetchingNextPage, status} = useInfiniteQuery({
-		queryKey: ['flashcrads', filter, sort],
+		queryKey: ['flashcards', JSON.stringify(filter), JSON.stringify(sort)],
 		queryFn: fetchFlashcards,
+		refetchOnReconnect: false,
+		refetchOnWindowFocus: false,
 		initialPageParam: 0,
 		getNextPageParam: (lastPage, pages) => lastPage.cursor,
 	})
@@ -44,6 +46,12 @@ export default function Cards() {
 	useEffect(() => {
 		fetchNextPage()
 	}, [isInView, fetchNextPage])
+
+	useEffect(() => {
+		queryClient.removeQueries({
+			queryKey: ['flashcards'],
+		})
+	}, [queryClient])
 
 	return (
 		<div className='space-y-16'>
