@@ -2,28 +2,23 @@
 import {useModalData} from '@/app/ModalDataProvider'
 import {faGripVertical} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import _ from 'lodash'
 import {Reorder} from 'motion/react'
 import {useState} from 'react'
 import ModalWrapper from '../_components/ModalWrapper'
+import {initialFlashcardsSortOrder} from './initial'
 
-const initialItems = [
-	{value: 'nextReviewDate', label: 'Next Review Date'},
-	{value: 'createdAt', label: 'Creation Date'},
-	{value: 'question', label: 'Question'},
-	{value: 'answer', label: 'Answer'},
-	{value: 'efactor', label: 'eFactor'},
-]
+export type FlashcardsSort = typeof initialFlashcardsSortOrder
 
-export type FlashcardsSort = typeof initialItems
-
+// TODO: Add asc/desc toggle for each field
 export default function FlashcardsSortModal() {
 	const {setData, getData, clearData} = useModalData()
 	const savedSort = getData<FlashcardsSort>('flashcardsSort')
-	const [items, setItems] = useState(savedSort || initialItems)
+	const [items, setItems] = useState(savedSort || initialFlashcardsSortOrder)
 
 	function handleSubmit(closeModal: () => void) {
 		const orderChanged =
-			JSON.stringify(items.map(item => item.value)) !== JSON.stringify(initialItems.map(item => item.value))
+			!_.isEqual(items, initialFlashcardsSortOrder)
 		if (orderChanged) {
 			setData<FlashcardsSort>('flashcardsSort', items)
 		} else {
@@ -33,7 +28,7 @@ export default function FlashcardsSortModal() {
 	}
 
 	function handleReset() {
-		setItems(initialItems)
+		setItems(initialFlashcardsSortOrder)
 	}
 
 	const handleKeyboardReorder = (currentIndex: number, direction: 'up' | 'down') => {
@@ -49,7 +44,12 @@ export default function FlashcardsSortModal() {
 	}
 
 	return (
-		<ModalWrapper title='Sort by' buttonContent='Change Sort Order' onReset={handleReset} onSubmit={handleSubmit} useForm={false}>
+		<ModalWrapper
+			title='Sort by'
+			buttonContent='Change Sort Order'
+			onReset={handleReset}
+			onSubmit={handleSubmit}
+			useForm={false}>
 			<Reorder.Group
 				axis='y'
 				values={items}
