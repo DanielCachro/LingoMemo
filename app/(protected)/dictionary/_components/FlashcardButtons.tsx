@@ -1,6 +1,7 @@
 'use client'
 
-import {faCircleExclamation, faCirclePlus, faMinusCircle, faSpinner} from '@fortawesome/free-solid-svg-icons'
+import Spinner from '@/components/Spinner'
+import {faCircleExclamation, faCirclePlus, faMinusCircle} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {$Enums} from '@prisma/client'
 import {useState, useTransition} from 'react'
@@ -41,12 +42,10 @@ export function FlashcardButtons({flashcardId, definition, userTargetLang}: Prop
 						sourceUrl: entry.source.url,
 					},
 				})
-				// Optimistic update - we assume success
-				// `revalidatePath` in the server action will retrieve the real data anyway
 				setFlashcardExists(true)
 			} catch (error) {
 				setError((error as Error).message)
-				setFlashcardExists(false) // Return to the initial state in case of an error.
+				setFlashcardExists(false)
 			}
 		})
 	}
@@ -66,26 +65,26 @@ export function FlashcardButtons({flashcardId, definition, userTargetLang}: Prop
 		})
 	}
 
-	if (isPending) {
-		return <FontAwesomeIcon size='sm' icon={faSpinner} pulse className='text-background-500 dark:text-background-400' />
-	}
-
 	const buttonClasses =
-		'text-primary-500 hover:cursor-pointer hover:text-primary-600 dark:text-primary-600 dark:hover:text-primary-700'
+		'inline-flex items-center justify-center w-4 h-4 text-primary-500 hover:cursor-pointer hover:text-primary-600 dark:text-primary-600 dark:hover:text-primary-700'
 
 	return (
 		<>
-			{!flashcardExists ? (
-				<button onClick={handleCreate} className={buttonClasses}>
-					<FontAwesomeIcon icon={faCirclePlus} />
-				</button>
-			) : (
-				<button onClick={handleDelete} className={buttonClasses}>
-					<FontAwesomeIcon icon={faMinusCircle} />
-				</button>
-			)}
+			<span className='mx-8 inline-flex h-4 w-4 translate-y-[0.125rem] items-center justify-center'>
+				{isPending ? (
+					<Spinner height={16} width={16} />
+				) : !flashcardExists ? (
+					<button onClick={handleCreate} className={buttonClasses}>
+						<FontAwesomeIcon icon={faCirclePlus} />
+					</button>
+				) : (
+					<button onClick={handleDelete} className={buttonClasses}>
+						<FontAwesomeIcon icon={faMinusCircle} />
+					</button>
+				)}
+			</span>
 			{error && (
-				<span className='text-sm text-error-500 dark:text-error-600'>
+				<span className='ml-4 text-sm text-error-500 dark:text-error-600'>
 					<FontAwesomeIcon icon={faCircleExclamation} className='mr-4' />
 					{error}
 				</span>

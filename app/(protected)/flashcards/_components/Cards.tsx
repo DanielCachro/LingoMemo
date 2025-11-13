@@ -6,6 +6,7 @@ import type {FlashcardsSort} from '@/app/@modal/flashcards/(.)sort/page'
 import {FlashcardsApiResponse} from '@/app/api/flashcards/route'
 import {useModalData} from '@/app/ModalDataProvider'
 import SearchBar from '@/components/SearchBar'
+import Spinner from '@/components/Spinner'
 import {faFilter, faUpDown} from '@fortawesome/free-solid-svg-icons'
 import {useInfiniteQuery, useQueryClient} from '@tanstack/react-query'
 import _, {pickBy} from 'lodash'
@@ -97,7 +98,9 @@ export default function Cards() {
 			)}
 
 			{/* <Card /> */}
-			<div ref={ref}>{isFetchingNextPage ? 'Loading more...' : undefined}</div>
+			<div ref={ref} className='flex justify-center py-16'>
+				{isFetchingNextPage ? <Spinner height={24} width={24} /> : undefined}
+			</div>
 		</div>
 	)
 }
