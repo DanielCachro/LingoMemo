@@ -136,7 +136,7 @@ export default function FlashcardsFilterModal() {
 								name='efactorFrom'
 								min={1.3}
 								max={2.5}
-								step={0.1}
+								step={0.01}
 								placeholder='1.3'
 								value={savedFilter.efactorFrom || ''}
 								onChange={e => setSavedFilter(prev => ({...prev, efactorFrom: +e.target.value}))}
@@ -151,7 +151,7 @@ export default function FlashcardsFilterModal() {
 								name='efactorTo'
 								min={1.3}
 								max={4}
-								step={0.1}
+								step={0.01}
 								placeholder='2.5'
 								value={savedFilter.efactorTo || ''}
 								onChange={e => setSavedFilter(prev => ({...prev, efactorTo: +e.target.value}))}
