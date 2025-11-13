@@ -1,5 +1,6 @@
-import type {FlashcardsFilter} from '@/app/@modal/flashcards/(.)filter/page'
-import type {FlashcardsSort} from '@/app/@modal/flashcards/(.)sort/page'
+import {schema as flashcardsZodSchema, type FlashcardsFilter} from '@/app/@modal/flashcards/(.)filter/schema'
+import {initialFlashcardsSortOrder} from '@/app/@modal/flashcards/(.)sort/initial'
+import {type FlashcardsSort} from '@/app/@modal/flashcards/(.)sort/page'
 import {getCurrentUser} from '@/lib/actions/user'
 import {prisma} from '@/prisma/client'
 import {Prisma} from '@prisma/client'
@@ -24,34 +25,68 @@ export async function POST(request: NextRequest) {
 		const cursor = Number(searchParams.get('cursor'))
 
 		const body = (await request.json()) as {sort: FlashcardsSort | []; filter: FlashcardsFilter | Record<string, never>}
-		if (!body.sort) {
-			return NextResponse.json({error: 'Sort parameter is required'}, {status: 400})
-		}
-		if (!body.filter) {
-			return NextResponse.json({error: 'Filter parameter is required'}, {status: 400})
+		flashcardsZodSchema.parse(body.filter)
+
+		const orderByMap: Record<string, Prisma.FlashcardOrderByWithRelationInput> = {
+			nextReviewDate: {nextReview: 'desc'},
+			createdAt: {createdAt: 'desc'},
+			question: {question: 'desc'},
+			answer: {answer: {text: 'desc'}},
+			efactor: {eFactor: 'desc'},
 		}
 
-		console.log(body.filter, body.sort)
+		const orderBy = body.sort.length
+			? body.sort.map(option => orderByMap[option.value])
+			: initialFlashcardsSortOrder.map(option => orderByMap[option.value])
 
 		const where: Prisma.FlashcardWhereInput = {
 			learningProfileId: activeLearningProfileId,
 		}
-		// TODO: Dynamically build 'where' based on 'body.filter'
-		// TODO: Dynamically build 'orderBy' based on 'body.sort'
+
+		if (body.filter.hasNote !== undefined) {
+			where.note = body.filter.hasNote ? {not: null} : null
+		}
+
+		if (body.filter.createdAtFrom || body.filter.createdAtTo) {
+			where.createdAt = {}
+			if (body.filter.createdAtFrom) {
+				where.createdAt.gte = new Date(body.filter.createdAtFrom)
+			}
+			if (body.filter.createdAtTo) {
+				where.createdAt.lte = new Date(body.filter.createdAtTo)
+			}
+		}
+
+		if (body.filter.nextReviewDateFrom || body.filter.nextReviewDateTo) {
+			where.nextReview = {}
+			if (body.filter.nextReviewDateFrom) {
+				where.nextReview.gte = new Date(body.filter.nextReviewDateFrom)
+			}
+			if (body.filter.nextReviewDateTo) {
+				where.nextReview.lte = new Date(body.filter.nextReviewDateTo)
+			}
+		}
+
+		if (body.filter.efactorFrom || body.filter.efactorTo) {
+			where.eFactor = {}
+			if (body.filter.efactorFrom) {
+				where.eFactor.gte = body.filter.efactorFrom
+			}
+			if (body.filter.efactorTo) {
+				where.eFactor.lte = body.filter.efactorTo
+			}
+		}
 
 		const flashcards = await prisma.flashcard.findMany({
 			take: limit,
 			skip: cursor ? 1 : 0,
-			where: {
-				learningProfileId: activeLearningProfileId,
-			},
+			where,
+			orderBy: orderBy,
 			include: {
 				answer: true,
 			},
 			cursor: cursor ? {id: cursor} : undefined,
 		})
-
-		console.log(flashcards)
 
 		const lastFlashcard = flashcards[limit - 1]
 		const newCursor = lastFlashcard?.id
