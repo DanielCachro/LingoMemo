@@ -51,9 +51,9 @@ export default function Cards() {
 	}, [isInView, fetchNextPage])
 
 	useEffect(() => {
-		queryClient.removeQueries({
-			queryKey: ['flashcards'],
-		})
+		return () => {
+			queryClient.removeQueries({queryKey: ['flashcards']})
+		}
 	}, [queryClient])
 
 	return (
@@ -76,7 +76,7 @@ export default function Cards() {
 			</div>
 
 			{status === 'pending' ? (
-				<p>Loading...</p>
+				<Skeleton />
 			) : status === 'error' ? (
 				// TODO: Move FlashcardsStatus to /components and make it reusable
 				<div className='mt-96'>
@@ -98,6 +98,18 @@ export default function Cards() {
 
 			{/* <Card /> */}
 			<div ref={ref}>{isFetchingNextPage ? 'Loading more...' : undefined}</div>
+		</div>
+	)
+}
+
+export function Skeleton() {
+	return (
+		<div className='animate-pulse space-y-16'>
+			<div className='h-[9rem] rounded-sm bg-skeleton' />
+			<div className='h-[9rem] rounded-sm bg-skeleton' />
+			<div className='h-[9rem] rounded-sm bg-skeleton' />
+			<div className='h-[9rem] rounded-sm bg-skeleton' />
+			<div className='h-[9rem] rounded-sm bg-skeleton' />
 		</div>
 	)
 }
