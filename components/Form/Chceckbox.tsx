@@ -8,9 +8,10 @@ interface Props {
 	defaultChecked?: boolean
 	className?: string
 	label?: string
+	error?: boolean
 }
 
-export default function Checkbox({checked, onChange, name, className, label, defaultChecked}: Props) {
+export default function Checkbox({checked, onChange, name, className, label, defaultChecked, error}: Props) {
 	const CheckboxToRender = (
 		<HeadlessCheckbox
 			checked={checked}
@@ -19,6 +20,9 @@ export default function Checkbox({checked, onChange, name, className, label, def
 			defaultChecked={defaultChecked}
 			className={cn(
 				'group block size-16 rounded-full border border-background-300 bg-background-100 transition-colors duration-150 peer-hover:border-primary-400 peer-hover:bg-primary-300 hover:cursor-pointer hover:border-primary-400 hover:bg-primary-300 focus:outline-none focus-visible:border-background-400 data-checked:border-primary-500 data-checked:bg-primary-500 data-checked:peer-hover:border-primary-400 data-checked:peer-hover:bg-primary-400 data-checked:hover:border-primary-400 data-checked:hover:bg-primary-400 data-checked:focus-visible:bg-primary-400 dark:border-background-600 dark:bg-background-900 dark:peer-hover:border-primary-500 dark:peer-hover:bg-primary-400 dark:hover:border-primary-500 dark:hover:bg-primary-400 dark:focus-visible:border-background-400 dark:data-checked:border-primary-600 dark:data-checked:bg-primary-600 dark:data-checked:peer-hover:border-primary-500 dark:data-checked:peer-hover:bg-primary-500 dark:data-checked:hover:border-primary-500 dark:data-checked:hover:bg-primary-500 data-checked:dark:focus-visible:bg-primary-500',
+				{
+					'dark:border-error- 700 border-error-600': error,
+				},
 				className,
 			)}>
 			<svg

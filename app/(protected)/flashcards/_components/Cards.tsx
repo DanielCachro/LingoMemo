@@ -1,11 +1,14 @@
 'use client'
-import type {FlashcardsFilter} from '@/app/@modal/flashcards/(.)filter/page'
+import {initialFlashcardsFilter} from '@/app/@modal/flashcards/(.)filter/initial'
+import type {FlashcardsFilter} from '@/app/@modal/flashcards/(.)filter/schema'
+import {initialFlashcardsSortOrder} from '@/app/@modal/flashcards/(.)sort/initial'
 import type {FlashcardsSort} from '@/app/@modal/flashcards/(.)sort/page'
 import {FlashcardsApiResponse} from '@/app/api/flashcards/route'
 import {useModalData} from '@/app/ModalDataProvider'
 import SearchBar from '@/components/SearchBar'
 import {faFilter, faUpDown} from '@fortawesome/free-solid-svg-icons'
 import {useInfiniteQuery, useQueryClient} from '@tanstack/react-query'
+import _, {pickBy} from 'lodash'
 import {useInView} from 'motion/react'
 import {Fragment, useEffect, useRef} from 'react'
 import FlashcardsStatus from '../../study/_components/FlashcardsStatus'
@@ -32,7 +35,7 @@ export default function Cards() {
 	}
 
 	const {data, error, fetchNextPage, isFetchingNextPage, status} = useInfiniteQuery({
-		queryKey: ['flashcards', JSON.stringify(filter), JSON.stringify(sort)],
+		queryKey: ['flashcards', pickBy(filter, value => value !== undefined), sort.map(option => option.value)],
 		queryFn: fetchFlashcards,
 		refetchOnReconnect: false,
 		refetchOnWindowFocus: false,
@@ -60,11 +63,15 @@ export default function Cards() {
 					className='grow [&_button]:pl-12 [&_input]:py-12 [&_input]:pr-12'
 					placeholder='Search flashcards...'
 				/>
-				<SearchOptionsLinkButton href='/flashcards/sort' icon={faUpDown} isActive={sort.length > 0} />
+				<SearchOptionsLinkButton
+					href='/flashcards/sort'
+					icon={faUpDown}
+					isActive={sort.length > 0 && !_.isEqual(sort, initialFlashcardsSortOrder)}
+				/>
 				<SearchOptionsLinkButton
 					href='/flashcards/filter'
 					icon={faFilter}
-					isActive={Object.values(filter).some(Boolean)}
+					isActive={!_.isEmpty(filter) && !_.isEqual(filter, initialFlashcardsFilter)}
 				/>
 			</div>
 

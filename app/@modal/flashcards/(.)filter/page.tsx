@@ -7,6 +7,7 @@ import {useState} from 'react'
 import z from 'zod'
 import FormBlock from '../_components/FormBlock'
 import ModalWrapper from '../_components/ModalWrapper'
+import {initialFlashcardsFilter} from './initial'
 import {FlashcardsFilter, schema} from './schema'
 
 function ErrorMessage({error}: {error?: string[]}) {
@@ -16,7 +17,9 @@ function ErrorMessage({error}: {error?: string[]}) {
 
 export default function FlashcardsFilterModal() {
 	const {setData, getData} = useModalData()
-	const [savedFilter, setSavedFilter] = useState<FlashcardsFilter>(getData<FlashcardsFilter>('flashcardsFilter') || {})
+	const [savedFilter, setSavedFilter] = useState<FlashcardsFilter>(
+		getData<FlashcardsFilter>('flashcardsFilter') || initialFlashcardsFilter,
+	)
 	const [errors, setErrors] = useState<Record<string, string[]>>({})
 
 	function handleSubmit(event: React.FormEvent<HTMLFormElement>, closeModal: () => void) {
