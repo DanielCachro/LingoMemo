@@ -9,9 +9,10 @@ interface Props {
 	placeholder?: string
 	formAction?: (formData: FormData) => void | Promise<void>
 	onSubmit?: (event: FormEvent<HTMLFormElement>) => void | Promise<void>
+	onChange?: (event: FormEvent<HTMLInputElement>) => void | Promise<void>
 }
 
-export default function SearchBar({className, placeholder, formAction, onSubmit}: Props) {
+export default function SearchBar({className, placeholder, formAction, onSubmit, onChange}: Props) {
 	return (
 		<search
 			className={cn(
@@ -31,6 +32,7 @@ export default function SearchBar({className, placeholder, formAction, onSubmit}
 					autoCapitalize='none'
 					spellCheck='false'
 					className='border-0 pl-0 [&::-webkit-search-cancel-button]:appearance-none'
+					onChange={onChange}
 				/>
 			</form>
 		</search>

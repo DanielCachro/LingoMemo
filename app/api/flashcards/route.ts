@@ -24,7 +24,12 @@ export async function POST(request: NextRequest) {
 		const limit = Math.min(Number(searchParams.get('limit') ?? 20), 100)
 		const cursor = Number(searchParams.get('cursor'))
 
-		const body = (await request.json()) as {sort: FlashcardsSort | []; filter: FlashcardsFilter | Record<string, never>}
+		const body = (await request.json()) as {
+			searchTerm: string
+			sort: FlashcardsSort | []
+			filter: FlashcardsFilter | Record<string, never>
+		}
+
 		flashcardsZodSchema.parse(body.filter)
 
 		const orderByMap: Record<string, Prisma.FlashcardOrderByWithRelationInput> = {
@@ -41,6 +46,14 @@ export async function POST(request: NextRequest) {
 
 		const where: Prisma.FlashcardWhereInput = {
 			learningProfileId: activeLearningProfileId,
+		}
+
+		if (body.searchTerm && body.searchTerm.trim() !== '') {
+			const search = body.searchTerm.trim()
+			where.OR = [
+				{question: {contains: search, mode: 'insensitive'}},
+				{answer: {text: {contains: search, mode: 'insensitive'}}},
+			]
 		}
 
 		if (body.filter.hasNote !== undefined) {

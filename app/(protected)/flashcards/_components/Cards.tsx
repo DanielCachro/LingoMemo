@@ -11,7 +11,7 @@ import {faFilter, faUpDown} from '@fortawesome/free-solid-svg-icons'
 import {useInfiniteQuery, useQueryClient} from '@tanstack/react-query'
 import _, {pickBy} from 'lodash'
 import {useInView} from 'motion/react'
-import {Fragment, useEffect, useRef} from 'react'
+import {Fragment, useEffect, useRef, useState} from 'react'
 import FlashcardsStatus from '../../study/_components/FlashcardsStatus'
 import Card from './Card'
 import SearchOptionsLinkButton from './SearchOptionsLinkButton'
@@ -19,6 +19,8 @@ import SearchOptionsLinkButton from './SearchOptionsLinkButton'
 export default function Cards() {
 	const queryClient = useQueryClient()
 	const {getData} = useModalData()
+	const [searchTerm, setSearchTerm] = useState<string>('')
+	const lastSearchChange = useRef<number | null>(null)
 	const filter = getData<FlashcardsFilter>('flashcardsFilter') || {}
 	const sort = getData<FlashcardsSort>('flashcardsSort') || []
 
@@ -26,7 +28,7 @@ export default function Cards() {
 		const res = await fetch(`/api/flashcards?limit=10&cursor=${pageParam}`, {
 			headers: {'Content-Type': 'application/json'},
 			method: 'POST',
-			body: JSON.stringify({filter, sort}),
+			body: JSON.stringify({searchTerm, filter, sort}),
 		})
 		if (!res.ok) {
 			throw new Error('Error fetching flashcards')
@@ -36,13 +38,30 @@ export default function Cards() {
 	}
 
 	const {data, error, fetchNextPage, isFetchingNextPage, status} = useInfiniteQuery({
-		queryKey: ['flashcards', pickBy(filter, value => value !== undefined), sort.map(option => option.value)],
+		queryKey: [
+			'flashcards',
+			searchTerm,
+			pickBy(filter, value => value !== undefined),
+			sort.map(option => option.value),
+		],
 		queryFn: fetchFlashcards,
 		refetchOnReconnect: false,
 		refetchOnWindowFocus: false,
 		initialPageParam: 0,
 		getNextPageParam: (lastPage, pages) => lastPage.cursor,
 	})
+
+	function handleSearch(event: React.FormEvent<HTMLInputElement>) {
+		if (lastSearchChange.current) {
+			window.clearTimeout(lastSearchChange.current)
+		}
+
+		const value = event.currentTarget.value
+		lastSearchChange.current = window.setTimeout(() => {
+			lastSearchChange.current = null
+			setSearchTerm(value)
+		}, 500)
+	}
 
 	const ref = useRef(null)
 	const isInView = useInView(ref)
@@ -63,6 +82,7 @@ export default function Cards() {
 				<SearchBar
 					className='grow [&_button]:pl-12 [&_input]:py-12 [&_input]:pr-12'
 					placeholder='Search flashcards...'
+					onChange={handleSearch}
 				/>
 				<SearchOptionsLinkButton
 					href='/flashcards/sort'
