@@ -1,5 +1,6 @@
 'use client'
 import Input from '@/components/Form/Input'
+import TagField from '@/components/Form/Tagfield'
 import Textarea from '@/components/Form/Textarea'
 import {Field, Label} from '@headlessui/react'
 import FormBlock from '../_components/FormBlock'
@@ -7,27 +8,41 @@ import FormSection from '../_components/FormSection'
 import ModalWrapper from '../_components/ModalWrapper'
 
 export default function FlashcardsCreateModal() {
+	function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+		event.preventDefault()
+
+		const formData = new FormData(event.currentTarget)
+
+		const data = {
+			question: formData.get('question'),
+			answer: formData.get('answer'),
+			note: formData.get('note'),
+			phonetic: formData.get('phonetic'),
+			synonyms: JSON.parse((formData.get('synonyms') as string) || '[]'),
+		}
+
+		console.log(data)
+	}
+
 	return (
 		<ModalWrapper
 			title='Create Flashcard'
 			subtitle='Fill in the details to create a flashcard'
 			buttonContent='Create Flashcard'
 			useForm={true}
-			onSubmit={event => {
-				console.log(event)
-			}}>
+			onSubmit={handleSubmit}>
 			<>
 				<FormSection title='Core Details'>
 					<FormBlock title='Question (front) *'>
 						<Field>
 							<Label className='sr-only'>Question (front)</Label>
-							<Input type='text' name='questionFront' placeholder='Question on the front side' />
+							<Input type='text' name='question' placeholder='Question on the front side' />
 						</Field>
 					</FormBlock>
 					<FormBlock title='Answer (back) *'>
 						<Field>
 							<Label className='sr-only'>Answer (back)</Label>
-							<Input type='text' name='answerBack' placeholder='Answer for the question' />
+							<Input type='text' name='answer' placeholder='Answer for the question' />
 						</Field>
 					</FormBlock>
 					<FormBlock title='Note'>
@@ -38,10 +53,18 @@ export default function FlashcardsCreateModal() {
 					</FormBlock>
 				</FormSection>
 				<FormSection title='Vocabulary Related'>
-					<Field>
-						<Label className='sr-only'>Phonetic</Label>
-						<Input type='text' name='phonetic' placeholder='e.g., /həˈləʊ/' />
-					</Field>
+					<FormBlock title='Phonetic'>
+						<Field>
+							<Label className='sr-only'>Phonetic</Label>
+							<Input type='text' name='phonetic' placeholder='e.g., /həˈləʊ/' />
+						</Field>
+					</FormBlock>
+					<FormBlock title='Synonyms'>
+						<Field>
+							<Label className='sr-only'>Synonyms</Label>
+							<TagField name='synonyms' />
+						</Field>
+					</FormBlock>
 				</FormSection>
 			</>
 		</ModalWrapper>
