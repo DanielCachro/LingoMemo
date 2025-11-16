@@ -1,5 +1,6 @@
 'use client'
 import PrimaryButton from '@/components/PrimaryButton'
+import {Fieldset, Legend} from '@headlessui/react'
 import dynamic from 'next/dynamic'
 import {FormEvent, ReactNode} from 'react'
 
@@ -7,7 +8,8 @@ const Modal = dynamic(() => import('../../_components/Modal'), {ssr: false})
 
 type ModalWrapperBaseProps = {
 	title: string
-	buttonContent: ReactNode
+	subtitle?: string
+	buttonContent?: ReactNode
 	onReset?: () => void
 	children: ReactNode
 }
@@ -25,10 +27,10 @@ type ModalWrapperDivProps = ModalWrapperBaseProps & {
 type ModalWrapperProps = ModalWrapperFormProps | ModalWrapperDivProps
 
 export default function ModalWrapper(props: ModalWrapperProps) {
-	const {title, buttonContent, onReset, children} = props
+	const {title, subtitle, buttonContent, onReset, children} = props
 
 	return (
-		<Modal header='none' heading={title} mobileScreenCoverage='2/3'>
+		<Modal className='overflow-hidden' header='none' heading={title} mobileScreenCoverage='2/3'>
 			{closeModal => {
 				const handleSubmit = (event?: FormEvent<HTMLFormElement>) => {
 					if (props.useForm && event) props.onSubmit(event, closeModal)
@@ -38,7 +40,10 @@ export default function ModalWrapper(props: ModalWrapperProps) {
 				const commonContent = (
 					<>
 						<div className='flex justify-between sm:mt-16'>
-							<h3 className='text-xl font-bold'>{title}</h3>
+							<div>
+								<h2 className='text-xl font-bold'>{title}</h2>
+								{subtitle && <p>{subtitle}</p>}
+							</div>
 							{onReset && (
 								<button
 									type='button'
@@ -49,9 +54,7 @@ export default function ModalWrapper(props: ModalWrapperProps) {
 							)}
 						</div>
 
-						<div className='-mr-16 flex min-h-0 flex-col space-y-24 overflow-y-auto pr-16 text-xl font-bold'>
-							{children}
-						</div>
+						<div className='-mr-16 flex min-h-0 flex-col space-y-24 overflow-y-auto pr-16'>{children}</div>
 
 						<PrimaryButton
 							type={props.useForm ? 'submit' : 'button'}
@@ -63,7 +66,10 @@ export default function ModalWrapper(props: ModalWrapperProps) {
 
 				return props.useForm ? (
 					<form className='flex h-full flex-col justify-between space-y-16 p-16 pt-0' onSubmit={handleSubmit}>
-						{commonContent}
+						<Fieldset className='-mr-16 flex min-h-0 flex-col space-y-24 pr-16'>
+							<Legend className='sr-only'>{title}</Legend>
+							{commonContent}
+						</Fieldset>
 					</form>
 				) : (
 					<div className='flex h-full flex-col justify-between space-y-16 p-16 pt-0'>{commonContent}</div>

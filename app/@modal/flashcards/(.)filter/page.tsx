@@ -1,10 +1,9 @@
 'use client'
 import {useModalData} from '@/app/ModalDataProvider'
 import Checkbox from '@/components/Form/Chceckbox'
-import Input from '@/components/Form/Input'
-import {Field, Fieldset, Label, Legend} from '@headlessui/react'
 import {useState} from 'react'
 import z from 'zod'
+import FieldPair from '../_components/FieldPair'
 import FormBlock from '../_components/FormBlock'
 import ModalWrapper from '../_components/ModalWrapper'
 import {initialFlashcardsFilter} from './initial'
@@ -59,9 +58,8 @@ export default function FlashcardsFilterModal() {
 			onReset={handleReset}
 			onSubmit={handleSubmit}
 			useForm={true}>
-			<Fieldset className='-mr-16 flex min-h-0 flex-col space-y-24 overflow-y-auto pr-16 text-xl font-bold'>
-				<Legend className='sr-only'>Filter</Legend>
-				<FormBlock title='General' className='mt-16'>
+			<>
+				<FormBlock title='General'>
 					<Checkbox
 						name='hasNote'
 						label='Has Note'
@@ -72,96 +70,78 @@ export default function FlashcardsFilterModal() {
 					<ErrorMessage error={errors.hasNote} />
 				</FormBlock>
 				<FormBlock title='Created At Date'>
-					<div className='flex gap-12'>
-						<Field className='w-1/2'>
-							<Label className='sr-only'>Created At From</Label>
-							<Input
-								type='date'
-								name='createdAtFrom'
-								placeholder='dd/mm/yyy'
-								value={savedFilter.createdAtFrom || ''}
-								onChange={e => setSavedFilter(prev => ({...prev, createdAtFrom: e.target.value}))}
-								error={!!errors.createdAtFrom}
-							/>
-							<ErrorMessage error={errors.createdAtFrom} />
-						</Field>
-						<Field className='w-1/2'>
-							<Label className='sr-only'>Created At To</Label>
-							<Input
-								type='date'
-								name='createdAtTo'
-								placeholder='dd/mm/yyy'
-								value={savedFilter.createdAtTo || ''}
-								onChange={e => setSavedFilter(prev => ({...prev, createdAtTo: e.target.value}))}
-								error={!!errors.createdAtTo}
-							/>
-							<ErrorMessage error={errors.createdAtTo} />
-						</Field>
-					</div>
+					<FieldPair
+						firstField={{
+							label: 'Created At From',
+							type: 'date',
+							name: 'createdAtFrom',
+							placeholder: 'dd/mm/yyy',
+							value: savedFilter.createdAtFrom || '',
+							onChange: value => setSavedFilter(prev => ({...prev, createdAtFrom: value})),
+							error: errors.createdAtFrom,
+						}}
+						secondField={{
+							label: 'Created At To',
+							type: 'date',
+							name: 'createdAtTo',
+							placeholder: 'dd/mm/yyy',
+							value: savedFilter.createdAtTo || '',
+							onChange: value => setSavedFilter(prev => ({...prev, createdAtTo: value})),
+							error: errors.createdAtTo,
+						}}
+					/>
 				</FormBlock>
 				<FormBlock title='Next Review Date'>
-					<div className='flex gap-12'>
-						<Field className='w-1/2'>
-							<Label className='sr-only'>Next Review Date From</Label>
-							<Input
-								type='date'
-								name='nextReviewDateFrom'
-								placeholder='dd/mm/yyy'
-								value={savedFilter.nextReviewDateFrom || ''}
-								onChange={e => setSavedFilter(prev => ({...prev, nextReviewDateFrom: e.target.value}))}
-								error={!!errors.nextReviewDateFrom}
-							/>
-							<ErrorMessage error={errors.nextReviewDateFrom} />
-						</Field>
-						<Field className='w-1/2'>
-							<Label className='sr-only'>Next Review Date To</Label>
-							<Input
-								type='date'
-								name='nextReviewDateTo'
-								placeholder='dd/mm/yyy'
-								value={savedFilter.nextReviewDateTo || ''}
-								onChange={e => setSavedFilter(prev => ({...prev, nextReviewDateTo: e.target.value}))}
-								error={!!errors.nextReviewDateTo}
-							/>
-							<ErrorMessage error={errors.nextReviewDateTo} />
-						</Field>
-					</div>
+					<FieldPair
+						firstField={{
+							label: 'Next Review Date From',
+							type: 'date',
+							name: 'nextReviewDateFrom',
+							placeholder: 'dd/mm/yyy',
+							value: savedFilter.nextReviewDateFrom || '',
+							onChange: value => setSavedFilter(prev => ({...prev, nextReviewDateFrom: value})),
+							error: errors.nextReviewDateFrom,
+						}}
+						secondField={{
+							label: 'Next Review Date To',
+							type: 'date',
+							name: 'nextReviewDateTo',
+							placeholder: 'dd/mm/yyy',
+							value: savedFilter.nextReviewDateTo || '',
+							onChange: value => setSavedFilter(prev => ({...prev, nextReviewDateTo: value})),
+							error: errors.nextReviewDateTo,
+						}}
+					/>
 				</FormBlock>
 				<FormBlock title='eFactor Range' className='mb-16'>
-					<div className='flex gap-12'>
-						<Field className='w-1/2'>
-							<Label className='sr-only'>eFactor From</Label>
-							<Input
-								type='number'
-								name='efactorFrom'
-								min={1.3}
-								max={2.5}
-								step={0.01}
-								placeholder='1.3'
-								value={savedFilter.efactorFrom || ''}
-								onChange={e => setSavedFilter(prev => ({...prev, efactorFrom: +e.target.value}))}
-								error={!!errors.efactorFrom}
-							/>
-							<ErrorMessage error={errors.efactorFrom} />
-						</Field>
-						<Field className='w-1/2'>
-							<Label className='sr-only'>eFactor To</Label>
-							<Input
-								type='number'
-								name='efactorTo'
-								min={1.3}
-								max={4}
-								step={0.01}
-								placeholder='2.5'
-								value={savedFilter.efactorTo || ''}
-								onChange={e => setSavedFilter(prev => ({...prev, efactorTo: +e.target.value}))}
-								error={!!errors.efactorTo}
-							/>
-							<ErrorMessage error={errors.efactorTo} />
-						</Field>
-					</div>
+					<FieldPair
+						firstField={{
+							label: 'eFactor From',
+							type: 'number',
+							name: 'efactorFrom',
+							min: 1.3,
+							max: 2.5,
+							step: 0.01,
+							placeholder: '1.3',
+							value: savedFilter.efactorFrom || '',
+							onChange: value => setSavedFilter(prev => ({...prev, efactorFrom: +value})),
+							error: errors.efactorFrom,
+						}}
+						secondField={{
+							label: 'eFactor To',
+							type: 'number',
+							name: 'efactorTo',
+							min: 1.3,
+							max: 4,
+							step: 0.01,
+							placeholder: '2.5',
+							value: savedFilter.efactorTo || '',
+							onChange: value => setSavedFilter(prev => ({...prev, efactorTo: +value})),
+							error: errors.efactorTo,
+						}}
+					/>
 				</FormBlock>
-			</Fieldset>
+			</>
 		</ModalWrapper>
 	)
 }
