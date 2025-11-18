@@ -1,3 +1,4 @@
+'use client'
 import {cn} from '@/lib/utils'
 import {faPlus, faXmark} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'

@@ -70,7 +70,7 @@ export default function FlashcardsCreateModal() {
 					<FormBlock title='Examples'>
 						<Field>
 							<Label className='sr-only'>Examples</Label>
-							<ArrayField name='examples' />
+							<ArrayField name='examples' buttonContent='Add New Example' />
 						</Field>
 					</FormBlock>
 				</FormSection>

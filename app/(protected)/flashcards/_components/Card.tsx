@@ -70,7 +70,7 @@ export default function Card({flashcard}: {flashcard: Prisma.FlashcardGetPayload
 							/>
 							<FontAwesomeIcon
 								icon={faTrashCan}
-								className='text-error-500 transition-colors duration-150 hover:cursor-pointer hover:text-error-400'
+								className='text-error-500 transition-colors duration-150 hover:cursor-pointer hover:text-error-600'
 							/>
 						</div>
 						<Checkbox />

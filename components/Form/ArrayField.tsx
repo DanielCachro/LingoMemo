@@ -7,12 +7,19 @@ import {useRef, useState} from 'react'
 
 interface Props extends TextareaProps {
 	name: string
+	buttonContent?: React.ReactNode
 	className?: string
 	errorInIndexes?: number[]
 	initialInputs?: string[]
 }
 
-export default function Arrayfield({errorInIndexes, className, name, initialInputs = []}: Props) {
+export default function Arrayfield({
+	errorInIndexes,
+	className,
+	name,
+	initialInputs = [],
+	buttonContent = 'Add New',
+}: Props) {
 	const [inputs, setInputs] = useState<string[]>(initialInputs)
 
 	function handleAddInput() {
@@ -45,9 +52,9 @@ export default function Arrayfield({errorInIndexes, className, name, initialInpu
 			<button
 				type='button'
 				onClick={handleAddInput}
-				className='flex w-full cursor-pointer flex-row items-center gap-8 rounded-sm border border-dashed border-primary-400 bg-primary-50 p-16 text-primary-400 transition-colors duration-100 hover:border-primary-500 hover:bg-primary-100 hover:text-primary-500'>
+				className='flex w-full cursor-pointer flex-row items-center gap-8 rounded-sm border border-dashed border-primary-400 bg-primary-50 p-16 text-primary-400 transition-colors duration-100 hover:border-primary-500 hover:bg-primary-100 hover:text-primary-500 dark:border-primary-400 dark:bg-primary-800 dark:text-primary-300 dark:hover:border-primary-300 dark:hover:bg-primary-700 dark:hover:text-primary-200'>
 				<FontAwesomeIcon icon={faPlusCircle} />
-				Add New Example
+				{buttonContent}
 			</button>
 		</div>
 	)
