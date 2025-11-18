@@ -1,6 +1,7 @@
 'use client'
+import ArrayField from '@/components/Form/ArrayField'
 import Input from '@/components/Form/Input'
-import TagField from '@/components/Form/Tagfield'
+import TagField from '@/components/Form/TagField'
 import Textarea from '@/components/Form/Textarea'
 import {Field, Label} from '@headlessui/react'
 import FormBlock from '../_components/FormBlock'
@@ -19,6 +20,7 @@ export default function FlashcardsCreateModal() {
 			note: formData.get('note'),
 			phonetic: formData.get('phonetic'),
 			synonyms: JSON.parse((formData.get('synonyms') as string) || '[]'),
+			examples: JSON.parse((formData.get('examples') as string) || '[]'),
 		}
 
 		console.log(data)
@@ -63,6 +65,12 @@ export default function FlashcardsCreateModal() {
 						<Field>
 							<Label className='sr-only'>Synonyms</Label>
 							<TagField name='synonyms' />
+						</Field>
+					</FormBlock>
+					<FormBlock title='Examples'>
+						<Field>
+							<Label className='sr-only'>Examples</Label>
+							<ArrayField name='examples' />
 						</Field>
 					</FormBlock>
 				</FormSection>
