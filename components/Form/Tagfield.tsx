@@ -4,15 +4,18 @@ import {faPlus, faXmark} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {Input as HeadlessInput, InputProps} from '@headlessui/react'
 import {useState} from 'react'
+import ErrorMessage from './ErrorMessage'
 
 interface Props extends InputProps {
 	name: string
 	className?: string
-	error?: boolean
 	initialTags?: string[]
+	error?: boolean
+	errorMessage?: string
+	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-export default function TagField({error, className, name, initialTags = [], ...props}: Props) {
+export default function TagField({error, errorMessage, className, name, initialTags = [], onChange, ...props}: Props) {
 	const [inputValue, setInputValue] = useState('')
 	const [tags, setTags] = useState<string[]>(Array.from(new Set(initialTags)))
 
@@ -37,36 +40,42 @@ export default function TagField({error, className, name, initialTags = [], ...p
 	}
 
 	return (
-		<div className='space-y-16'>
-			<input type='hidden' name={name} value={JSON.stringify(tags)} />
+		<div>
+			<div className='space-y-16'>
+				<input type='hidden' name={name} value={JSON.stringify(tags)} />
 
-			<div className='flex flex-wrap gap-8'>
-				{tags.map(tag => (
-					<Tag key={tag} tag={tag} onRemove={handleRemoveTag} />
-				))}
+				<div className='flex flex-wrap gap-8'>
+					{tags.map(tag => (
+						<Tag key={tag} tag={tag} onRemove={handleRemoveTag} />
+					))}
+				</div>
+				<div
+					className={cn(
+						'flex space-x-12 rounded-sm border-2 border-background-300 bg-background-50 px-16 py-16 text-base placeholder-background-400 placeholder:font-medium focus-within:border-background-400 focus:outline-none dark:border-background-700 dark:bg-background-900 dark:focus-within:border-background-600',
+						{
+							'border-error-400 dark:border-error-700': error,
+						},
+						className,
+					)}>
+					<HeadlessInput
+						{...props}
+						value={inputValue}
+						onChange={e => {
+							setInputValue(e.target.value)
+							onChange?.(e)
+						}}
+						className='grow focus:outline-none'
+						onKeyDown={handleEnter}
+					/>
+					<button
+						type='button'
+						onClick={handleAddTag}
+						className='h-24 w-24 cursor-pointer rounded-sm bg-primary-100 text-primary-500 hover:text-primary-400 dark:bg-primary-600 dark:text-primary-200 dark:hover:text-primary-100'>
+						<FontAwesomeIcon size='sm' icon={faPlus} />
+					</button>
+				</div>
 			</div>
-			<div
-				className={cn(
-					'flex space-x-12 rounded-sm border-2 border-background-300 bg-background-50 px-16 py-16 text-base placeholder-background-400 placeholder:font-medium focus-within:border-background-400 focus:outline-none dark:border-background-700 dark:bg-background-900 dark:focus-within:border-background-600',
-					{
-						'border-error-400 dark:border-error-700': error,
-					},
-					className,
-				)}>
-				<HeadlessInput
-					{...props}
-					value={inputValue}
-					onChange={e => setInputValue(e.target.value)}
-					className='grow focus:outline-none'
-					onKeyDown={handleEnter}
-				/>
-				<button
-					type='button'
-					onClick={handleAddTag}
-					className='h-24 w-24 cursor-pointer rounded-sm bg-primary-100 text-primary-500 hover:text-primary-400 dark:bg-primary-600 dark:text-primary-200 dark:hover:text-primary-100'>
-					<FontAwesomeIcon size='sm' icon={faPlus} />
-				</button>
-			</div>
+			{errorMessage && <ErrorMessage error={errorMessage} />}
 		</div>
 	)
 }

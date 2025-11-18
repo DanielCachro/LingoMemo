@@ -1,5 +1,6 @@
 import {cn} from '@/lib/utils'
 import {Field, Checkbox as HeadlessCheckbox, Label} from '@headlessui/react'
+import ErrorMessage from './ErrorMessage'
 
 interface Props {
 	checked?: boolean
@@ -9,9 +10,19 @@ interface Props {
 	className?: string
 	label?: string
 	error?: boolean
+	errorMessage?: string
 }
 
-export default function Checkbox({checked, onChange, name, className, label, defaultChecked, error}: Props) {
+export default function Checkbox({
+	checked,
+	onChange,
+	name,
+	className,
+	label,
+	defaultChecked,
+	error,
+	errorMessage,
+}: Props) {
 	const CheckboxToRender = (
 		<HeadlessCheckbox
 			checked={checked}
@@ -34,12 +45,17 @@ export default function Checkbox({checked, onChange, name, className, label, def
 		</HeadlessCheckbox>
 	)
 
-	return label ? (
-		<Field className='flex w-fit flex-row-reverse items-center gap-8'>
-			<Label className='peer text-base font-medium hover:cursor-pointer'>{label}</Label>
-			{CheckboxToRender}
-		</Field>
-	) : (
-		CheckboxToRender
+	return (
+		<div>
+			{label ? (
+				<Field className='flex w-fit flex-row-reverse items-center gap-8'>
+					<Label className='peer text-base font-medium hover:cursor-pointer'>{label}</Label>
+					{CheckboxToRender}
+				</Field>
+			) : (
+				CheckboxToRender
+			)}
+			{errorMessage && <ErrorMessage error={errorMessage} />}
+		</div>
 	)
 }

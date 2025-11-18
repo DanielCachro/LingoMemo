@@ -35,6 +35,7 @@ export default function CreateProfileField(props: Props) {
 					options={options}
 					onFocus={onFocus}
 					error={errorMessage !== undefined}
+					errorMessage={errorMessage}
 				/>
 			)
 		}
@@ -49,6 +50,7 @@ export default function CreateProfileField(props: Props) {
 					onFocus={onFocus}
 					onChange={onChange}
 					error={errorMessage !== undefined}
+					errorMessage={errorMessage}
 				/>
 			)
 		}
@@ -60,7 +62,6 @@ export default function CreateProfileField(props: Props) {
 		<Field className='flex flex-col gap-8'>
 			{label && <Label className='font-bold'>{label}</Label>}
 			{renderField()}
-			{errorMessage && <p className='text-sm text-error-500'>{errorMessage}</p>}
 		</Field>
 	)
 }

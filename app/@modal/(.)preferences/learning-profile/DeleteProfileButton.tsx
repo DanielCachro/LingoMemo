@@ -26,48 +26,50 @@ export default function DeleteProfileButton({profile, onDelete, ...props}: Props
 					mobileScreenCoverage='2/3'
 					closingType='dialogClose'
 					onClose={() => setShowDialog(false)}>
-					<div className='space-y-16 p-24'>
-						<p>You are about to delete profile</p>
-						<div className='rounded-sm border-2 border-background-200 p-16 dark:border-background-800'>
-							<ProfileDetails profile={profile} />
+					{() => (
+						<div className='space-y-16 p-24'>
+							<p>You are about to delete profile</p>
+							<div className='rounded-sm border-2 border-background-200 p-16 dark:border-background-800'>
+								<ProfileDetails profile={profile} />
+							</div>
+							<p>Are you sure?</p>
+							<div className='space-x-16'>
+								<SecondaryButton
+									className='w-128'
+									onKeyDown={(event: KeyboardEvent<HTMLButtonElement>) => {
+										if (event.key === 'Enter') {
+											event.stopPropagation()
+										}
+									}}
+									onClick={async () => {
+										try {
+											setIsLoading(true)
+											await onDelete(profile.id)
+											setShowDialog(false)
+										} catch (error) {
+											// TODO: Show toast
+											console.error('Error deleting profile:', error)
+										} finally {
+											setIsLoading(false)
+										}
+									}}
+									disabled={isLoading}>
+									{isLoading ? <span className='animate-pulse'>Deleting...</span> : 'Yes, Delete'}
+								</SecondaryButton>
+								<PrimaryButton
+									className='w-128'
+									onKeyDown={(event: KeyboardEvent<HTMLButtonElement>) => {
+										if (event.key === 'Enter') {
+											event.stopPropagation()
+										}
+									}}
+									onClick={() => setShowDialog(false)}
+									disabled={isLoading}>
+									No
+								</PrimaryButton>
+							</div>
 						</div>
-						<p>Are you sure?</p>
-						<div className='space-x-16'>
-							<SecondaryButton
-								className='w-128'
-								onKeyDown={(event: KeyboardEvent<HTMLButtonElement>) => {
-									if (event.key === 'Enter') {
-										event.stopPropagation()
-									}
-								}}
-								onClick={async () => {
-									try {
-										setIsLoading(true)
-										await onDelete(profile.id)
-										setShowDialog(false)
-									} catch (error) {
-										// TODO: Show toast
-										console.error('Error deleting profile:', error)
-									} finally {
-										setIsLoading(false)
-									}
-								}}
-								disabled={isLoading}>
-								{isLoading ? <span className='animate-pulse'>Deleting...</span> : 'Yes, Delete'}
-							</SecondaryButton>
-							<PrimaryButton
-								className='w-128'
-								onKeyDown={(event: KeyboardEvent<HTMLButtonElement>) => {
-									if (event.key === 'Enter') {
-										event.stopPropagation()
-									}
-								}}
-								onClick={() => setShowDialog(false)}
-								disabled={isLoading}>
-								No
-							</PrimaryButton>
-						</div>
-					</div>
+					)}
 				</Modal>
 			)}
 			<button

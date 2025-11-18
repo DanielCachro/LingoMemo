@@ -5,8 +5,9 @@ import {Field as HeadlessField, InputProps, Label} from '@headlessui/react'
 type FieldConfig = {
 	label: string
 	className?: string
-	error?: string[]
 	onChange: (value: string) => void
+	error?: boolean
+	errorMessage?: string
 } & Omit<InputProps, 'onChange' | 'error' | 'label' | 'className'>
 
 type FieldPairProps = {
@@ -23,17 +24,11 @@ export default function FieldPair({firstField, secondField}: FieldPairProps) {
 	)
 }
 
-function ErrorMessage({error}: {error?: string[]}) {
-	if (!error?.length) return null
-	return <p className='mt-8 text-sm text-error-500'>{error[0]}</p>
-}
-
-function Field({label, error, onChange, ...rest}: FieldConfig) {
+function Field({label, error, errorMessage, onChange, ...rest}: FieldConfig) {
 	return (
 		<HeadlessField className='w-full [@media(min-width:410px)]:w-1/2'>
 			<Label className='sr-only'>{label}</Label>
-			<Input {...rest} onChange={e => onChange(e.target.value)} error={!!error} />
-			{error && <ErrorMessage error={error} />}
+			<Input {...rest} onChange={e => onChange(e.target.value)} error={error} errorMessage={errorMessage} />
 		</HeadlessField>
 	)
 }
