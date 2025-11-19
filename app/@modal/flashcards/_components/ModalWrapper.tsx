@@ -8,7 +8,7 @@ const Modal = dynamic(() => import('../../_components/Modal'), {ssr: false})
 
 type ModalWrapperBaseProps = {
 	title: string
-	subtitle?: string
+	subtitleContent?: ReactNode
 	buttonContent?: ReactNode
 	onReset?: () => void
 	children: ReactNode
@@ -27,7 +27,7 @@ type ModalWrapperDivProps = ModalWrapperBaseProps & {
 type ModalWrapperProps = ModalWrapperFormProps | ModalWrapperDivProps
 
 export default function ModalWrapper(props: ModalWrapperProps) {
-	const {title, subtitle, buttonContent, onReset, children} = props
+	const {title, subtitleContent, buttonContent, onReset, children} = props
 
 	return (
 		<Modal className='overflow-hidden' header='none' heading={title} mobileScreenCoverage='2/3'>
@@ -42,7 +42,7 @@ export default function ModalWrapper(props: ModalWrapperProps) {
 						<div className='flex justify-between sm:mt-16'>
 							<div>
 								<h2 className='text-xl font-bold'>{title}</h2>
-								{subtitle && <p>{subtitle}</p>}
+								{subtitleContent}
 							</div>
 							{onReset && (
 								<button

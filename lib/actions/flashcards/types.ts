@@ -1,0 +1,16 @@
+import {z} from 'zod'
+import type {flashcardFormSchema} from './schema'
+
+export type FlashcardFormValues = z.infer<typeof flashcardFormSchema>
+
+export type FlashcardFormErrors = {
+	[K in keyof FlashcardFormValues]?: NonNullable<FlashcardFormValues[K]> extends Array<unknown>
+		? {index: number; message?: string}[]
+		: string
+}
+
+export type FlashcardActionState = {
+	status: 'idle' | 'success' | 'error'
+	message?: string // Message for toast; TODO: implement toast notification
+	errors: FlashcardFormErrors
+}
