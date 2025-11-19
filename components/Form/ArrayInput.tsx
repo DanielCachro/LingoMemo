@@ -10,21 +10,23 @@ interface Props extends TextareaProps {
 	name: string
 	buttonContent?: React.ReactNode
 	className?: string
+	initialInputs?: string[]
+	onInputChange?: (index: number) => void
+	onInputRemove?: (index: number) => void
 	errorInInput?: {
 		index: number
 		message?: string
 	}[]
-	initialInputs?: string[]
-	onInputChange?: (index: number) => void
 }
 
 export default function ArrayInput({
-	errorInInput,
 	className,
 	name,
 	initialInputs = [],
 	buttonContent = 'Add New',
 	onInputChange,
+	onInputRemove,
+	errorInInput,
 }: Props) {
 	const [inputs, setInputs] = useState<string[]>(initialInputs)
 	const [errors, setErrors] = useState(errorInInput ?? [])
@@ -45,6 +47,7 @@ export default function ArrayInput({
 
 		setInputs(updatedInputs)
 		setErrors(updatedErrors)
+		onInputRemove?.(index)
 	}
 
 	useEffect(() => {
@@ -53,7 +56,7 @@ export default function ArrayInput({
 
 	return (
 		<div className='space-y-12'>
-			<input type='hidden' name={name} value={JSON.stringify(inputs.filter(Boolean))} />
+			<input type='hidden' name={name} value={JSON.stringify(inputs)} />
 			{inputs.map((value, index) => {
 				const inputError = errors.find(error => error.index === index)
 				return (
