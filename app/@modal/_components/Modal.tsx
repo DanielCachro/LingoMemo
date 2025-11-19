@@ -4,7 +4,7 @@ import {useMediaQuery} from '@/hooks/useMediaQuery'
 import {cn} from '@/lib/utils'
 import {AnimatePresence, motion, useAnimationControls, useDragControls} from 'motion/react'
 import {usePathname} from 'next/navigation'
-import {useEffect, useRef, useState} from 'react'
+import {MouseEvent, useEffect, useRef, useState} from 'react'
 import {createPortal} from 'react-dom'
 
 interface ModalProps {
@@ -34,6 +34,7 @@ export default function Modal({
 	}
 	const CLOSED = () => window.innerHeight * 1.5
 	const dialogRef = useRef<HTMLDialogElement>(null)
+	const mouseDownTarget = useRef<EventTarget | null>(null)
 	const [isOpen, setIsOpen] = useState(true)
 	const [modalNavCount, setModalNavCount] = useState(process.env.NODE_ENV === 'development' ? -1 : 0)
 	const pathname = usePathname()
@@ -47,6 +48,13 @@ export default function Modal({
 
 	function handleClose() {
 		setIsOpen(false)
+	}
+
+	function handleBackdropClick(event: MouseEvent<HTMLDialogElement>) {
+		if (event.target === event.currentTarget && mouseDownTarget.current === event.currentTarget) {
+			handleClose()
+		}
+		mouseDownTarget.current = null
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -89,7 +97,10 @@ export default function Modal({
 					ref={dialogRef}
 					aria-label={heading}
 					onClose={handleClose}
-					onClick={handleClose}
+					onMouseDown={event => {
+						mouseDownTarget.current = event.target
+					}}
+					onMouseUp={handleBackdropClick}
 					onDragEnd={onDragEnd}
 					initial={animations.initial}
 					animate={animationControls}
