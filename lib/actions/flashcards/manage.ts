@@ -1,10 +1,9 @@
 'use server'
 import {prisma} from '@/prisma/client'
-import {revalidatePath} from 'next/cache'
 import {z} from 'zod'
 import {getCurrentUser} from '../user'
 import {flashcardFormSchema} from './schema'
-import {FlashcardActionState, FlashcardFormErrors} from './types'
+import {FlashcardActionState, FlashcardFormErrors, FlashcardFormValues} from './types'
 
 function formatFlashcardErrors(error: z.ZodError): FlashcardFormErrors {
 	const errors: FlashcardFormErrors = {}
@@ -24,15 +23,9 @@ function formatFlashcardErrors(error: z.ZodError): FlashcardFormErrors {
 	return errors
 }
 
-export async function createFlashcard(_: FlashcardActionState, formData: FormData): Promise<FlashcardActionState> {
-	const user = await getCurrentUser()
-	if (!user) throw new Error('User not authenticated')
+type ValidationResult = {success: true; data: FlashcardFormValues} | {success: false; errorState: FlashcardActionState}
 
-	const activeLearningProfile = user.activeLearningProfile
-	const activeLearningProfileId = user.activeLearningProfileId
-
-	if (!activeLearningProfile || !activeLearningProfileId) throw new Error('No active learning profile found.')
-
+function parseAndValidateFlashcard(formData: FormData): ValidationResult {
 	const data = {
 		question: formData.get('question'),
 		answer: formData.get('answer'),
@@ -42,35 +35,55 @@ export async function createFlashcard(_: FlashcardActionState, formData: FormDat
 		examples: JSON.parse((formData.get('examples') as string) || '[]'),
 	}
 
-	const parsedData = flashcardFormSchema.safeParse(data)
-	if (!parsedData.success) {
-		const errors = formatFlashcardErrors(parsedData.error)
+	const parsed = flashcardFormSchema.safeParse(data)
 
+	if (!parsed.success) {
+		const errors = formatFlashcardErrors(parsed.error)
 		return {
-			status: 'error',
-			message: 'Validation failed. Please correct the errors and try again.',
-			errors: {
-				question: errors.question,
-				answer: errors.answer,
-				note: errors.note,
-				phonetic: errors.phonetic,
-				synonyms: errors.synonyms,
-				examples: errors.examples,
-			},
+			success: false,
+			errorState: {
+				status: 'error',
+				message: 'Validation failed. Please correct the errors and try again.',
+				errors: {
+					question: errors.question,
+					answer: errors.answer,
+					note: errors.note,
+					phonetic: errors.phonetic,
+					synonyms: errors.synonyms,
+					examples: errors.examples,
+				},
+			} as FlashcardActionState,
 		}
+	}
+
+	return {success: true, data: parsed.data}
+}
+
+export async function createFlashcard(_: FlashcardActionState, formData: FormData): Promise<FlashcardActionState> {
+	const user = await getCurrentUser()
+	if (!user) throw new Error('User not authenticated')
+
+	const activeLearningProfile = user.activeLearningProfile
+	const activeLearningProfileId = user.activeLearningProfileId
+
+	if (!activeLearningProfile || !activeLearningProfileId) throw new Error('No active learning profile found.')
+
+	const validation = parseAndValidateFlashcard(formData)
+	if (!validation.success) {
+		return validation.errorState
 	}
 
 	try {
 		await prisma.flashcard.create({
 			data: {
-				question: parsedData.data.question,
-				note: parsedData.data.note || null,
-				synonyms: parsedData.data.synonyms?.filter(Boolean),
-				examples: parsedData.data.examples?.filter(Boolean),
+				question: validation.data.question,
+				note: validation.data.note || null,
+				synonyms: validation.data.synonyms?.filter(Boolean),
+				examples: validation.data.examples?.filter(Boolean),
 				answer: {
 					create: {
-						text: parsedData.data.answer,
-						phonetic: parsedData.data.phonetic || null,
+						text: validation.data.answer,
+						phonetic: validation.data.phonetic || null,
 						isPersonal: true,
 					},
 				},
@@ -82,7 +95,6 @@ export async function createFlashcard(_: FlashcardActionState, formData: FormDat
 			},
 		})
 
-		revalidatePath('/flashcards')
 		return {
 			status: 'success',
 			message: 'Flashcard created successfully.',
@@ -102,5 +114,43 @@ export async function createFlashcard(_: FlashcardActionState, formData: FormDat
 			message: 'An unexpected error occurred while creating the flashcard.',
 			errors: {},
 		}
+	}
+}
+
+export async function updateFlashcard(
+	flashcardId: number,
+	_: FlashcardActionState,
+	formData: FormData,
+): Promise<FlashcardActionState> {
+	const user = await getCurrentUser()
+	if (!user || !user.activeLearningProfileId) throw new Error('User or profile not found')
+
+	const validation = parseAndValidateFlashcard(formData)
+	if (!validation.success) return validation.errorState
+
+	try {
+		await prisma.flashcard.update({
+			where: {
+				id: flashcardId,
+				learningProfileId: user.activeLearningProfileId,
+			},
+			data: {
+				question: validation.data.question,
+				note: validation.data.note || null,
+				synonyms: validation.data.synonyms?.filter(Boolean),
+				examples: validation.data.examples?.filter(Boolean),
+				answer: {
+					update: {
+						text: validation.data.answer,
+						phonetic: validation.data.phonetic || null,
+					},
+				},
+			},
+		})
+
+		return {status: 'success', message: 'Flashcard updated successfully.', errors: {}}
+	} catch (error) {
+		console.error('Database Error:', error)
+		return {status: 'error', message: 'Failed to update flashcard.', errors: {}}
 	}
 }

@@ -8,6 +8,7 @@ import {Prisma} from '@prisma/client'
 import {DateTime} from 'luxon'
 import {AnimatePresence, motion, stagger, Variants} from 'motion/react'
 import Link from 'next/link'
+import {useRouter} from 'next/navigation'
 import {useState} from 'react'
 
 function DetailsBlock({title, children}: {title: string; children: React.ReactNode}) {
@@ -23,6 +24,7 @@ function DetailsBlock({title, children}: {title: string; children: React.ReactNo
 
 export default function Card({flashcard}: {flashcard: Prisma.FlashcardGetPayload<{include: {answer: true}}>}) {
 	const [showDetails, setShowDetails] = useState(false)
+	const router = useRouter()
 
 	const detailsVariants: Variants = {
 		hidden: {
@@ -64,14 +66,21 @@ export default function Card({flashcard}: {flashcard: Prisma.FlashcardGetPayload
 					</div>
 					<div className='flex items-center gap-8'>
 						<div className='space-x-4'>
-							<FontAwesomeIcon
-								icon={faPenToSquare}
-								className='text-background-600 transition-colors duration-150 hover:cursor-pointer hover:text-background-500 dark:text-background-300 dark:hover:text-background-200'
-							/>
-							<FontAwesomeIcon
-								icon={faTrashCan}
-								className='text-error-500 transition-colors duration-150 hover:cursor-pointer hover:text-error-600'
-							/>
+							<button
+								onClick={() => {
+									router.push(`/flashcards/edit/${flashcard.id}`)
+								}}>
+								<FontAwesomeIcon
+									icon={faPenToSquare}
+									className='text-background-600 transition-colors duration-150 hover:cursor-pointer hover:text-background-500 dark:text-background-300 dark:hover:text-background-200'
+								/>
+							</button>
+							<button>
+								<FontAwesomeIcon
+									icon={faTrashCan}
+									className='text-error-500 transition-colors duration-150 hover:cursor-pointer hover:text-error-600'
+								/>
+							</button>
 						</div>
 						<Checkbox />
 					</div>
