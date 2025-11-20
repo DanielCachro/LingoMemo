@@ -7,6 +7,11 @@ import {usePathname} from 'next/navigation'
 import {MouseEvent, useEffect, useRef, useState} from 'react'
 import {createPortal} from 'react-dom'
 
+export interface ModalDisableAnimations {
+	disableEntryAnimation?: boolean
+	disableExitAnimation?: boolean
+}
+
 interface ModalProps {
 	header: 'mobile' | 'desktop' | 'both' | 'none'
 	heading: string
@@ -15,6 +20,7 @@ interface ModalProps {
 	closingType?: 'navigateBack' | 'dialogClose'
 	onClose?: () => void
 	className?: string
+	disableAnimations?: ModalDisableAnimations
 }
 
 export default function Modal({
@@ -25,6 +31,7 @@ export default function Modal({
 	closingType = 'navigateBack',
 	onClose,
 	className,
+	disableAnimations,
 }: ModalProps) {
 	const OPEN = () => {
 		if (mobileScreenCoverage === 'full') return 0
@@ -41,10 +48,20 @@ export default function Modal({
 	const isDesktop = useMediaQuery('(min-width: 40rem)')
 	const animationControls = useAnimationControls()
 	const dragControls = useDragControls()
+	const shouldAnimateEntry = !disableAnimations?.disableEntryAnimation
+	const shouldAnimateExit = !disableAnimations?.disableExitAnimation
 
 	const animations = isDesktop
-		? {initial: {scale: 0.95, opacity: 0}, animate: {scale: 1, opacity: 1}, exit: {scale: 0.95, opacity: 0}}
-		: {initial: {y: CLOSED()}, animate: {y: OPEN()}, exit: {y: CLOSED()}}
+		? {
+				initial: shouldAnimateEntry ? {scale: 0.95, opacity: 0} : {scale: 1, opacity: 1},
+				animate: {scale: 1, opacity: 1},
+				exit: shouldAnimateExit ? {scale: 0.95, opacity: 0} : {scale: 1, opacity: 1, transition: {duration: 0}},
+			}
+		: {
+				initial: shouldAnimateEntry ? {y: CLOSED()} : {y: OPEN()},
+				animate: {y: OPEN()},
+				exit: shouldAnimateExit ? {y: CLOSED()} : {y: OPEN(), transition: {duration: 0}},
+			}
 
 	function handleClose() {
 		setIsOpen(false)

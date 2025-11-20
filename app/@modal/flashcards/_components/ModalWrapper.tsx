@@ -3,6 +3,7 @@ import PrimaryButton from '@/components/PrimaryButton'
 import {Fieldset, Legend} from '@headlessui/react'
 import dynamic from 'next/dynamic'
 import {FormEvent, ReactNode} from 'react'
+import {ModalDisableAnimations} from '../../_components/Modal'
 
 const Modal = dynamic(() => import('../../_components/Modal'), {ssr: false})
 
@@ -12,6 +13,7 @@ type ModalWrapperBaseProps = {
 	buttonContent?: ReactNode
 	onReset?: () => void
 	children: ReactNode
+	disableAnimations?: ModalDisableAnimations
 }
 
 type ModalWrapperFormProps = ModalWrapperBaseProps & {
@@ -27,10 +29,15 @@ type ModalWrapperDivProps = ModalWrapperBaseProps & {
 type ModalWrapperProps = ModalWrapperFormProps | ModalWrapperDivProps
 
 export default function ModalWrapper(props: ModalWrapperProps) {
-	const {title, subtitleContent, buttonContent, onReset, children} = props
+	const {title, subtitleContent, buttonContent, onReset, children, disableAnimations} = props
 
 	return (
-		<Modal className='overflow-hidden' header='none' heading={title} mobileScreenCoverage='9/10'>
+		<Modal
+			className='overflow-hidden'
+			header='none'
+			heading={title}
+			mobileScreenCoverage='9/10'
+			disableAnimations={disableAnimations}>
 			{closeModal => {
 				const handleSubmit = (event?: FormEvent<HTMLFormElement>) => {
 					if (props.useForm && event) props.onSubmit(event, closeModal)
