@@ -5,6 +5,7 @@ import TagInput from '@/components/Form/TagInput'
 import Textarea from '@/components/Form/Textarea'
 import {initialFlashcardState} from '@/lib/actions/flashcards/initial'
 import {FlashcardFormValues} from '@/lib/actions/flashcards/types'
+import {cn} from '@/lib/utils'
 import {Field, Label} from '@headlessui/react'
 import {useQueryClient} from '@tanstack/react-query'
 import {useRouter} from 'next/navigation'
@@ -205,6 +206,81 @@ export default function CreateEditModal({
 					</FormBlock>
 				</FormSection>
 			</>
+		</ModalWrapper>
+	)
+}
+
+function SkeletonTextLine() {
+	return (
+		<div className='flex h-24 items-center'>
+			<div className='h-16 w-192 rounded-full bg-skeleton' />
+		</div>
+	)
+}
+
+function SkeletonField({type = 'input'}: {type?: 'input' | 'textarea'}) {
+	return (
+		<div
+			className={cn('rounded-sm bg-skeleton', {
+				'h-[3.75rem]': type === 'input',
+				'h-[5.25rem]': type === 'textarea',
+			})}
+		/>
+	)
+}
+
+export function Skeleton({
+	title,
+	subtitle,
+	buttonContent,
+	disableAnimations,
+}: {
+	title: string
+	subtitle: string
+	buttonContent: React.ReactNode
+	disableAnimations?: ModalDisableAnimations
+}) {
+	return (
+		<ModalWrapper
+			title={title}
+			subtitleContent={subtitle}
+			buttonContent={buttonContent}
+			useForm={false}
+			onSubmit={() => {}}
+			disableAnimations={disableAnimations}>
+			<div className='mt-12 animate-pulse space-y-24'>
+				<div className='space-y-16'>
+					<SkeletonTextLine />
+					<div className='space-y-12'>
+						<SkeletonTextLine />
+						<SkeletonField />
+					</div>
+					<div className='space-y-12'>
+						<SkeletonTextLine />
+						<SkeletonField />
+					</div>
+					<div className='space-y-12'>
+						<SkeletonTextLine />
+						<SkeletonField type='textarea' />
+					</div>
+				</div>
+				<div className='space-y-16'>
+					<SkeletonTextLine />
+					<div className='space-y-12'>
+						<SkeletonTextLine />
+						<SkeletonField />
+					</div>
+					<div className='space-y-12'>
+						<SkeletonTextLine />
+						<SkeletonField />
+					</div>
+					<div className='space-y-12'>
+						<SkeletonTextLine />
+						<SkeletonField />
+						<SkeletonField />
+					</div>
+				</div>
+			</div>
 		</ModalWrapper>
 	)
 }
