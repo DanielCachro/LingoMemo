@@ -11,7 +11,7 @@ interface ModalProps {
 	header: 'mobile' | 'desktop' | 'both' | 'none'
 	heading: string
 	children: (closeModal: () => void) => React.ReactNode
-	mobileScreenCoverage?: 'full' | '1/2' | '2/3' | '1/3'
+	mobileScreenCoverage?: 'full' | '9/10' | '3/4' | '2/3' | '1/2' | '1/3'
 	closingType?: 'navigateBack' | 'dialogClose'
 	onClose?: () => void
 	className?: string

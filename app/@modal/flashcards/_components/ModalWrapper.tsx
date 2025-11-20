@@ -30,7 +30,7 @@ export default function ModalWrapper(props: ModalWrapperProps) {
 	const {title, subtitleContent, buttonContent, onReset, children} = props
 
 	return (
-		<Modal className='overflow-hidden' header='none' heading={title} mobileScreenCoverage='2/3'>
+		<Modal className='overflow-hidden' header='none' heading={title} mobileScreenCoverage='9/10'>
 			{closeModal => {
 				const handleSubmit = (event?: FormEvent<HTMLFormElement>) => {
 					if (props.useForm && event) props.onSubmit(event, closeModal)
