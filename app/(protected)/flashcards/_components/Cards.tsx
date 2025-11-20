@@ -48,7 +48,7 @@ export default function Cards() {
 		refetchOnReconnect: false,
 		refetchOnWindowFocus: false,
 		initialPageParam: 0,
-		getNextPageParam: (lastPage, pages) => lastPage.cursor,
+		getNextPageParam: (lastPage, _) => lastPage.cursor,
 	})
 
 	function handleSearch(event: React.FormEvent<HTMLInputElement>) {
@@ -83,6 +83,9 @@ export default function Cards() {
 					className='grow [&_button]:pl-12 [&_input]:py-12 [&_input]:pr-12'
 					placeholder='Search flashcards...'
 					onChange={handleSearch}
+					onSubmit={e => {
+						e.preventDefault()
+					}}
 				/>
 				<SearchOptionsLinkButton
 					href='/flashcards/sort'
