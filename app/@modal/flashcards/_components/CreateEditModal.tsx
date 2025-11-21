@@ -4,6 +4,7 @@ import Input from '@/components/Form/Input'
 import TagInput from '@/components/Form/TagInput'
 import Textarea from '@/components/Form/Textarea'
 import {initialFlashcardState} from '@/lib/actions/flashcards/initial'
+import {lengths as inputsLengths} from '@/lib/actions/flashcards/schema'
 import {FlashcardFormValues} from '@/lib/actions/flashcards/types'
 import {cn} from '@/lib/utils'
 import {Field, Label} from '@headlessui/react'
@@ -84,6 +85,7 @@ export default function CreateEditModal({
 								type='text'
 								name='answer'
 								placeholder='Answer for the question'
+								maxLength={inputsLengths.answer.max}
 								defaultValue={initialValues?.answer}
 								error={!!formErrors.answer}
 								errorMessage={formErrors.answer}
@@ -103,6 +105,7 @@ export default function CreateEditModal({
 								type='text'
 								name='question'
 								placeholder='Question on the front side'
+								maxLength={inputsLengths.question.max}
 								defaultValue={initialValues?.question}
 								error={!!formErrors.question}
 								errorMessage={formErrors.question}
@@ -122,6 +125,7 @@ export default function CreateEditModal({
 								className='max-h-192'
 								name='note'
 								placeholder='Any additional notes or context'
+								maxLength={inputsLengths.note.max}
 								defaultValue={initialValues?.note}
 								error={!!formErrors.note}
 								errorMessage={formErrors.note}
@@ -143,6 +147,7 @@ export default function CreateEditModal({
 								type='text'
 								name='phonetic'
 								placeholder='e.g., /həˈləʊ/'
+								maxLength={inputsLengths.phonetic.max}
 								defaultValue={initialValues?.phonetic}
 								error={!!formErrors.phonetic}
 								errorMessage={formErrors.phonetic}
@@ -160,6 +165,7 @@ export default function CreateEditModal({
 							<Label className='sr-only'>Synonyms</Label>
 							<TagInput
 								name='synonyms'
+								maxLength={inputsLengths.synonym.max}
 								initialTags={initialValues?.synonyms}
 								errorInTag={formErrors.synonyms}
 								onTagRemove={tagIndex => {
@@ -182,6 +188,7 @@ export default function CreateEditModal({
 							<ArrayInput
 								name='examples'
 								buttonContent='Add New Example'
+								maxLength={inputsLengths.example.max}
 								initialInputs={initialValues?.examples}
 								errorInInput={formErrors.examples}
 								onInputChange={inputIndex => {
