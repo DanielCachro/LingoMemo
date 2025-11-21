@@ -17,8 +17,7 @@ export default function FlashcardsSortModal() {
 	const [items, setItems] = useState(savedSort || initialFlashcardsSortOrder)
 
 	function handleSubmit(closeModal: () => void) {
-		const orderChanged =
-			!_.isEqual(items, initialFlashcardsSortOrder)
+		const orderChanged = !_.isEqual(items, initialFlashcardsSortOrder)
 		if (orderChanged) {
 			setData<FlashcardsSort>('flashcardsSort', items)
 		} else {
@@ -47,6 +46,7 @@ export default function FlashcardsSortModal() {
 		<ModalWrapper
 			title='Sort by'
 			buttonContent='Change Sort Order'
+			mobileScreenCoverage='2/3'
 			onReset={handleReset}
 			onSubmit={handleSubmit}
 			useForm={false}>

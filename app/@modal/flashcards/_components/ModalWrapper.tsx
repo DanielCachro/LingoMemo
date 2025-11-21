@@ -7,10 +7,13 @@ import {ModalDisableAnimations} from '../../_components/Modal'
 
 const Modal = dynamic(() => import('../../_components/Modal'), {ssr: false})
 
+type MobileScreenCoverage = React.ComponentProps<typeof Modal>['mobileScreenCoverage']
+
 type ModalWrapperBaseProps = {
 	title: string
 	subtitleContent?: ReactNode
 	buttonContent?: ReactNode
+	mobileScreenCoverage?: MobileScreenCoverage
 	onReset?: () => void
 	children: ReactNode
 	disableAnimations?: ModalDisableAnimations
@@ -29,14 +32,22 @@ type ModalWrapperDivProps = ModalWrapperBaseProps & {
 type ModalWrapperProps = ModalWrapperFormProps | ModalWrapperDivProps
 
 export default function ModalWrapper(props: ModalWrapperProps) {
-	const {title, subtitleContent, buttonContent, onReset, children, disableAnimations} = props
+	const {
+		title,
+		subtitleContent,
+		buttonContent,
+		mobileScreenCoverage = '9/10',
+		onReset,
+		children,
+		disableAnimations,
+	} = props
 
 	return (
 		<Modal
 			className='overflow-hidden'
 			header='none'
 			heading={title}
-			mobileScreenCoverage='9/10'
+			mobileScreenCoverage={mobileScreenCoverage}
 			disableAnimations={disableAnimations}>
 			{closeModal => {
 				const handleSubmit = (event?: FormEvent<HTMLFormElement>) => {
@@ -61,7 +72,9 @@ export default function ModalWrapper(props: ModalWrapperProps) {
 							)}
 						</div>
 
-						<div className='-mr-16 flex min-h-0 flex-col space-y-24 overflow-y-auto pr-16'>{children}</div>
+						<div className='-mr-16 flex h-full min-h-0 flex-col justify-start space-y-24 overflow-y-auto pr-16'>
+							{children}
+						</div>
 
 						<PrimaryButton
 							type={props.useForm ? 'submit' : 'button'}
