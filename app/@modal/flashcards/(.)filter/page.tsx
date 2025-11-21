@@ -61,7 +61,7 @@ export default function FlashcardsFilterModal() {
 						checked={!!savedFilter.hasNote}
 						onChange={checked => setSavedFilter(prev => ({...prev, hasNote: checked}))}
 						error={!!errors.hasNote}
-						errorMessage={errors.hasNote[0]}
+						errorMessage={errors.hasNote?.[0]}
 					/>
 				</FormBlock>
 				<FormBlock title='Created At Date'>
@@ -74,7 +74,7 @@ export default function FlashcardsFilterModal() {
 							value: savedFilter.createdAtFrom || '',
 							onChange: value => setSavedFilter(prev => ({...prev, createdAtFrom: value})),
 							error: !!errors.createdAtFrom,
-							errorMessage: errors.createdAtFrom[0],
+							errorMessage: errors.createdAtFrom?.[0],
 						}}
 						secondField={{
 							label: 'Created At To',
@@ -84,7 +84,7 @@ export default function FlashcardsFilterModal() {
 							value: savedFilter.createdAtTo || '',
 							onChange: value => setSavedFilter(prev => ({...prev, createdAtTo: value})),
 							error: !!errors.createdAtTo,
-							errorMessage: errors.createdAtTo[0],
+							errorMessage: errors.createdAtTo?.[0],
 						}}
 					/>
 				</FormBlock>
@@ -98,7 +98,7 @@ export default function FlashcardsFilterModal() {
 							value: savedFilter.nextReviewDateFrom || '',
 							onChange: value => setSavedFilter(prev => ({...prev, nextReviewDateFrom: value})),
 							error: !!errors.nextReviewDateFrom,
-							errorMessage: errors.nextReviewDateFrom[0],
+							errorMessage: errors.nextReviewDateFrom?.[0],
 						}}
 						secondField={{
 							label: 'Next Review Date To',
@@ -108,7 +108,7 @@ export default function FlashcardsFilterModal() {
 							value: savedFilter.nextReviewDateTo || '',
 							onChange: value => setSavedFilter(prev => ({...prev, nextReviewDateTo: value})),
 							error: !!errors.nextReviewDateTo,
-							errorMessage: errors.nextReviewDateTo[0],
+							errorMessage: errors.nextReviewDateTo?.[0],
 						}}
 					/>
 				</FormBlock>
@@ -125,7 +125,7 @@ export default function FlashcardsFilterModal() {
 							value: savedFilter.efactorFrom || '',
 							onChange: value => setSavedFilter(prev => ({...prev, efactorFrom: +value})),
 							error: !!errors.efactorFrom,
-							errorMessage: errors.efactorFrom[0],
+							errorMessage: errors.efactorFrom?.[0],
 						}}
 						secondField={{
 							label: 'eFactor To',
@@ -138,7 +138,7 @@ export default function FlashcardsFilterModal() {
 							value: savedFilter.efactorTo || '',
 							onChange: value => setSavedFilter(prev => ({...prev, efactorTo: +value})),
 							error: !!errors.efactorTo,
-							errorMessage: errors.efactorTo[0],
+							errorMessage: errors.efactorTo?.[0],
 						}}
 					/>
 				</FormBlock>
