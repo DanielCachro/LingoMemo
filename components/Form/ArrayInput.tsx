@@ -27,6 +27,7 @@ export default function ArrayInput({
 	onInputChange,
 	onInputRemove,
 	errorInInput,
+	...props
 }: Props) {
 	const [inputs, setInputs] = useState<string[]>(initialInputs)
 	const [errors, setErrors] = useState(errorInInput ?? [])
@@ -61,6 +62,7 @@ export default function ArrayInput({
 				const inputError = errors.find(error => error.index === index)
 				return (
 					<InputItem
+						{...props}
 						key={index}
 						value={value}
 						className={className}
