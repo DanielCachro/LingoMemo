@@ -4,7 +4,7 @@ import {useMediaQuery} from '@/hooks/useMediaQuery'
 import {cn} from '@/lib/utils'
 import {AnimatePresence, motion, useAnimationControls, useDragControls} from 'motion/react'
 import {usePathname} from 'next/navigation'
-import {MouseEvent, useEffect, useRef, useState} from 'react'
+import {MouseEvent, ReactNode, useEffect, useRef, useState} from 'react'
 import {createPortal} from 'react-dom'
 
 export interface ModalDisableAnimations {
@@ -15,7 +15,7 @@ export interface ModalDisableAnimations {
 interface ModalProps {
 	header: 'mobile' | 'desktop' | 'both' | 'none'
 	heading: string
-	children: (closeModal: () => void) => React.ReactNode
+	children: ReactNode | ((closeModal: () => void) => ReactNode)
 	mobileScreenCoverage?: 'full' | '9/10' | '3/4' | '2/3' | '1/2' | '1/3'
 	closingType?: 'navigateBack' | 'dialogClose'
 	onClose?: () => void
@@ -156,7 +156,7 @@ export default function Modal({
 								</div>
 							)}
 						</div>
-						<div className='overflow-y-auto'>{children(handleClose)}</div>
+						<div className='overflow-y-auto'>{typeof children === 'function' ? children(handleClose) : children}</div>
 					</div>
 				</motion.dialog>
 			)}
