@@ -4,9 +4,9 @@ import CreateEditModal from '../_components/CreateEditModal'
 export default function FlashcardsCreateModal() {
 	return (
 		<CreateEditModal
-			title='Edit Flashcard'
-			subtitle='Make changes to your flashcard below.'
-			buttonContent='Edit Flashcard'
+			title='Create Flashcard'
+			subtitle='Fill in the details to create a flashcard.'
+			buttonContent='Create Flashcard'
 			pendingButtonText='Creating...'
 			action={createFlashcard}
 		/>

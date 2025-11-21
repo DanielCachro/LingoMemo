@@ -57,32 +57,36 @@ export default function Card({flashcard}: {flashcard: Prisma.FlashcardGetPayload
 				<div className='flex justify-between'>
 					<div className='flex gap-12'>
 						<p className='font-bold'>{flashcard.answer.text}</p>
-						<div className='space-x-4'>
-							{flashcard.answer.audio.map((audio, index) => (
-								<AudioIcon key={index} audio={audio} />
-							))}
-						</div>
+						{flashcard.answer.audio.map((audio, index) => (
+							<div key={index} className='space-x-4'>
+								<AudioIcon audio={audio} />
+							</div>
+						))}
 						<p className='text-background-400 dark:text-background-500'>{flashcard.answer.phonetic}</p>
 					</div>
-					<div className='flex items-center gap-8'>
-						<div className='space-x-4'>
-							<button
-								onClick={() => {
-									router.push(`/flashcards/edit/${flashcard.id}`)
-								}}>
-								<FontAwesomeIcon
-									icon={faPenToSquare}
-									className='text-background-600 transition-colors duration-150 hover:cursor-pointer hover:text-background-500 dark:text-background-300 dark:hover:text-background-200'
-								/>
-							</button>
-							<button>
-								<FontAwesomeIcon
-									icon={faTrashCan}
-									className='text-error-500 transition-colors duration-150 hover:cursor-pointer hover:text-error-600'
-								/>
-							</button>
-						</div>
-						<Checkbox />
+					<div className='ml-16 flex items-center gap-4 self-start'>
+						<button
+							onClick={() => {
+								router.push(`/flashcards/edit/${flashcard.id}`)
+							}}>
+							<FontAwesomeIcon
+								icon={faPenToSquare}
+								className='text-background-600 transition-colors duration-150 hover:cursor-pointer hover:text-background-500 dark:text-background-300 dark:hover:text-background-200'
+							/>
+						</button>
+						<button
+							onClick={() => {
+								router.push(
+									`/flashcards/delete/${flashcard.id}?question=${encodeURIComponent(flashcard.question)}&answer=${encodeURIComponent(flashcard.answer.text)}`,
+								)
+							}}>
+							<FontAwesomeIcon
+								icon={faTrashCan}
+								className='text-error-500 transition-colors duration-150 hover:cursor-pointer hover:text-error-600'
+							/>
+						</button>
+
+						<Checkbox className='ml-4' />
 					</div>
 				</div>
 				<p className='text-background-700 dark:text-background-300'>{flashcard.question}</p>

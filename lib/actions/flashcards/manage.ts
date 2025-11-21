@@ -155,6 +155,22 @@ export async function updateFlashcard(
 	}
 }
 
+export async function deleteFlashcard(flashcardId: number): Promise<void> {
+	const user = await getCurrentUser()
+	if (!user || !user.activeLearningProfileId) throw new Error('User or profile not found')
+	try {
+		await prisma.flashcard.delete({
+			where: {
+				id: flashcardId,
+				learningProfileId: user.activeLearningProfileId,
+			},
+		})
+	} catch (error) {
+		console.error('Error deleting flashcard:', error)
+		throw new Error('Failed to delete flashcard.')
+	}
+}
+
 export async function getFlashcardById(flashcardId: number) {
 	const user = await getCurrentUser()
 	if (!user || !user.activeLearningProfileId) throw new Error('User or profile not found')
