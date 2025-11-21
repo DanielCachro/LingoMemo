@@ -3,9 +3,9 @@ import {useModalData} from '@/app/ModalDataProvider'
 import Checkbox from '@/components/Form/Chceckbox'
 import {useState} from 'react'
 import {z} from 'zod'
+import LeftAlignedModal from '../../_components/LeftAlignedModal'
 import FieldPair from '../_components/FieldPair'
 import FormBlock from '../_components/FormBlock'
-import ModalWrapper from '../_components/ModalWrapper'
 import {initialFlashcardsFilter} from './initial'
 import {FlashcardsFilter, schema} from './schema'
 
@@ -47,7 +47,7 @@ export default function FlashcardsFilterModal() {
 	}
 
 	return (
-		<ModalWrapper
+		<LeftAlignedModal
 			title='Filter'
 			buttonContent='Apply Filters'
 			onReset={handleReset}
@@ -143,6 +143,6 @@ export default function FlashcardsFilterModal() {
 					/>
 				</FormBlock>
 			</>
-		</ModalWrapper>
+		</LeftAlignedModal>
 	)
 }

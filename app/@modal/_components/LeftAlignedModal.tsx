@@ -3,13 +3,13 @@ import PrimaryButton from '@/components/PrimaryButton'
 import {Fieldset, Legend} from '@headlessui/react'
 import dynamic from 'next/dynamic'
 import {FormEvent, ReactNode} from 'react'
-import {ModalDisableAnimations} from '../../_components/Modal'
+import {ModalDisableAnimations} from './Modal'
 
-const Modal = dynamic(() => import('../../_components/Modal'), {ssr: false})
+const Modal = dynamic(() => import('./Modal'), {ssr: false})
 
 type MobileScreenCoverage = React.ComponentProps<typeof Modal>['mobileScreenCoverage']
 
-type ModalWrapperBaseProps = {
+type BaseProps = {
 	title: string
 	subtitleContent?: ReactNode
 	buttonContent?: ReactNode
@@ -19,19 +19,19 @@ type ModalWrapperBaseProps = {
 	disableAnimations?: ModalDisableAnimations
 }
 
-type ModalWrapperFormProps = ModalWrapperBaseProps & {
+type FormProps = BaseProps & {
 	useForm: true
 	onSubmit: (event: FormEvent<HTMLFormElement>, closeModal: () => void) => void
 }
 
-type ModalWrapperDivProps = ModalWrapperBaseProps & {
+type DivProps = BaseProps & {
 	useForm: false
 	onSubmit: (closeModal: () => void) => void
 }
 
-type ModalWrapperProps = ModalWrapperFormProps | ModalWrapperDivProps
+type Props = FormProps | DivProps
 
-export default function ModalWrapper(props: ModalWrapperProps) {
+export default function LeftAlignedModal(props: Props) {
 	const {
 		title,
 		subtitleContent,

@@ -11,10 +11,10 @@ import {Field, Label} from '@headlessui/react'
 import {useQueryClient} from '@tanstack/react-query'
 import {useRouter} from 'next/navigation'
 import {useActionState, useEffect, useState, useTransition} from 'react'
+import LeftAlignedModal from '../../_components/LeftAlignedModal'
 import {ModalDisableAnimations} from '../../_components/Modal'
 import FormBlock from './FormBlock'
 import FormSection from './FormSection'
-import ModalWrapper from './ModalWrapper'
 
 interface Props {
 	title: string
@@ -63,7 +63,7 @@ export default function CreateEditModal({
 	}, [formState, router, queryClient])
 
 	return (
-		<ModalWrapper
+		<LeftAlignedModal
 			title={title}
 			subtitleContent={
 				formState.errors && formState.message ? (
@@ -213,7 +213,7 @@ export default function CreateEditModal({
 					</FormBlock>
 				</FormSection>
 			</>
-		</ModalWrapper>
+		</LeftAlignedModal>
 	)
 }
 
@@ -248,7 +248,7 @@ export function Skeleton({
 	disableAnimations?: ModalDisableAnimations
 }) {
 	return (
-		<ModalWrapper
+		<LeftAlignedModal
 			title={title}
 			subtitleContent={subtitle}
 			buttonContent={buttonContent}
@@ -288,6 +288,6 @@ export function Skeleton({
 					</div>
 				</div>
 			</div>
-		</ModalWrapper>
+		</LeftAlignedModal>
 	)
 }

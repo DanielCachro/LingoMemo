@@ -5,7 +5,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import _ from 'lodash'
 import {Reorder} from 'motion/react'
 import {useState} from 'react'
-import ModalWrapper from '../_components/ModalWrapper'
+import LeftAlignedModal from '../../_components/LeftAlignedModal'
 import {initialFlashcardsSortOrder} from './initial'
 
 export type FlashcardsSort = typeof initialFlashcardsSortOrder
@@ -43,7 +43,7 @@ export default function FlashcardsSortModal() {
 	}
 
 	return (
-		<ModalWrapper
+		<LeftAlignedModal
 			title='Sort by'
 			buttonContent='Change Sort Order'
 			mobileScreenCoverage='2/3'
@@ -79,6 +79,6 @@ export default function FlashcardsSortModal() {
 					</Reorder.Item>
 				))}
 			</Reorder.Group>
-		</ModalWrapper>
+		</LeftAlignedModal>
 	)
 }
