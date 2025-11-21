@@ -1,44 +1,27 @@
-import {updateFlashcard} from '@/lib/actions/flashcards/manage'
+import {getFlashcardById, updateFlashcard} from '@/lib/actions/flashcards/manage'
 import {FlashcardFormValues} from '@/lib/actions/flashcards/types'
-import {getCurrentUser} from '@/lib/actions/user'
-import {prisma} from '@/prisma/client'
 import CreateEditModal from '../../_components/CreateEditModal'
 
 export default async function FlashcardsEditModal({params}: {params: Promise<{id: number}>}) {
 	const {id} = await params
 	const flashcardId = Number(id)
-
-	const user = await getCurrentUser()
-	if (!user || !user.activeLearningProfileId) {
-		// TODO: instead show error toast notification
-		throw new Error('User not found or no active learning profile.')
-	}
+	
 	const updateAction = updateFlashcard.bind(null, flashcardId)
+	
+	const flashcard = await getFlashcardById(flashcardId)
+	if (!flashcard) {
+		// TODO: instead show error toast notification
+		throw new Error('Flashcard not found, please try again.')
+	}
 
-	const initialValues = await prisma.flashcard
-		.findUnique({
-			where: {id: flashcardId, learningProfileId: user.activeLearningProfileId},
-			select: {
-				answer: {select: {text: true, phonetic: true}},
-				question: true,
-				note: true,
-				synonyms: true,
-				examples: true,
-			},
-		})
-		.then(flashcard => {
-			if (!flashcard) {
-				throw new Error('Flashcard not found, please try again.')
-			}
-			return {
-				question: flashcard.question,
-				answer: flashcard.answer.text,
-				note: flashcard.note,
-				phonetic: flashcard.answer.phonetic,
-				synonyms: flashcard.synonyms,
-				examples: flashcard.examples,
-			} as FlashcardFormValues
-		})
+	const initialValues: FlashcardFormValues = {
+		question: flashcard.question,
+		answer: flashcard.answer.text,
+		note: flashcard.note ?? undefined,
+		phonetic: flashcard.answer.phonetic ?? undefined,
+		synonyms: flashcard.synonyms,
+		examples: flashcard.examples,
+	}
 
 	return (
 		<CreateEditModal

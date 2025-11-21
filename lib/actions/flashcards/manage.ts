@@ -108,7 +108,7 @@ export async function createFlashcard(_: FlashcardActionState, formData: FormDat
 			},
 		}
 	} catch (error) {
-		console.error('Database Error:', error)
+		console.error('Error creating flashcard:', error)
 		return {
 			status: 'error',
 			message: 'An unexpected error occurred while creating the flashcard.',
@@ -150,7 +150,27 @@ export async function updateFlashcard(
 
 		return {status: 'success', message: 'Flashcard updated successfully.', errors: {}}
 	} catch (error) {
-		console.error('Database Error:', error)
+		console.error('Error updating flashcard:', error)
 		return {status: 'error', message: 'Failed to update flashcard.', errors: {}}
+	}
+}
+
+export async function getFlashcardById(flashcardId: number) {
+	const user = await getCurrentUser()
+	if (!user || !user.activeLearningProfileId) throw new Error('User or profile not found')
+	try {
+		const flashcard = await prisma.flashcard.findFirst({
+			where: {
+				id: flashcardId,
+				learningProfileId: user.activeLearningProfileId,
+			},
+			include: {
+				answer: true,
+			},
+		})
+		return flashcard
+	} catch (error) {
+		console.error('Error fetching flashcard:', error)
+		return null
 	}
 }
