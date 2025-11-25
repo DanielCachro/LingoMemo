@@ -3,7 +3,7 @@ import {initialFlashcardsSortOrder} from '@/app/@modal/flashcards/(.)sort/initia
 import {type FlashcardsSort} from '@/app/@modal/flashcards/(.)sort/page'
 import {getCurrentUser} from '@/lib/actions/user'
 import {prisma} from '@/prisma/client'
-import {Prisma} from '@prisma/client'
+import {Prisma} from '@/lib/generated/prisma/client'
 import {NextRequest, NextResponse} from 'next/server'
 
 export type FlashcardsApiResponse = {

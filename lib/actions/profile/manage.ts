@@ -1,8 +1,9 @@
 'use server'
 import {getCurrentUser, setActiveLearningProfile} from '@/lib/actions/user'
+import {SourceLanguages, TargetLanguages} from '@/lib/generated/prisma/browser'
+import {Prisma} from '@/lib/generated/prisma/client'
 import {prisma} from '@/prisma/client'
 import type {RevalidationConfig} from '@/types/revalidate'
-import {Prisma, SourceLanguages, TargetLanguages} from '@prisma/client'
 import {revalidatePath} from 'next/cache'
 import {z} from 'zod'
 

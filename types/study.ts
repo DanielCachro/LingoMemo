@@ -1,4 +1,4 @@
-import type {Prisma} from '@prisma/client'
+import type {Prisma} from '@/lib/generated/prisma/browser'
 
 export type Flashcard = Prisma.FlashcardGetPayload<{
 	include: {answer: true}

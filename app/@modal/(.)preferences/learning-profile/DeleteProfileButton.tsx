@@ -1,7 +1,7 @@
 'use client'
 
 import DeleteItemModal from '@/app/@modal/_components/DeleteItemModal' // Adjust path if needed
-import {LearningProfile} from '@prisma/client'
+import {LearningProfile} from '@/lib/generated/prisma/browser'
 import {ButtonHTMLAttributes, useState} from 'react'
 import ProfileDetails from './ProfileDetails'
 

@@ -1,22 +1,17 @@
 'use client'
 import {createLearningProfile} from '@/lib/actions/profile/manage'
-import {languageCodeToName} from '@/lib/utils'
+import {SourceLanguages, TargetLanguages} from '@/lib/generated/prisma/browser'
 import {faLanguage} from '@fortawesome/free-solid-svg-icons'
-import {SourceLanguages, TargetLanguages} from '@prisma/client'
 import CreateProfileField from '../CreateProfileField'
 import CreateProfileForm from '../CreateProfileForm'
 
-const sourceLanguages = Object.values(SourceLanguages).map(lang => ({
-	value: lang,
-	label: languageCodeToName(lang),
-}))
-
-const targetLanguages = Object.values(TargetLanguages).map(lang => ({
-	value: lang,
-	label: languageCodeToName(lang),
-}))
-
-export default function Form() {
+export default function Form({
+	sourceLanguages,
+	targetLanguages,
+}: {
+	sourceLanguages: {value: SourceLanguages; label: string}[]
+	targetLanguages: {value: TargetLanguages; label: string}[]
+}) {
 	return (
 		<CreateProfileForm
 			heading='Creating Language Profile'

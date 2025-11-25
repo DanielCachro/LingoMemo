@@ -3,7 +3,7 @@ import {getCurrentUser} from '@/lib/actions/user'
 import {getUserDayRangeUTC} from '@/lib/time'
 import {prisma} from '@/prisma/client'
 import {FlashcardResponseQuality} from '@/types/study'
-import {Prisma} from '@prisma/client'
+import {Prisma} from '@/lib/generated/prisma/client'
 import {DateTime} from 'luxon'
 
 export async function updateFlashcard(flashcardId: number, q: FlashcardResponseQuality) {

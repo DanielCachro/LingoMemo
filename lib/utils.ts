@@ -1,4 +1,4 @@
-import {TargetLanguages} from '@prisma/client'
+import {TargetLanguages} from '@/lib/generated/prisma/browser'
 import {ClassValue, clsx} from 'clsx'
 import {twMerge} from 'tailwind-merge'
 

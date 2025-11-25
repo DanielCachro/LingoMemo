@@ -1,5 +1,5 @@
 import {languageCodeToName} from '@/lib/utils'
-import {LearningProfile} from '@prisma/client'
+import {LearningProfile} from '@/lib/generated/prisma/browser'
 
 export default function ProfileDetails({profile}: {profile: LearningProfile}) {
 	if (profile.sourceLang && profile.targetLang) {

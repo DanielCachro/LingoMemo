@@ -3,7 +3,7 @@
 import Spinner from '@/components/Spinner'
 import {faCircleExclamation, faCirclePlus, faMinusCircle} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {$Enums} from '@prisma/client'
+import {$Enums} from '@/lib/generated/prisma/browser'
 import {useState, useTransition} from 'react'
 import {createFlashcard, deleteFlashcard} from '../_lib/actions'
 import type {DictionaryDefinition} from '../_lib/types'
