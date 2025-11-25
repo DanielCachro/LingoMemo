@@ -158,6 +158,7 @@ export async function updateFlashcard(
 export async function deleteFlashcard(flashcardId: number): Promise<void> {
 	const user = await getCurrentUser()
 	if (!user || !user.activeLearningProfileId) throw new Error('User or profile not found')
+
 	try {
 		await prisma.flashcard.delete({
 			where: {
@@ -171,9 +172,29 @@ export async function deleteFlashcard(flashcardId: number): Promise<void> {
 	}
 }
 
+export async function bulkDeleteFlashcards(flashcardIds: number[]): Promise<void> {
+	const user = await getCurrentUser()
+	if (!user || !user.activeLearningProfileId) throw new Error('User or profile not found')
+
+	try {
+		await prisma.flashcard.deleteMany({
+			where: {
+				id: {
+					in: flashcardIds,
+				},
+				learningProfileId: user.activeLearningProfileId,
+			},
+		})
+	} catch (error) {
+		console.error('Error deleting flashcards in bulk:', error)
+		throw new Error('Failed to delete flashcards.')
+	}
+}
+
 export async function getFlashcardById(flashcardId: number) {
 	const user = await getCurrentUser()
 	if (!user || !user.activeLearningProfileId) throw new Error('User or profile not found')
+		
 	try {
 		const flashcard = await prisma.flashcard.findFirst({
 			where: {

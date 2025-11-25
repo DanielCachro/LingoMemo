@@ -11,9 +11,9 @@ export default function FlashcardsDeleteModal({
 	params: Promise<{id: number}>
 	searchParams: Promise<{question?: string; answer?: string}>
 }) {
+	const queryClient = useQueryClient()
 	const {id} = use(params)
 	const {question, answer} = use(searchParams)
-	const queryClient = useQueryClient()
 
 	const flashcardId = Number(id)
 
@@ -22,6 +22,7 @@ export default function FlashcardsDeleteModal({
 			await deleteFlashcard(flashcardId)
 			queryClient.refetchQueries({queryKey: ['flashcards']})
 		} catch (error) {
+			// TODO: Show toast notification
 			console.error('Failed to delete flashcard:', error)
 		}
 	}

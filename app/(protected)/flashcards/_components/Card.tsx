@@ -22,7 +22,13 @@ function DetailsBlock({title, children}: {title: string; children: React.ReactNo
 	)
 }
 
-export default function Card({flashcard}: {flashcard: Prisma.FlashcardGetPayload<{include: {answer: true}}>}) {
+interface CardProps {
+	flashcard: Prisma.FlashcardGetPayload<{include: {answer: true}}>
+	isSelected: boolean
+	onSelectionChange: (checked: boolean) => void
+}
+
+export default function Card({flashcard, isSelected, onSelectionChange}: CardProps) {
 	const [showDetails, setShowDetails] = useState(false)
 	const router = useRouter()
 
@@ -86,7 +92,7 @@ export default function Card({flashcard}: {flashcard: Prisma.FlashcardGetPayload
 							/>
 						</button>
 
-						<Checkbox className='ml-4' />
+						<Checkbox className='ml-4' checked={isSelected} onChange={onSelectionChange} />
 					</div>
 				</div>
 				<p className='text-background-700 dark:text-background-300'>{flashcard.question}</p>
