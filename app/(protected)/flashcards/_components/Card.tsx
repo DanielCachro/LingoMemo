@@ -96,7 +96,7 @@ export default function Card({flashcard, isSelected, onSelectionChange}: CardPro
 					</div>
 				</div>
 				<p className='text-background-700 dark:text-background-300'>{flashcard.question}</p>
-				<div aria-hidden='true' className='h-[1px] rounded-full bg-background-300 dark:bg-background-700' />
+				<div aria-hidden='true' className='h-px rounded-full bg-background-300 dark:bg-background-700' />
 				<button
 					className={cn(
 						'flex w-full justify-between text-background-600 hover:cursor-pointer hover:text-background-500 dark:text-background-300 dark:hover:text-background-200',
@@ -115,7 +115,7 @@ export default function Card({flashcard, isSelected, onSelectionChange}: CardPro
 				{showDetails && (
 					<motion.div variants={detailsVariants} initial='hidden' animate='show' exit='exit' className='space-y-16'>
 						<DetailsBlock title='Note'>
-							<p className='rounded-sm border-[1px] border-background-200 bg-background-100 p-16 text-background-700 dark:border-background-700 dark:bg-background-800 dark:text-background-300'>
+							<p className='rounded-sm border-px border-background-200 bg-background-100 p-16 text-background-700 dark:border-background-700 dark:bg-background-800 dark:text-background-300'>
 								{flashcard.note || 'No additional notes for this flashcard.'}
 							</p>
 						</DetailsBlock>

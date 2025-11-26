@@ -1,19 +1,22 @@
-import Image from 'next/image'
-import LoginButton from './LoginButton'
+import {Metadata} from 'next'
+import CTASection from './_sections/CTA'
+import FeaturesSection from './_sections/Features'
+import HeroSection from './_sections/Hero'
+import HowItWorksSection from './_sections/HowItWorks'
+
+export const metadata: Metadata = {
+	title: 'LingoMemo - Master any language effortlessly',
+	description:
+		'The smarter way to learn vocabulary. Create custom flashcards, track your progress, and let our spaced repetition algorithm handle the rest.',
+}
 
 export default function LandingPage() {
 	return (
-		<section className='mx-32 flex min-h-dvh flex-col items-center justify-center gap-32 text-center'>
-			<Image src='/cats/CatSmile.svg' alt='Brand cat smiling' width={120} height={112} priority className='w-128' />
-			<div className='max-w-384 space-y-32'>
-				<div className='space-y-12'>
-					<h1 className='text-2xl font-bold'>
-						A smarter way to learn vocabulary<span className='text-primary-500 dark:text-primary-600'>.</span>
-					</h1>
-					<p>Create your own cards, track your progress, and never forget the words that matter.</p>
-				</div>
-				<LoginButton />
-			</div>
-		</section>
+		<div className='min-h-screen bg-background-100 dark:bg-background-900'>
+			<HeroSection />
+			<FeaturesSection />
+			<HowItWorksSection />
+			<CTASection />
+		</div>
 	)
 }

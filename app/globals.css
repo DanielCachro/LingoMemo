@@ -113,6 +113,8 @@
 	--spacing-640: 40rem;
 	--spacing-768: 48rem;
 	--spacing-1024: 64rem;
+	--spacing-1280: 80rem;
+	--spacing-1440: 90rem;
 
 	--container-*: initial;
 
@@ -179,6 +181,26 @@
 	@variant dark {
 		background-color: var(--color-background-900);
 		background-image: url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23af3726' fill-opacity='0.05' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
+	}
+}
+
+@utility cta-pattern {
+	background-color: var(--color-primary-500);
+
+	background-image:
+		radial-gradient(circle at center, var(--color-primary-500) 0%, transparent 75%),
+		radial-gradient(rgba(255, 255, 255, 0.2) 1.5px, transparent 1.5px);
+
+	background-size:
+		100% 100%,
+		24px 24px;
+	background-position: center;
+
+	@variant dark {
+		background-color: var(--color-primary-700);
+		background-image:
+			radial-gradient(circle at center, var(--color-primary-700) 0%, transparent 70%),
+			radial-gradient(rgba(255, 255, 255, 0.15) 1.5px, transparent 1.5px);
 	}
 }
 

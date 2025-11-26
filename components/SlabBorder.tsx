@@ -4,6 +4,7 @@ interface Props {
 	children: React.ReactNode
 	className?: string
 	slabClassName?: string
+	wrapperClassName?: string
 	/** Controls the size of the border.
 	 * - 'xs': 1px
 	 * - 'sm': 2px
@@ -35,6 +36,7 @@ export default function SlabBorder({
 	children,
 	className,
 	slabClassName,
+	wrapperClassName,
 	slabSize = 'sm',
 	borderSize = 'sm',
 	rounded = 'sm',
@@ -56,7 +58,7 @@ export default function SlabBorder({
 	}
 
 	return (
-		<div className='relative isolate'>
+		<div className={cn('relative isolate', wrapperClassName)}>
 			<div
 				className={cn(
 					`border-background-300! bg-background-100 dark:border-background-700! dark:bg-background-900`,
