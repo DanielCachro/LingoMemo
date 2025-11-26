@@ -56,10 +56,10 @@ export default function SlabBorder({
 	}
 
 	return (
-		<div className='relative'>
+		<div className='relative isolate'>
 			<div
 				className={cn(
-					`!border-background-300 bg-background-100 dark:!border-background-700 dark:bg-background-900`,
+					`border-background-300! bg-background-100 dark:border-background-700! dark:bg-background-900`,
 					className,
 				)}
 				style={{border: `${sizes[borderSize]} solid `, borderRadius: borders[rounded]}}>
