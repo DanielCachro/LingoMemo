@@ -17,6 +17,7 @@ type BaseProps = {
 	onReset?: () => void
 	children: ReactNode
 	disableAnimations?: ModalDisableAnimations
+	modalCloseRef?: React.MutableRefObject<(() => void) | null>
 }
 
 type FormProps = BaseProps & {
@@ -40,6 +41,7 @@ export default function LeftAlignedModal(props: Props) {
 		onReset,
 		children,
 		disableAnimations,
+		modalCloseRef,
 	} = props
 
 	return (
@@ -50,6 +52,10 @@ export default function LeftAlignedModal(props: Props) {
 			mobileScreenCoverage={mobileScreenCoverage}
 			disableAnimations={disableAnimations}>
 			{closeModal => {
+				if (modalCloseRef) {
+					modalCloseRef.current = closeModal
+				}
+
 				const handleSubmit = (event?: FormEvent<HTMLFormElement>) => {
 					if (props.useForm && event) props.onSubmit(event, closeModal)
 					else if (!props.useForm) props.onSubmit(closeModal)

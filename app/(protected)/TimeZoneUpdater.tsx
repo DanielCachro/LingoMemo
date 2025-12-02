@@ -2,6 +2,7 @@
 import {DateTime} from 'luxon'
 import {useRouter} from 'next/navigation'
 import {useEffect} from 'react'
+import {toast} from 'react-toastify'
 
 export function TimeZoneUpdater() {
 	const router = useRouter()
@@ -28,8 +29,7 @@ export function TimeZoneUpdater() {
 			}
 		}
 		sendTimezoneToServer().catch(error => {
-			// TODO: show toast
-			alert(error.message || 'Unknown error')
+			toast.error(error.message || 'Unknown error')
 		})
 	}, [router])
 

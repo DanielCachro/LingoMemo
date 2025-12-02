@@ -3,6 +3,7 @@ import DeleteItemModal from '@/app/@modal/_components/DeleteItemModal'
 import {deleteFlashcard} from '@/lib/actions/flashcards/manage'
 import {useQueryClient} from '@tanstack/react-query'
 import {use} from 'react'
+import {toast} from 'react-toastify'
 
 export default function FlashcardsDeleteModal({
 	params,
@@ -22,7 +23,7 @@ export default function FlashcardsDeleteModal({
 			await deleteFlashcard(flashcardId)
 			queryClient.refetchQueries({queryKey: ['flashcards']})
 		} catch (error) {
-			// TODO: Show toast notification
+			toast.error('Failed to delete flashcard. Please try again.')
 			console.error('Failed to delete flashcard:', error)
 		}
 	}

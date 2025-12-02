@@ -3,12 +3,13 @@
 import RadioForm, {Skeleton as RadioFormSkeleton, RadioOption} from '@/components/Form/RadioForm'
 import {deleteLearningProfile} from '@/lib/actions/profile/manage'
 import {setActiveLearningProfile} from '@/lib/actions/user'
+import {LearningProfile} from '@/lib/generated/prisma/browser'
 import {faSpinner} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {LearningProfile} from '@/lib/generated/prisma/browser'
 import {useQueryClient} from '@tanstack/react-query'
 import {useRouter} from 'next/navigation'
 import {KeyboardEvent, useTransition} from 'react'
+import {toast} from 'react-toastify'
 import DeleteProfileButton from './DeleteProfileButton'
 import ProfileDetails from './ProfileDetails'
 
@@ -28,7 +29,7 @@ export default function ProfileSelect({
 		try {
 			await deleteLearningProfile(profileId)
 		} catch (error) {
-			// TODO: Show toast
+			toast.error('Failed to delete profile. Please try again.')
 			console.error(error)
 		}
 
@@ -47,7 +48,7 @@ export default function ProfileSelect({
 				})
 				queryClient.removeQueries()
 			} catch (error) {
-				// TODO: Show toast
+				toast.error('Failed to switch profile. Please try again.')
 				console.error(error)
 			}
 			router.push('/home')

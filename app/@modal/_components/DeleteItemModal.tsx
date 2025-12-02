@@ -5,6 +5,7 @@ import SecondaryButton from '@/components/SecondaryButton'
 import dynamic from 'next/dynamic'
 import {useRouter} from 'next/navigation'
 import {KeyboardEvent, useState} from 'react'
+import {toast} from 'react-toastify'
 import {ModalDisableAnimations} from './Modal'
 const Modal = dynamic(() => import('../_components/Modal'), {ssr: false})
 
@@ -37,7 +38,7 @@ export default function DeleteItemModal({heading, children, onConfirm, onCancel,
 			await onConfirm()
 			handleClose()
 		} catch (error) {
-			// TODO: Show toast
+			toast.error('An error occurred while deleting the item.')
 			console.error('Error during deletion:', error)
 		} finally {
 			setIsLoading(false)

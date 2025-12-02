@@ -8,6 +8,8 @@ export default function FlashcardsCreateModal() {
 			subtitle='Fill in the details to create a flashcard.'
 			buttonContent='Create Flashcard'
 			pendingButtonText='Creating...'
+			successMessage='Flashcard created successfully!'
+			errorMessage='Failed to create flashcard. '
 			action={createFlashcard}
 		/>
 	)

@@ -11,6 +11,6 @@ export type FlashcardFormErrors = {
 
 export type FlashcardActionState = {
 	status: 'idle' | 'success' | 'error'
-	message?: string // Message for toast; TODO: implement toast notification
+	message?: string
 	errors: FlashcardFormErrors
 }

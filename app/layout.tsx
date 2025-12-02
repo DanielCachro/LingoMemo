@@ -7,6 +7,7 @@ import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
 
 import {ThemeProvider} from 'next-themes'
+import AppToast from './AppToast'
 import {ModalDataProvider} from './ModalDataProvider'
 import QueryClientProvider from './QueryClientProvider'
 
@@ -30,7 +31,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html suppressHydrationWarning lang='en'>
-			<body className={`${nunito.variable}`}>
+			<body className={`${nunito.variable} overflow-x-hidden`}>
 				<QueryClientProvider>
 					<ThemeProvider>
 						<ModalDataProvider>
@@ -38,6 +39,7 @@ export default function RootLayout({
 							{children}
 							{modal}
 						</ModalDataProvider>
+						<AppToast />
 					</ThemeProvider>
 				</QueryClientProvider>
 			</body>

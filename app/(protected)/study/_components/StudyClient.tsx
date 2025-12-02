@@ -3,6 +3,7 @@ import {cn} from '@/lib/utils'
 import type {Flashcard, FlashcardResponseQuality} from '@/types/study'
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query'
 import {useEffect, useRef, useState} from 'react'
+import {toast} from 'react-toastify'
 import AnswerDisplay from './AnswerDisplay'
 import Buttons from './Buttons'
 import FlashcardComponent, {Skeleton as FlashcardComponentSkeleton} from './Flashcard'
@@ -98,8 +99,7 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 			if (doneToday === toReviewToday) {
 				streakRes = await fetch('/api/profile/streak/update', {method: 'POST'})
 				if (!streakRes.ok) {
-					// TODO: show toast
-					alert('Error: Failed to update streak. Please try again.')
+					toast.error('Error: Failed to update streak. Please try again.')
 				}
 				queryClient.invalidateQueries({queryKey: ['profile']})
 			}
@@ -140,8 +140,7 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 			if (context?.prevUserAnswer) setUserAnswer(context.prevUserAnswer)
 			setDoneToday(done => Math.max(0, done - 1))
 
-			// TODO: show toast
-			alert('Error: Failed to save flashcard review. Please try again.')
+			toast.error('Error: Failed to save flashcard review. Please try again.')
 		},
 		onSettled: async (_, __, variables) => {
 			inFlight.current.delete(variables.flashcardId)

@@ -9,8 +9,10 @@ import {FlashcardFormValues} from '@/lib/actions/flashcards/types'
 import {cn} from '@/lib/utils'
 import {Field, Label} from '@headlessui/react'
 import {useQueryClient} from '@tanstack/react-query'
+import _ from 'lodash'
 import {useRouter} from 'next/navigation'
-import {useActionState, useEffect, useState, useTransition} from 'react'
+import {useActionState, useEffect, useRef, useState, useTransition} from 'react'
+import {toast} from 'react-toastify'
 import LeftAlignedModal from '../../_components/LeftAlignedModal'
 import {ModalDisableAnimations} from '../../_components/Modal'
 import FormBlock from './FormBlock'
@@ -21,6 +23,8 @@ interface Props {
 	subtitle: string
 	buttonContent: React.ReactNode
 	pendingButtonText: string
+	successMessage?: string
+	errorMessage?: string
 	action: (prevState: typeof initialFlashcardState, formData: FormData) => Promise<typeof initialFlashcardState>
 	initialValues?: FlashcardFormValues
 	disableAnimations?: ModalDisableAnimations
@@ -31,6 +35,8 @@ export default function CreateEditModal({
 	subtitle,
 	buttonContent,
 	pendingButtonText,
+	successMessage = 'Flashcard saved successfully!',
+	errorMessage = 'Failed to save flashcard. Please try again.',
 	action,
 	initialValues,
 	disableAnimations,
@@ -40,6 +46,7 @@ export default function CreateEditModal({
 	const [isPending, startTransition] = useTransition()
 	const [formErrors, setFormErrors] = useState(initialFlashcardState.errors)
 	const queryClient = useQueryClient()
+	const modalCloseRef = useRef<(() => void) | null>(null)
 
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
@@ -51,16 +58,23 @@ export default function CreateEditModal({
 
 	useEffect(() => {
 		if (formState.status === 'success') {
-			// TODO: show toast notification
+			toast.success(successMessage)
 			queryClient.invalidateQueries({queryKey: ['flashcards']})
-			router.back()
+			if (modalCloseRef.current) {
+				modalCloseRef.current()
+			} else {
+				router.back()
+			}
 		}
 
 		if (formState.status === 'error') {
-			// TODO: show toast notification
 			setFormErrors(formState.errors)
+
+			if (_.isEmpty(formState.errors)) {
+				toast.error(formState.message || errorMessage)
+			}
 		}
-	}, [formState, router, queryClient])
+	}, [formState, router, queryClient, successMessage, errorMessage])
 
 	return (
 		<LeftAlignedModal
@@ -75,7 +89,8 @@ export default function CreateEditModal({
 			buttonContent={isPending ? <span className='animate-pulse'>{pendingButtonText}</span> : buttonContent}
 			useForm={true}
 			onSubmit={handleSubmit}
-			disableAnimations={disableAnimations}>
+			disableAnimations={disableAnimations}
+			modalCloseRef={modalCloseRef}>
 			<>
 				<FormSection title='Core Details'>
 					<FormBlock title='Answer (back) *'>

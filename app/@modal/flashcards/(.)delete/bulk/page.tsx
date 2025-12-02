@@ -3,6 +3,7 @@ import DeleteItemModal from '@/app/@modal/_components/DeleteItemModal'
 import {useModalData} from '@/app/ModalDataProvider'
 import {bulkDeleteFlashcards} from '@/lib/actions/flashcards/manage'
 import {useQueryClient} from '@tanstack/react-query'
+import {toast} from 'react-toastify'
 
 export default function FlashcardsBulkDeletePage() {
 	const queryClient = useQueryClient()
@@ -12,11 +13,11 @@ export default function FlashcardsBulkDeletePage() {
 	async function handleConfirmDelete() {
 		try {
 			await bulkDeleteFlashcards(flashcardsToDelete)
-            setData('flashcardsToBulkDelete', [])
+			setData('flashcardsToBulkDelete', [])
 			queryClient.refetchQueries({queryKey: ['flashcards']})
 		} catch (error) {
-			// TODO: Show toast notification
-			console.error('Failed to delete flashcard:', error)
+			toast.error('Failed to delete flashcards. Please try again.')
+			console.error('Failed to delete flashcards:', error)
 		}
 	}
 

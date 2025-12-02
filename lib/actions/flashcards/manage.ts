@@ -60,20 +60,20 @@ function parseAndValidateFlashcard(formData: FormData): ValidationResult {
 }
 
 export async function createFlashcard(_: FlashcardActionState, formData: FormData): Promise<FlashcardActionState> {
-	const user = await getCurrentUser()
-	if (!user) throw new Error('User not authenticated')
-
-	const activeLearningProfile = user.activeLearningProfile
-	const activeLearningProfileId = user.activeLearningProfileId
-
-	if (!activeLearningProfile || !activeLearningProfileId) throw new Error('No active learning profile found.')
-
-	const validation = parseAndValidateFlashcard(formData)
-	if (!validation.success) {
-		return validation.errorState
-	}
-
 	try {
+		const user = await getCurrentUser()
+		if (!user) throw new Error('User not authenticated')
+
+		const activeLearningProfile = user.activeLearningProfile
+		const activeLearningProfileId = user.activeLearningProfileId
+
+		if (!activeLearningProfile || !activeLearningProfileId) throw new Error('No active learning profile found.')
+
+		const validation = parseAndValidateFlashcard(formData)
+		if (!validation.success) {
+			return validation.errorState
+		}
+
 		await prisma.flashcard.create({
 			data: {
 				question: validation.data.question,
@@ -122,13 +122,13 @@ export async function updateFlashcard(
 	_: FlashcardActionState,
 	formData: FormData,
 ): Promise<FlashcardActionState> {
-	const user = await getCurrentUser()
-	if (!user || !user.activeLearningProfileId) throw new Error('User or profile not found')
-
-	const validation = parseAndValidateFlashcard(formData)
-	if (!validation.success) return validation.errorState
-
 	try {
+		const user = await getCurrentUser()
+		if (!user || !user.activeLearningProfileId) throw new Error('User or profile not found')
+
+		const validation = parseAndValidateFlashcard(formData)
+		if (!validation.success) return validation.errorState
+
 		await prisma.flashcard.update({
 			where: {
 				id: flashcardId,
@@ -156,10 +156,10 @@ export async function updateFlashcard(
 }
 
 export async function deleteFlashcard(flashcardId: number): Promise<void> {
-	const user = await getCurrentUser()
-	if (!user || !user.activeLearningProfileId) throw new Error('User or profile not found')
-
 	try {
+		const user = await getCurrentUser()
+		if (!user || !user.activeLearningProfileId) throw new Error('User or profile not found')
+
 		await prisma.flashcard.delete({
 			where: {
 				id: flashcardId,
@@ -173,10 +173,10 @@ export async function deleteFlashcard(flashcardId: number): Promise<void> {
 }
 
 export async function bulkDeleteFlashcards(flashcardIds: number[]): Promise<void> {
-	const user = await getCurrentUser()
-	if (!user || !user.activeLearningProfileId) throw new Error('User or profile not found')
-
 	try {
+		const user = await getCurrentUser()
+		if (!user || !user.activeLearningProfileId) throw new Error('User or profile not found')
+
 		await prisma.flashcard.deleteMany({
 			where: {
 				id: {
@@ -192,10 +192,10 @@ export async function bulkDeleteFlashcards(flashcardIds: number[]): Promise<void
 }
 
 export async function getFlashcardById(flashcardId: number) {
-	const user = await getCurrentUser()
-	if (!user || !user.activeLearningProfileId) throw new Error('User or profile not found')
-		
 	try {
+		const user = await getCurrentUser()
+		if (!user || !user.activeLearningProfileId) throw new Error('User or profile not found')
+
 		const flashcard = await prisma.flashcard.findFirst({
 			where: {
 				id: flashcardId,

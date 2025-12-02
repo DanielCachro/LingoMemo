@@ -1,17 +1,18 @@
 import {getFlashcardById, updateFlashcard} from '@/lib/actions/flashcards/manage'
 import {FlashcardFormValues} from '@/lib/actions/flashcards/types'
+import {use} from 'react'
 import CreateEditModal from '../../_components/CreateEditModal'
+import FlashcardNotFound from './FlashcardNotFound'
 
-export default async function FlashcardsEditModal({params}: {params: Promise<{id: number}>}) {
-	const {id} = await params
+export default function FlashcardsEditModal({params}: {params: Promise<{id: number}>}) {
+	const {id} = use(params)
 	const flashcardId = Number(id)
-	
+
 	const updateAction = updateFlashcard.bind(null, flashcardId)
-	
-	const flashcard = await getFlashcardById(flashcardId)
+
+	const flashcard = use(getFlashcardById(flashcardId))
 	if (!flashcard) {
-		// TODO: instead show error toast notification
-		throw new Error('Flashcard not found, please try again.')
+		return <FlashcardNotFound />
 	}
 
 	const initialValues: FlashcardFormValues = {
@@ -29,6 +30,8 @@ export default async function FlashcardsEditModal({params}: {params: Promise<{id
 			subtitle='Make changes to your flashcard below.'
 			buttonContent='Edit Flashcard'
 			pendingButtonText='Saving...'
+			successMessage='Flashcard updated successfully!'
+			errorMessage='Failed to update flashcard. Please try again.'
 			action={updateAction}
 			initialValues={initialValues ?? undefined}
 			disableAnimations={{disableEntryAnimation: true}}
