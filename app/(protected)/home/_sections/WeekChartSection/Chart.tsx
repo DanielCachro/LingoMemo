@@ -8,6 +8,7 @@ export default function Chart({last7Days}: {last7Days: Awaited<ReturnType<typeof
 	const maxCards = Math.max(...last7Days.map(day => day.cardsCompleted))
 	const [currentDay, setCurrentDay] = useState<number>()
 	const barMaxHeight = 96
+	const baseHeight = 0.5
 
 	useEffect(() => {
 		setCurrentDay(new Date().getDate())
@@ -23,7 +24,9 @@ export default function Chart({last7Days}: {last7Days: Awaited<ReturnType<typeof
 			style={{direction: 'ltr', minHeight: `${barMaxHeight / 12}rem`}}>
 			<figcaption className='sr-only'>Chart showing the number of cards completed over the last 7 days</figcaption>
 			{last7Days.map(day => {
-				const height = day.cardsCompleted > 0 ? (day.cardsCompleted / maxCards) * (barMaxHeight / 16) : 0.5
+				const proportionalHeight =
+					day.cardsCompleted > 0 ? (day.cardsCompleted / maxCards) * (barMaxHeight / 16 - baseHeight) : 0
+				const height = baseHeight + proportionalHeight
 
 				return (
 					<motion.div
