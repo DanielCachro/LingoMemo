@@ -18,8 +18,8 @@ export default function BulkSelectFloatingButton({visible, numberOfSelectedItems
 					initial={{opacity: 0, y: 50}}
 					animate={{opacity: 1, y: 0}}
 					exit={{opacity: 0, y: 50}}
-					className='fixed bottom-96 left-1/2 z-50 flex w-fit -translate-x-1/2 items-center gap-16 rounded-sm bg-primary-500 p-16 text-primary-50 shadow-lg sm:right-64 sm:bottom-32 sm:left-auto sm:translate-0 dark:bg-primary-600'>
-					<div className='space-x-8'>
+					className='fixed bottom-96 left-1/2 z-40 flex -translate-x-1/2 items-center gap-16 rounded-sm bg-primary-500 p-16 text-primary-50 shadow-lg sm:right-64 sm:bottom-32 sm:left-auto sm:translate-0 dark:bg-primary-600'>
+					<div className='space-x-8 whitespace-nowrap'>
 						<button
 							onClick={onClear}
 							title='Clear selection'
@@ -29,11 +29,11 @@ export default function BulkSelectFloatingButton({visible, numberOfSelectedItems
 						<span>{numberOfSelectedItems} selected</span>
 					</div>
 
-					<div aria-hidden='true' className='relative w-[1px] self-stretch bg-primary-300 dark:bg-primary-400' />
+					<div aria-hidden='true' className='relative w-px self-stretch bg-primary-300 dark:bg-primary-400' />
 
 					<button
 						onClick={onDelete}
-						className='cursor-pointer space-x-8 rounded-sm bg-error-600 px-12 py-8 transition-colors duration-150 hover:bg-error-500'>
+						className='cursor-pointer space-x-8 rounded-sm bg-error-600 px-12 py-8 whitespace-nowrap transition-colors duration-150 hover:bg-error-500'>
 						<FontAwesomeIcon icon={faTrashCan} />
 						<span>Delete</span>
 					</button>
