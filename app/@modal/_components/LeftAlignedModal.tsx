@@ -17,7 +17,7 @@ type BaseProps = {
 	onReset?: () => void
 	children: ReactNode
 	disableAnimations?: ModalDisableAnimations
-	modalCloseRef?: React.MutableRefObject<(() => void) | null>
+	modalCloseRef?: React.RefObject<(() => void) | null>
 }
 
 type FormProps = BaseProps & {

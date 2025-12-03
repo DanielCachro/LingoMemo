@@ -115,7 +115,13 @@ export async function createLearningProfile(
 			}
 		}
 
-		await prisma.learningProfile.create({data: createData})
+		const newProfile = await prisma.learningProfile.create({data: createData})
+		if (!user.activeLearningProfileId) {
+			await prisma.user.update({
+				where: {id: user.id},
+				data: {activeLearningProfileId: newProfile.id},
+			})
+		}
 
 		if (config.revalidateAfter) {
 			revalidatePath(config.pathToRevalidate)

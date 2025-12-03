@@ -2,6 +2,7 @@
 import PrimaryButton from '@/components/PrimaryButton'
 import SlabBorder from '@/components/SlabBorder'
 import {createLearningProfile} from '@/lib/actions/profile/manage'
+import {cn} from '@/lib/utils'
 import {faSpinner, IconDefinition} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {useRouter} from 'next/navigation'
@@ -13,6 +14,8 @@ interface Props {
 	heading: string
 	subheading: string
 	icon: IconDefinition
+	redirectTo: string
+	className?: string
 	children: (
 		formErrors: FormErrorsType,
 		setFormErrors: Dispatch<React.SetStateAction<FormErrorsType>>,
@@ -20,7 +23,15 @@ interface Props {
 	onSubmit: (event: React.FormEvent) => ReturnType<typeof createLearningProfile>
 }
 
-export default function CreateProfileForm({heading, subheading, icon, children, onSubmit}: Props) {
+export default function CreateProfileForm({
+	heading,
+	subheading,
+	icon,
+	redirectTo,
+	className,
+	children,
+	onSubmit,
+}: Props) {
 	const [formErrors, setFormErrors] = useState<FormErrorsType>(null)
 	const [isPending, startTransition] = useTransition()
 	const router = useRouter()
@@ -34,14 +45,14 @@ export default function CreateProfileForm({heading, subheading, icon, children, 
 			if (result?.errors) {
 				setFormErrors(result)
 			} else {
-				router.push('/preferences/learning-profile')
+				router.push(redirectTo)
 			}
 		})
 	}
 
 	return (
-		<form className='flex h-full flex-col justify-between sm:gap-128' onSubmit={handleSubmit}>
-			<SlabBorder className='space-y-32 p-24'>
+		<form className={cn('flex h-full flex-col justify-between', className)} onSubmit={handleSubmit}>
+			<SlabBorder className='space-y-32 p-24' wrapperClassName='z-20'>
 				<div className='flex gap-16'>
 					<div className='flex h-48 w-48 items-center justify-center rounded-full bg-accent-100 text-accent-500'>
 						<FontAwesomeIcon size='lg' icon={icon} aria-hidden='true' />

@@ -51,7 +51,8 @@ export async function getActiveLearningProfile() {
 
 	const activeLearningProfile = user.activeLearningProfile
 	const activeLearningProfileId = user.activeLearningProfileId
-	if (!activeLearningProfile || !activeLearningProfileId) throw new Error('No active learning profile found.')
+	if (!activeLearningProfile || !activeLearningProfileId)
+		return {activeLearningProfile: null, activeLearningProfileId: null}
 
 	return {activeLearningProfile, activeLearningProfileId}
 }

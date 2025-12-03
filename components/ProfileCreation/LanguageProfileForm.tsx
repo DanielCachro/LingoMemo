@@ -1,22 +1,30 @@
 'use client'
+
 import {createLearningProfile} from '@/lib/actions/profile/manage'
 import {SourceLanguages, TargetLanguages} from '@/lib/generated/prisma/browser'
+import {languageCodeToName} from '@/lib/utils'
 import {faLanguage} from '@fortawesome/free-solid-svg-icons'
-import CreateProfileField from '../CreateProfileField'
-import CreateProfileForm from '../CreateProfileForm'
+import CreateProfileField from './Field'
+import CreateProfileForm from './Form'
 
-export default function Form({
-	sourceLanguages,
-	targetLanguages,
-}: {
-	sourceLanguages: {value: SourceLanguages; label: string}[]
-	targetLanguages: {value: TargetLanguages; label: string}[]
-}) {
+const sourceLanguageOptions = Object.values(SourceLanguages).map(lang => ({
+	value: lang,
+	label: languageCodeToName(lang),
+}))
+
+const targetLanguageOptions = Object.values(TargetLanguages).map(lang => ({
+	value: lang,
+	label: languageCodeToName(lang),
+}))
+
+export default function Form({redirectTo, className}: {redirectTo: string, className?: string}) {
 	return (
 		<CreateProfileForm
 			heading='Creating Language Profile'
 			subheading='Select your learning languages'
 			icon={faLanguage}
+			redirectTo={redirectTo}
+			className={className}
 			onSubmit={async event => {
 				const formData = new FormData(event.currentTarget as HTMLFormElement)
 				const data = Object.fromEntries(formData.entries())
@@ -38,7 +46,7 @@ export default function Form({
 							name='sourceLanguage'
 							label='From the source language:'
 							placeholder='Please choose a language'
-							options={sourceLanguages}
+							options={sourceLanguageOptions}
 							onFocus={() => {
 								setFormErrors(prevErrors => {
 									if (!prevErrors) return null
@@ -57,7 +65,7 @@ export default function Form({
 							name='targetLanguage'
 							label='I want to learn:'
 							placeholder='Please choose a language'
-							options={targetLanguages}
+							options={targetLanguageOptions}
 							onFocus={() => {
 								setFormErrors(prevErrors => {
 									if (!prevErrors) return null

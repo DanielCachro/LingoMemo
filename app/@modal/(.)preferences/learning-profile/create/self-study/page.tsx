@@ -1,5 +1,5 @@
-import Form from './Form'
+import Form from '@/components/ProfileCreation/SelfStudyProfileForm'
 
 export default function CreateSelfStudyProfileModal() {
-	return <Form />
+	return <Form className='sm:gap-128' redirectTo='/preferences/learning-profile' />
 }

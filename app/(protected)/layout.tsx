@@ -2,6 +2,7 @@ import {prefetchStreak} from '@/hooks/useStreak'
 import {getActiveLearningProfile} from '@/lib/actions/user'
 import type {LearningProfileTypes} from '@/types/profile'
 import {dehydrate, HydrationBoundary, QueryClient} from '@tanstack/react-query'
+import {redirect} from 'next/navigation'
 import BottomNavigation from './BottomNavigation'
 import MainNavigation from './MainNavigation'
 import ProfileToast from './ProfileToast'
@@ -12,10 +13,15 @@ export default async function RootLayout({
 }: Readonly<{
 	children: React.ReactNode
 }>) {
+	const {activeLearningProfile} = await getActiveLearningProfile()
+
+	if (!activeLearningProfile) {
+		redirect('/setup')
+	}
+
 	const queryClient = new QueryClient()
 	await prefetchStreak(queryClient)
 
-	const {activeLearningProfile} = await getActiveLearningProfile()
 	let activeLearningProfileType: LearningProfileTypes = 'language'
 	if (!activeLearningProfile.targetLang) {
 		activeLearningProfileType = 'self-study'

@@ -1,15 +1,17 @@
 'use client'
 import {createLearningProfile} from '@/lib/actions/profile/manage'
 import {faSignature} from '@fortawesome/free-solid-svg-icons'
-import CreateProfileField from '../CreateProfileField'
-import CreateProfileForm from '../CreateProfileForm'
+import CreateProfileField from './Field'
+import CreateProfileForm from './Form'
 
-export default function Form() {
+export default function Form({redirectTo, className}: {redirectTo: string; className?: string}) {
 	return (
 		<CreateProfileForm
 			heading='Creating Self-Study Profile'
 			subheading='Name your learning profile'
 			icon={faSignature}
+			redirectTo={redirectTo}
+			className={className}
 			onSubmit={async event => {
 				const formData = new FormData(event.currentTarget as HTMLFormElement)
 				const data = Object.fromEntries(formData.entries())
