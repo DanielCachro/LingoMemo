@@ -4,6 +4,7 @@ import RadioForm, {Skeleton as RadioFormSkeleton, RadioOption} from '@/component
 import {deleteLearningProfile} from '@/lib/actions/profile/manage'
 import {setActiveLearningProfile} from '@/lib/actions/user'
 import {LearningProfile} from '@/lib/generated/prisma/browser'
+import {languageCodeToName} from '@/lib/utils'
 import {faSpinner} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {useQueryClient} from '@tanstack/react-query'
@@ -29,7 +30,7 @@ export default function ProfileSelect({
 		try {
 			await deleteLearningProfile(profileId)
 		} catch (error) {
-			toast.error('Failed to delete profile. Please try again.')
+			toast.error(error instanceof Error ? error.message : 'Failed to delete profile. Please try again.')
 			console.error(error)
 		}
 
@@ -47,6 +48,23 @@ export default function ProfileSelect({
 					type: 'layout',
 				})
 				queryClient.removeQueries()
+				const selectedProfile = learningProfiles.find(profile => profile.id === Number(selectedOption))
+
+				const sourceLang = selectedProfile?.sourceLang
+				const targetLang = selectedProfile?.targetLang
+
+				const displayName = selectedProfile?.profileName ? (
+					<>
+						profile <span className='font-bold'>{selectedProfile.profileName}</span>
+					</>
+				) : sourceLang && targetLang ? (
+					<>
+						learning <span className='font-bold'>{languageCodeToName(targetLang)}</span> from{' '}
+						<span className='font-bold'>{languageCodeToName(sourceLang)}</span>
+					</>
+				) : null
+
+				toast.success(displayName ? <p>Switched to {displayName}</p> : 'Learning profile switched successfully')
 			} catch (error) {
 				toast.error('Failed to switch profile. Please try again.')
 				console.error(error)
