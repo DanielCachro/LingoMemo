@@ -110,7 +110,7 @@ export default function Modal({
 						initial={backdropAnimations.initial}
 						animate={backdropAnimations.animate}
 						exit={backdropAnimations.exit}
-						className='fixed inset-0 z-40 bg-background-950/60'
+						className='fixed inset-0 z-50 bg-background-950/60'
 						onClick={handleClose}
 					/>
 					<motion.div
