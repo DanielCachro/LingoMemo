@@ -236,6 +236,9 @@ body {
 /* Toast Notification */
 
 :root {
+	--toastify-toast-shadow: theme('boxShadow.lg');
+	--toastify-font-family: var(--font-nunito);
+
 	--toastify-color-light: var(--color-background-100);
 	--toastify-color-dark: var(--color-background-800);
 
@@ -250,8 +253,6 @@ body {
 	--toastify-icon-color-success: var(--color-success-600);
 	--toastify-icon-color-warning: var(--color-warning-500);
 	--toastify-icon-color-error: var(--color-error-500);
-
-	--toastify-toast-shadow: theme('boxShadow.lg');
 }
 
 .Toastify__toast-container {
