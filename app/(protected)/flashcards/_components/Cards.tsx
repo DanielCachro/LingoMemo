@@ -48,7 +48,7 @@ export default function Cards() {
 			'flashcards',
 			searchTerm,
 			pickBy(filter, value => value !== undefined),
-			sort.map(option => option.value),
+			sort.map(option => [option.value, option.direction]),
 		],
 		queryFn: fetchFlashcards,
 		refetchOnReconnect: false,

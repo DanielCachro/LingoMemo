@@ -1,16 +1,24 @@
 'use client'
 import {useModalData} from '@/app/ModalDataProvider'
-import {faGripVertical} from '@fortawesome/free-solid-svg-icons'
+import {faArrowDown, faGripVertical} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import _ from 'lodash'
-import {Reorder} from 'motion/react'
+import {motion, Reorder} from 'motion/react'
 import {useState} from 'react'
 import LeftAlignedModal from '../../_components/LeftAlignedModal'
 import {initialFlashcardsSortOrder} from './initial'
 
 export type FlashcardsSort = typeof initialFlashcardsSortOrder
 
-// TODO: Add asc/desc toggle for each field
+const arrowVariants = {
+	asc: {
+		rotateX: 180,
+	},
+	desc: {
+		rotateX: 0,
+	},
+}
+
 export default function FlashcardsSortModal() {
 	const {setData, getData, clearData} = useModalData()
 	const savedSort = getData<FlashcardsSort>('flashcardsSort')
@@ -42,6 +50,12 @@ export default function FlashcardsSortModal() {
 		setItems(reorderedItems)
 	}
 
+	const toggleDirection = (index: number) => {
+		const newItems = [...items]
+		newItems[index] = {...newItems[index], direction: newItems[index].direction === 'asc' ? 'desc' : 'asc'}
+		setItems(newItems)
+	}
+
 	return (
 		<LeftAlignedModal
 			title='Sort by'
@@ -71,11 +85,22 @@ export default function FlashcardsSortModal() {
 								handleKeyboardReorder(index, 'down')
 							}
 						}}
-						className='rounded-sm bg-transparent px-8 py-12 focus-visible:bg-transparent pointer-fine:hover:bg-primary-100 dark:pointer-fine:hover:bg-primary-900'>
-						<>
+						className='flex items-center justify-between rounded-sm bg-transparent px-8 py-12 focus-visible:bg-transparent pointer-fine:hover:bg-primary-100 dark:pointer-fine:hover:bg-primary-900'>
+						<div className='flex items-center'>
 							<FontAwesomeIcon icon={faGripVertical} className='text-gray-500 mr-12' />
 							{item.label}
-						</>
+						</div>
+						<motion.button
+							type='button'
+							onPointerDown={e => e.stopPropagation()}
+							onClick={() => toggleDirection(index)}
+							variants={arrowVariants}
+							initial={item.direction}
+							animate={item.direction}
+							transition={{type: 'tween', duration: 0.2, ease: 'easeInOut'}}
+							className='cursor-pointer p-[0.125rem] hover:text-primary-500 dark:hover:text-primary-400'>
+							<FontAwesomeIcon icon={faArrowDown} />
+						</motion.button>
 					</Reorder.Item>
 				))}
 			</Reorder.Group>

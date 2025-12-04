@@ -2,8 +2,8 @@ import {schema as flashcardsZodSchema, type FlashcardsFilter} from '@/app/@modal
 import {initialFlashcardsSortOrder} from '@/app/@modal/flashcards/(.)sort/initial'
 import {type FlashcardsSort} from '@/app/@modal/flashcards/(.)sort/page'
 import {getCurrentUser} from '@/lib/actions/user'
-import {prisma} from '@/prisma/client'
 import {Prisma} from '@/lib/generated/prisma/client'
+import {prisma} from '@/prisma/client'
 import {NextRequest, NextResponse} from 'next/server'
 
 export type FlashcardsApiResponse = {
@@ -32,17 +32,25 @@ export async function POST(request: NextRequest) {
 
 		flashcardsZodSchema.parse(body.filter)
 
-		const orderByMap: Record<string, Prisma.FlashcardOrderByWithRelationInput> = {
-			nextReviewDate: {nextReview: 'desc'},
-			createdAt: {createdAt: 'desc'},
-			question: {question: 'desc'},
-			answer: {answer: {text: 'desc'}},
-			efactor: {eFactor: 'desc'},
+		const getOrderBy = (value: string, direction: 'asc' | 'desc'): Prisma.FlashcardOrderByWithRelationInput => {
+			switch (value) {
+				case 'nextReviewDate':
+					return {nextReview: direction}
+				case 'createdAt':
+					return {createdAt: direction}
+				case 'question':
+					return {question: direction}
+				case 'answer':
+					return {answer: {text: direction}}
+				case 'efactor':
+					return {eFactor: direction}
+				default:
+					return {createdAt: direction}
+			}
 		}
 
-		const orderBy = body.sort.length
-			? body.sort.map(option => orderByMap[option.value])
-			: initialFlashcardsSortOrder.map(option => orderByMap[option.value])
+		const sortOptions = body.sort.length ? body.sort : initialFlashcardsSortOrder
+		const orderBy = sortOptions.map(option => getOrderBy(option.value, option.direction))
 
 		const where: Prisma.FlashcardWhereInput = {
 			learningProfileId: activeLearningProfileId,
