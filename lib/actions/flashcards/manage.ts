@@ -129,24 +129,67 @@ export async function updateFlashcard(
 		const validation = parseAndValidateFlashcard(formData)
 		if (!validation.success) return validation.errorState
 
-		await prisma.flashcard.update({
+		const currentFlashcard = await prisma.flashcard.findUnique({
 			where: {
 				id: flashcardId,
 				learningProfileId: user.activeLearningProfileId,
 			},
-			data: {
-				question: validation.data.question,
-				note: validation.data.note || null,
-				synonyms: validation.data.synonyms?.filter(Boolean),
-				examples: validation.data.examples?.filter(Boolean),
-				answer: {
-					update: {
-						text: validation.data.answer,
-						phonetic: validation.data.phonetic || null,
-					},
-				},
+			include: {
+				answer: true,
 			},
 		})
+
+		if (!currentFlashcard) {
+			return {status: 'error', message: 'Flashcard not found.', errors: {}}
+		}
+
+		const commonData = {
+			question: validation.data.question,
+			note: validation.data.note || null,
+			synonyms: validation.data.synonyms?.filter(Boolean),
+			examples: validation.data.examples?.filter(Boolean),
+		}
+
+		const newPhonetic = validation.data.phonetic || null
+		const hasAnswerChanged =
+			validation.data.answer !== currentFlashcard.answer.text || newPhonetic !== currentFlashcard.answer.phonetic
+
+		if (currentFlashcard.answer.isPersonal || !hasAnswerChanged) {
+			await prisma.flashcard.update({
+				where: {
+					id: flashcardId,
+				},
+				data: {
+					...commonData,
+					...(hasAnswerChanged
+						? {
+								answer: {
+									update: {
+										text: validation.data.answer,
+										phonetic: newPhonetic,
+									},
+								},
+							}
+						: {}),
+				},
+			})
+		} else {
+			await prisma.flashcard.update({
+				where: {
+					id: flashcardId,
+				},
+				data: {
+					...commonData,
+					answer: {
+						create: {
+							text: validation.data.answer,
+							phonetic: newPhonetic,
+							isPersonal: true,
+						},
+					},
+				},
+			})
+		}
 
 		return {status: 'success', message: 'Flashcard updated successfully.', errors: {}}
 	} catch (error) {
