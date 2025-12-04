@@ -9,7 +9,7 @@ interface SelectFieldProps {
 	options: Option[]
 }
 
-interface TextFieldProps {
+interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
 	type: 'input'
 	onChange?: () => void
 }
@@ -41,9 +41,10 @@ export default function CreateProfileField(props: Props) {
 		}
 
 		if (props.type === 'input') {
-			const {placeholder = 'Please enter a value', onChange} = props
+			const {placeholder = 'Please enter a value', onChange, ...rest} = props
 			return (
 				<Input
+					{...rest}
 					type='text'
 					name={name}
 					placeholder={placeholder}

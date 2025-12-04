@@ -55,7 +55,9 @@ export default function DeleteItemModal({heading, children, onConfirm, onCancel,
 			onClose={handleClose}>
 			<div className='space-y-16 p-24'>
 				<p>{heading}</p>
-				<div className='rounded-sm border-2 border-background-200 p-16 dark:border-background-800'>{children}</div>
+				<div className='max-h-[15rem] max-w-full overflow-y-auto rounded-sm border-2 border-background-200 p-16 wrap-break-word dark:border-background-800'>
+					{children}
+				</div>
 				<p>Are you sure?</p>
 
 				<div className='space-x-16'>

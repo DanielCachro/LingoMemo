@@ -256,6 +256,7 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 								<AnswerDisplay
 									answer={currentFlashcard.answer}
 									examples={currentFlashcard.examples}
+									synonyms={currentFlashcard.synonyms}
 									userAnswer={userAnswer}
 								/>
 							)}

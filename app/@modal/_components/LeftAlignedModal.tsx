@@ -92,7 +92,7 @@ export default function LeftAlignedModal(props: Props) {
 
 				return props.useForm ? (
 					<form className='flex h-full flex-col justify-between space-y-16 p-16 pt-0' onSubmit={handleSubmit}>
-						<Fieldset className='-mr-16 flex min-h-0 flex-col space-y-24 pr-16'>
+						<Fieldset className='flex min-h-0 w-full min-w-0 flex-col space-y-24'>
 							<Legend className='sr-only'>{title}</Legend>
 							{commonContent}
 						</Fieldset>

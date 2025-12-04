@@ -30,6 +30,7 @@ export default function TagInput({
 	const [inputValue, setInputValue] = useState('')
 	const [tags, setTags] = useState<string[]>(Array.from(new Set(initialTags)))
 	const [errors, setErrors] = useState(errorInTag ?? [])
+
 	function handleAddTag() {
 		const trimmed = inputValue.trim()
 		if (!trimmed) return
@@ -68,7 +69,7 @@ export default function TagInput({
 			<div className='space-y-16'>
 				<input type='hidden' name={name} value={JSON.stringify(tags)} />
 
-				<div className='flex flex-wrap gap-8'>
+				<div className='flex w-full flex-wrap gap-8'>
 					{tags.map((tag, index) => {
 						const tagError = errors.find(error => error.index === index)
 						return <Tag key={tag} tag={tag} onRemove={() => handleRemoveTag(index)} error={!!tagError} />
@@ -92,7 +93,7 @@ export default function TagInput({
 					<button
 						type='button'
 						onClick={handleAddTag}
-						className='h-24 w-24 cursor-pointer rounded-sm bg-primary-100 text-primary-500 hover:text-primary-400 dark:bg-primary-600 dark:text-primary-200 dark:hover:text-primary-100'>
+						className='h-24 w-24 shrink-0 cursor-pointer rounded-sm bg-primary-100 text-primary-500 hover:text-primary-400 dark:bg-primary-600 dark:text-primary-200 dark:hover:text-primary-100'>
 						<FontAwesomeIcon size='sm' icon={faPlus} />
 					</button>
 				</div>
@@ -107,19 +108,20 @@ export default function TagInput({
 
 function Tag({tag, onRemove, error}: {tag: string; onRemove: () => void; error: boolean}) {
 	return (
-		<div>
+		<div className='max-w-full'>
 			<div
 				className={cn(
-					'flex gap-8 rounded-full bg-primary-100 px-12 py-8 text-primary-500 dark:bg-primary-600 dark:text-primary-100',
+					'inline-flex max-w-full items-center gap-8 rounded-full bg-primary-100 px-12 py-8 text-primary-500 dark:bg-primary-600 dark:text-primary-100',
 					{
 						'bg-error-200 text-error-600 ring ring-error-600 dark:bg-error-600 dark:text-error-100 dark:ring-transparent':
 							error,
 					},
 				)}>
-				{tag}
+				<span className='overflow-x-auto whitespace-nowrap'>{tag}</span>
+
 				<button
 					type='button'
-					className={cn('cursor-pointer hover:text-primary-400 dark:hover:text-primary-200', {
+					className={cn('shrink-0 cursor-pointer hover:text-primary-400 dark:hover:text-primary-200', {
 						'hover:text-error-500 dark:hover:text-error-200': error,
 					})}
 					onClick={onRemove}>

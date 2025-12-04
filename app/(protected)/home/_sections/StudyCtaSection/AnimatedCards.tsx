@@ -33,8 +33,8 @@ export default function AnimatedCards({frontCardText}: {frontCardText?: string})
 				custom={12}
 				variants={variants}
 				className='relative z-20 flex h-192 w-256 flex-col items-center justify-between rounded-sm bg-primary-500 py-32 dark:bg-primary-600'>
-				<div className='flex h-full items-center pb-8'>
-					<p className='line-clamp-3 px-32 text-center text-primary-50'>{frontCardText}</p>
+				<div className='flex w-full items-center justify-center pb-8'>
+					<p className='line-clamp-3 w-full px-32 text-center wrap-break-word text-primary-50'>{frontCardText}</p>
 				</div>
 
 				<PrimaryButton

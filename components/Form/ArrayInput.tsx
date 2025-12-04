@@ -3,7 +3,7 @@ import {cn} from '@/lib/utils'
 import {faPlusCircle, faTrashCan} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {Textarea as HeadlessTextarea, TextareaProps} from '@headlessui/react'
-import {useEffect, useRef, useState} from 'react'
+import {useEffect, useLayoutEffect, useRef, useState} from 'react'
 import ErrorMessage from './ErrorMessage'
 
 interface Props extends TextareaProps {
@@ -97,6 +97,7 @@ function InputItem({
 	onRemove,
 	error,
 	errorMessage,
+	value,
 	...props
 }: {
 	className?: string
@@ -116,6 +117,10 @@ function InputItem({
 		textarea.style.height = `${textarea.scrollHeight}px`
 	}
 
+	useLayoutEffect(() => {
+		handleInputResize()
+	}, [value])
+
 	return (
 		<div>
 			<div
@@ -129,6 +134,7 @@ function InputItem({
 				<HeadlessTextarea
 					ref={ref}
 					onInput={handleInputResize}
+					value={value}
 					rows={1}
 					{...props}
 					className='no-scrollbar grow resize-none focus:outline-none'

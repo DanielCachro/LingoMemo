@@ -10,9 +10,9 @@ import {FlashcardButtons} from './FlashcardButtons'
 // Header
 function Header({entry}: {entry: DictionaryEntry}) {
 	return (
-		<div className='relative mb-48 w-fit'>
-			<h2 className='text-xl font-bold'>{entry.word}</h2>
-			<p className='text-sm'>
+		<div className='relative mb-48 w-fit max-w-full'>
+			<h2 className='text-xl font-bold wrap-break-word'>{entry.word}</h2>
+			<p className='text-sm wrap-break-word'>
 				<>
 					{entry.phonetic}
 					{entry.audio.map((audio, index) => (
@@ -82,12 +82,12 @@ async function Definition({
 
 	return (
 		<div className='space-y-32 rounded-sm border-2 border-background-300 p-24 dark:border-background-700'>
-			<p className='space-x-4'>
+			<p className='space-x-4 wrap-break-word'>
 				<span>{definition.definition}</span>
 				<FlashcardButtons
 					definition={definition}
 					flashcardId={flashcardId}
-					userTargetLang={activeLearningProfile.targetLang}
+					userTargetLang={activeLearningProfile?.targetLang}
 				/>
 			</p>
 			<Examples examples={definition.examples} />
@@ -99,7 +99,7 @@ async function Definition({
 // Synonyms
 function Synonyms({synonyms}: {synonyms: string[]}) {
 	return (
-		<p className='text-sm'>
+		<p className='text-sm wrap-break-word'>
 			<span className='text-background-600 dark:text-background-500'>synonyms: </span>
 			{synonyms.map((synonym, index) => (
 				<span key={`${synonym.slice(0, 10).trim()}-${index}`} className='text-primary-500 dark:text-primary-600'>
@@ -126,7 +126,9 @@ function Examples({examples}: {examples: string[]}) {
 				<ExamplesLabel count={examples.length} />
 				<ul>
 					{examples.map((example, index) => (
-						<li key={`${example.slice(1, 6).trim()}-${example.slice(-6, -1).trim()}-${index}`} className='text-sm'>
+						<li
+							key={`${example.slice(1, 6).trim()}-${example.slice(-6, -1).trim()}-${index}`}
+							className='text-sm wrap-break-word'>
 							{example}
 						</li>
 					))}

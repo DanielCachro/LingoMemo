@@ -29,6 +29,8 @@ export default function Form({redirectTo, className}: {redirectTo: string; class
 							type='input'
 							name='profileName'
 							label='My profile will be named:'
+							minLength={2}
+							maxLength={50}
 							placeholder='Enter profile name'
 							onChange={() => {
 								setFormErrors(prevErrors => {
