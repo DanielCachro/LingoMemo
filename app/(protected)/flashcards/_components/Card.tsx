@@ -6,10 +6,10 @@ import {cn} from '@/lib/utils'
 import {faChevronDown, faPenToSquare, faTrashCan} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {DateTime} from 'luxon'
-import {AnimatePresence, motion, stagger, Variants} from 'motion/react'
+import {motion, stagger, useAnimation, Variants} from 'motion/react'
 import Link from 'next/link'
 import {useRouter} from 'next/navigation'
-import {useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 
 function DetailsBlock({title, children}: {title: string; children: React.ReactNode}) {
 	const variants: Variants = {hidden: {opacity: 0}, show: {opacity: 1}, exit: {opacity: 0}}
@@ -31,14 +31,17 @@ interface CardProps {
 export default function Card({flashcard, isSelected, onSelectionChange}: CardProps) {
 	const [showDetails, setShowDetails] = useState(false)
 	const router = useRouter()
+	const controls = useAnimation()
+	const currentVariantRef = useRef('initial')
 
 	const detailsVariants: Variants = {
 		hidden: {
 			height: 0,
-			paddingTop: 12,
+			opacity: 0,
 		},
 		show: {
 			height: 'auto',
+			opacity: 1,
 			transition: {
 				delayChildren: stagger(0.2),
 				ease: 'circOut',
@@ -47,7 +50,7 @@ export default function Card({flashcard, isSelected, onSelectionChange}: CardPro
 		},
 		exit: {
 			height: 0,
-			paddingTop: 0,
+			opacity: 0,
 			transition: {
 				when: 'afterChildren',
 				ease: 'circOut',
@@ -56,6 +59,24 @@ export default function Card({flashcard, isSelected, onSelectionChange}: CardPro
 			},
 		},
 	}
+
+	useEffect(() => {
+		if (showDetails) {
+			currentVariantRef.current = 'show'
+			controls.start('show')
+		} else {
+			currentVariantRef.current = 'exit'
+			controls.start('exit')
+		}
+	}, [showDetails, controls])
+
+	useEffect(() => {
+		if (currentVariantRef.current === 'show') {
+			// Ensure that data is visible when while updating flashcard we add a new DetailsBlock (initial opacity:0).
+			// This forces 'show' variant to be applied to every DetailsBlock when data changes.
+			controls.set('show')
+		}
+	}, [flashcard, controls])
 
 	return (
 		<div className='rounded-sm border-2 border-background-300 bg-background-50 p-16 dark:border-background-700 dark:bg-background-900'>
@@ -122,64 +143,63 @@ export default function Card({flashcard, isSelected, onSelectionChange}: CardPro
 					</motion.span>
 				</button>
 			</div>
-			<AnimatePresence>
-				{showDetails && (
-					<motion.div variants={detailsVariants} initial='hidden' animate='show' exit='exit' className='space-y-16'>
-						<DetailsBlock title='Note'>
-							<p className='border-px w-full rounded-sm border-background-200 bg-background-100 p-16 wrap-break-word whitespace-pre-wrap text-background-700 dark:border-background-700 dark:bg-background-800 dark:text-background-300'>
-								{flashcard.note || 'No additional notes for this flashcard.'}
+
+			<motion.div variants={detailsVariants} initial='hidden' animate={controls} className='overflow-hidden'>
+				<div className='space-y-16 pt-16'>
+					<DetailsBlock title='Note'>
+						<p className='border-px w-full rounded-sm border-background-200 bg-background-100 p-16 wrap-break-word whitespace-pre-wrap text-background-700 dark:border-background-700 dark:bg-background-800 dark:text-background-300'>
+							{flashcard.note || 'No additional notes for this flashcard.'}
+						</p>
+					</DetailsBlock>
+					{flashcard.examples.length > 0 && (
+						<DetailsBlock title='Examples'>
+							<ol className='ml-24 list-disc wrap-break-word text-background-700 dark:text-background-300'>
+								{flashcard.examples.map((example, index) => (
+									<li key={index} className='w-full'>
+										<span className='inline'>{example}</span>
+									</li>
+								))}
+							</ol>
+						</DetailsBlock>
+					)}
+					{flashcard.synonyms.length > 0 && (
+						<DetailsBlock title='Synonyms'>
+							<p className='break-all whitespace-pre-wrap text-background-700 dark:text-background-300'>
+								{flashcard.synonyms.map((synonym, index) => (
+									<span
+										key={`${synonym.slice(0, 10).trim()}-${index}`}
+										className='inline-block text-primary-500 dark:text-primary-600'>
+										<Link href={`dictionary?search=${synonym}`} className='wrap-break-word hover:underline'>
+											{synonym}
+										</Link>
+										{index < flashcard.synonyms.length - 1 && <span className='mr-[3px]'>,</span>}
+									</span>
+								))}
 							</p>
 						</DetailsBlock>
-						{flashcard.examples.length > 0 && (
-							<DetailsBlock title='Examples'>
-								<ol className='ml-24 list-disc wrap-break-word text-background-700 dark:text-background-300'>
-									{flashcard.examples.map((example, index) => (
-										<li key={index} className='w-full'>
-											<span className='inline'>{example}</span>
-										</li>
-									))}
-								</ol>
-							</DetailsBlock>
-						)}
-						{flashcard.synonyms.length > 0 && (
-							<DetailsBlock title='Synonyms'>
-								<p className='break-all whitespace-pre-wrap text-background-700 dark:text-background-300'>
-									{flashcard.synonyms.map((synonym, index) => (
-										<span
-											key={`${synonym.slice(0, 10).trim()}-${index}`}
-											className='inline-block text-primary-500 dark:text-primary-600'>
-											<Link href={`dictionary?search=${synonym}`} className='wrap-break-word hover:underline'>
-												{synonym}
-											</Link>
-											{index < flashcard.synonyms.length - 1 && <span className='mr-[3px]'>,</span>}
-										</span>
-									))}
-								</p>
-							</DetailsBlock>
-						)}
-						<DetailsBlock title='Other'>
-							<div className='wrap-break-word'>
-								<p>
-									<span className='text-background-500 dark:text-background-400'>eFactor:</span> {flashcard.eFactor}
-								</p>
-								<p>
-									<span className='text-background-500 dark:text-background-400'>Created At: </span>
-									{DateTime.fromJSDate(new Date(flashcard.createdAt)).setLocale('en').toLocaleString(DateTime.DATE_MED)}
-								</p>
-								<p>
-									<span className='text-background-500 dark:text-background-400'>Next Review: </span>
-									{DateTime.max(
-										flashcard.nextReview ? DateTime.fromJSDate(new Date(flashcard.nextReview)) : DateTime.now(),
-										DateTime.now(),
-									)
-										.setLocale('en')
-										.toLocaleString(DateTime.DATE_MED)}
-								</p>
-							</div>
-						</DetailsBlock>
-					</motion.div>
-				)}
-			</AnimatePresence>
+					)}
+					<DetailsBlock title='Other'>
+						<div className='wrap-break-word'>
+							<p>
+								<span className='text-background-500 dark:text-background-400'>eFactor:</span> {flashcard.eFactor}
+							</p>
+							<p>
+								<span className='text-background-500 dark:text-background-400'>Created At: </span>
+								{DateTime.fromJSDate(new Date(flashcard.createdAt)).setLocale('en').toLocaleString(DateTime.DATE_MED)}
+							</p>
+							<p>
+								<span className='text-background-500 dark:text-background-400'>Next Review: </span>
+								{DateTime.max(
+									flashcard.nextReview ? DateTime.fromJSDate(new Date(flashcard.nextReview)) : DateTime.now(),
+									DateTime.now(),
+								)
+									.setLocale('en')
+									.toLocaleString(DateTime.DATE_MED)}
+							</p>
+						</div>
+					</DetailsBlock>
+				</div>
+			</motion.div>
 		</div>
 	)
 }
