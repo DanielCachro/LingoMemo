@@ -1,4 +1,5 @@
 'use client'
+import FlashcardsStatus from '@/components/Status'
 import {cn} from '@/lib/utils'
 import type {Flashcard, FlashcardResponseQuality} from '@/types/study'
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query'
@@ -7,7 +8,6 @@ import {toast} from 'react-toastify'
 import AnswerDisplay from './AnswerDisplay'
 import Buttons from './Buttons'
 import FlashcardComponent, {Skeleton as FlashcardComponentSkeleton} from './Flashcard'
-import FlashcardsStatus from './FlashcardsStatus'
 import ProgressBar, {Skeleton as ProgressBarSkeleton} from './ProgressBar'
 import Textarea, {Skeleton as TextareaSkeleton} from './Textarea'
 
@@ -267,7 +267,9 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 					) : !currentFlashcard && queueEnabled ? (
 						<p className='animate-pulse'>Loading more flashcards...</p>
 					) : toReviewToday === 0 ? (
-						<FlashcardsStatus status='empty' />
+						<FlashcardsStatus status='empty'>
+							No flashcards scheduled for today! You can add a new one now or come back another day to keep learning.
+						</FlashcardsStatus>
 					) : !queueEnabled ? (
 						<FlashcardsStatus status='done' />
 					) : null}

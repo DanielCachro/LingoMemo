@@ -7,13 +7,13 @@ import {FlashcardsApiResponse} from '@/app/api/flashcards/route'
 import {useModalData} from '@/app/ModalDataProvider'
 import SearchBar from '@/components/SearchBar'
 import Spinner from '@/components/Spinner'
+import FlashcardsStatus from '@/components/Status'
 import {faFilter, faUpDown} from '@fortawesome/free-solid-svg-icons'
 import {useInfiniteQuery, useQueryClient} from '@tanstack/react-query'
 import _, {pickBy} from 'lodash'
 import {useInView} from 'motion/react'
 import {useRouter} from 'next/navigation'
 import {Fragment, useEffect, useRef, useState} from 'react'
-import FlashcardsStatus from '../../study/_components/FlashcardsStatus'
 import BulkSelectFloatingButton from './BulkSelectFloatingButton'
 import Card from './Card'
 import SearchOptionsLinkButton from './SearchOptionsLinkButton'
@@ -93,7 +93,7 @@ export default function Cards() {
 	}, [queryClient])
 
 	return (
-		<div className='space-y-16'>
+		<div className='flex grow flex-col gap-16'>
 			<div className='flex gap-4'>
 				<SearchBar
 					className='grow [&_button]:pl-12 [&_input]:py-12'
@@ -117,13 +117,29 @@ export default function Cards() {
 
 			{status === 'pending' ? (
 				<Skeleton />
-			) : status === 'error' ? (
-				// TODO: Move FlashcardsStatus to /components and make it reusable
-				<div className='mt-96'>
-					<>
-						{console.log(error)}
-						<FlashcardsStatus status='error' />
-					</>
+			) : status === 'error' || data?.pages[0]?.flashcards.length === 0 ? (
+				<div className='mt-48 flex w-full grow items-center justify-center'>
+					{status === 'error' ? (
+						<>
+							{console.log(error)}
+							<FlashcardsStatus
+								variant='vertical'
+								status='error'
+								buttonText='Try Again'
+								onButtonClick={() => router.refresh()}
+							/>
+						</>
+					) : (
+						<FlashcardsStatus variant='vertical' status='empty' showButton={false}>
+							<div className='space-y-8'>
+								<p>Is anyone there? (Just an echo!) 👀</p>
+								<p>
+									There are zero flashcards in sight. You can easily change that right now by smashing that button
+									above!
+								</p>
+							</div>
+						</FlashcardsStatus>
+					)}
 				</div>
 			) : (
 				data &&
