@@ -3,7 +3,7 @@ import PrimaryButton from '@/components/PrimaryButton'
 import SlabBorder from '@/components/SlabBorder'
 import {createLearningProfile} from '@/lib/actions/profile/manage'
 import {cn} from '@/lib/utils'
-import {faSpinner, IconDefinition} from '@fortawesome/free-solid-svg-icons'
+import {IconDefinition} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {useRouter} from 'next/navigation'
 import {Dispatch, useState, useTransition} from 'react'
@@ -65,13 +65,7 @@ export default function CreateProfileForm({
 				{children(formErrors, setFormErrors)}
 			</SlabBorder>
 			<PrimaryButton type='submit'>
-				{isPending ? (
-					<span className='animate-pulse'>
-						<FontAwesomeIcon icon={faSpinner} spin /> Creating...
-					</span>
-				) : (
-					'Create Learning Profile'
-				)}
+				{isPending ? <span className='animate-pulse'>Creating...</span> : 'Create Learning Profile'}
 			</PrimaryButton>
 		</form>
 	)

@@ -5,8 +5,6 @@ import {deleteLearningProfile} from '@/lib/actions/profile/manage'
 import {setActiveLearningProfile} from '@/lib/actions/user'
 import {LearningProfile} from '@/lib/generated/prisma/browser'
 import {languageCodeToName} from '@/lib/utils'
-import {faSpinner} from '@fortawesome/free-solid-svg-icons'
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {useQueryClient} from '@tanstack/react-query'
 import {useRouter} from 'next/navigation'
 import {KeyboardEvent, useTransition} from 'react'
@@ -102,13 +100,7 @@ export default function ProfileSelect({
 					options={options}
 					initialSelectedRadioValue={activeLearningProfileId}
 					submitButtonText={
-						isChangePending ? (
-							<span className='animate-pulse'>
-								<FontAwesomeIcon icon={faSpinner} spin /> Swithing Profile...
-							</span>
-						) : (
-							'Switch to This Profile'
-						)
+						isChangePending ? <span className='animate-pulse'>Swithing Profile...</span> : 'Switch to This Profile'
 					}
 					radioGroupName='learning-profile'
 					onSubmit={selectedOption => handleChangeProfile(selectedOption)}
