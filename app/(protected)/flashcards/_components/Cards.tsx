@@ -43,7 +43,7 @@ export default function Cards() {
 		return data as FlashcardsApiResponse
 	}
 
-	const {data, error, fetchNextPage, isFetchingNextPage, status} = useInfiniteQuery({
+	const {data, error, fetchNextPage, isFetchingNextPage, status, hasNextPage, refetch} = useInfiniteQuery({
 		queryKey: [
 			'flashcards',
 			searchTerm,
@@ -83,8 +83,10 @@ export default function Cards() {
 	}
 
 	useEffect(() => {
-		fetchNextPage()
-	}, [isInView, fetchNextPage])
+		if (isInView && hasNextPage && !isFetchingNextPage && status !== 'error') {
+			fetchNextPage()
+		}
+	}, [isInView, fetchNextPage, hasNextPage, isFetchingNextPage, status])
 
 	useEffect(() => {
 		return () => {
@@ -126,7 +128,7 @@ export default function Cards() {
 								variant='vertical'
 								status='error'
 								buttonText='Try Again'
-								onButtonClick={() => router.refresh()}
+								onButtonClick={() => refetch()}
 							/>
 						</>
 					) : (
