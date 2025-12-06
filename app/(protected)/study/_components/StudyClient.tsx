@@ -31,12 +31,19 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 	const [currentFlashcard, setCurrentFlashcard] = useState<Flashcard | null>(initialFlashcard)
 	const [doneToday, setDoneToday] = useState(initialDone ?? 0)
 	const inFlight = useRef<Set<number>>(new Set())
+	const successSoundRef = useRef<HTMLAudioElement | null>(null)
 	const [userAnswer, setUserAnswer] = useState<UserAnswer>({
 		answer: '',
 		isAnswered: false,
 		isCorrect: false,
 		hintCount: 0,
 	})
+
+	useEffect(() => {
+		if (typeof window !== 'undefined') {
+			successSoundRef.current = new Audio('/sounds/success.mp3')
+		}
+	}, [])
 
 	// fetch queue of next flashcards
 	const {
@@ -94,19 +101,8 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 			}
 
 			const flashcard = await flashcardRes.json()
-
-			let streakRes = null
-			if (doneToday === toReviewToday) {
-				streakRes = await fetch('/api/profile/streak/update', {method: 'POST'})
-				if (!streakRes.ok) {
-					toast.error('Error: Failed to update streak. Please try again.')
-				}
-				queryClient.invalidateQueries({queryKey: ['profile']})
-			}
-
 			return {
 				flashcard,
-				streak: streakRes ? await streakRes.json() : null,
 			}
 		},
 		onMutate: async (variables: {flashcardId: number; q: number}) => {
@@ -130,6 +126,18 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 			queryClient.setQueryData(['nextFlashcards'], newQueue)
 
 			return {prevQueue, prevCurrentFlashcard, prevUserAnswer}
+		},
+		onSuccess: async () => {
+			if (doneToday === toReviewToday) {
+				successSoundRef.current?.play().catch(error => {
+					console.error('Failed to play success sound:', error)
+				})
+				const streakRes = await fetch('/api/profile/streak/update', {method: 'POST'})
+				if (!streakRes.ok) {
+					toast.error('Error: Failed to update streak. Please try again.')
+				}
+				queryClient.invalidateQueries({queryKey: ['profile']})
+			}
 		},
 		onError: (error, data, context) => {
 			console.error('Mutation failed', error)
@@ -271,7 +279,9 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 							No flashcards scheduled for today! You can add a new one now or come back another day to keep learning.
 						</FlashcardsStatus>
 					) : !queueEnabled ? (
-						<FlashcardsStatus status='done' />
+						<>
+							<FlashcardsStatus status='done' />
+						</>
 					) : null}
 				</div>
 			</div>
