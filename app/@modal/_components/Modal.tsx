@@ -4,7 +4,7 @@ import {useMediaQuery} from '@/hooks/useMediaQuery'
 import {cn} from '@/lib/utils'
 import {AnimatePresence, motion, useAnimationControls, useDragControls} from 'motion/react'
 import {usePathname} from 'next/navigation'
-import {ReactNode, useEffect, useState} from 'react'
+import {ReactNode, useCallback, useEffect, useState} from 'react'
 import {createPortal} from 'react-dom'
 
 export interface ModalDisableAnimations {
@@ -67,9 +67,20 @@ export default function Modal({
 		exit: shouldAnimateExit ? {opacity: 0} : {opacity: 1, transition: {duration: 0}},
 	}
 
-	function handleClose() {
+	const handleClose = useCallback(() => {
 		setIsOpen(false)
-	}
+	}, [])
+
+	useEffect(() => {
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === 'Escape') {
+				handleClose()
+			}
+		}
+
+		document.addEventListener('keydown', handleKeyDown)
+		return () => document.removeEventListener('keydown', handleKeyDown)
+	}, [handleClose])
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	function onDragEnd(_event: any, info: {offset: {y: number}; velocity: {y: number}}) {
