@@ -7,18 +7,31 @@ import {useRouter} from 'next/navigation'
 import {KeyboardEvent, useState} from 'react'
 import {toast} from 'react-toastify'
 import {ModalDisableAnimations} from './Modal'
-const Modal = dynamic(() => import('../_components/Modal'), {ssr: false})
+const Modal = dynamic(() => import('./Modal'), {ssr: false})
 
 interface Props {
 	heading: string
 	children: React.ReactNode
+	confirmButtonText?: string
+	confirmButtonTextPending?: string
+	cancelButtonText?: string
 	onConfirm: () => void | Promise<void>
 	onCancel?: (handleClose: () => void) => void
 	onClose?: () => void
 	disableAnimations?: ModalDisableAnimations
 }
 
-export default function DeleteItemModal({heading, children, onConfirm, onCancel, onClose, disableAnimations}: Props) {
+export default function DeleteItemModal({
+	heading,
+	children,
+	confirmButtonText = 'Yes',
+	confirmButtonTextPending = 'Processing...',
+	cancelButtonText = 'No',
+	onConfirm,
+	onCancel,
+	onClose,
+	disableAnimations,
+}: Props) {
 	const router = useRouter()
 	const [isLoading, setIsLoading] = useState(false)
 
@@ -71,7 +84,7 @@ export default function DeleteItemModal({heading, children, onConfirm, onCancel,
 								event.stopPropagation()
 							}
 						}}>
-						{isLoading ? <span className='animate-pulse'>Deleting...</span> : 'Yes, Delete'}
+						{isLoading ? <span className='animate-pulse'>{confirmButtonTextPending}</span> : confirmButtonText}
 					</SecondaryButton>
 
 					<PrimaryButton
@@ -90,7 +103,7 @@ export default function DeleteItemModal({heading, children, onConfirm, onCancel,
 								handleClose()
 							}
 						}}>
-						No
+						{cancelButtonText}
 					</PrimaryButton>
 				</div>
 			</div>

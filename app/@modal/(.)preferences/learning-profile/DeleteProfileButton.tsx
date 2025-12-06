@@ -1,6 +1,6 @@
 'use client'
 
-import DeleteItemModal from '@/app/@modal/_components/DeleteItemModal' // Adjust path if needed
+import DeleteItemModal from '@/app/@modal/_components/ConfirmActionModal' // Adjust path if needed
 import {LearningProfile} from '@/lib/generated/prisma/browser'
 import {ButtonHTMLAttributes, useState} from 'react'
 import ProfileDetails from './ProfileDetails'
@@ -18,6 +18,8 @@ export default function DeleteProfileButton({profile, onDelete, ...props}: Props
 			{showDialog && (
 				<DeleteItemModal
 					heading='You are about to delete profile'
+					confirmButtonText='Yes, delete'
+					confirmButtonTextPending='Deleting...'
 					onClose={() => setShowDialog(false)}
 					onConfirm={async () => {
 						await onDelete(profile.id)
