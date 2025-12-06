@@ -1,6 +1,7 @@
 'use client'
 import AudioIcon from '@/components/AudioIcon'
 import Checkbox from '@/components/Form/Chceckbox'
+import Tooltip from '@/components/Tooltip'
 import {Prisma} from '@/lib/generated/prisma/browser'
 import {cn} from '@/lib/utils'
 import {faChevronDown, faPenToSquare, faTrashCan} from '@fortawesome/free-solid-svg-icons'
@@ -180,9 +181,15 @@ export default function Card({flashcard, isSelected, onSelectionChange}: CardPro
 					)}
 					<DetailsBlock title='Other'>
 						<div className='wrap-break-word'>
-							<p>
-								<span className='text-background-500 dark:text-background-400'>eFactor:</span> {flashcard.eFactor}
-							</p>
+							<div className='flex gap-4'>
+								<p>
+									<span className='text-background-500 dark:text-background-400'>eFactor:</span> {flashcard.eFactor}
+								</p>
+								<Tooltip>
+									eFactor shows how easy a card is for you and lets the app decide how quickly to extend the time
+									between its reviews: higher eFactor = rarer reviews, lower eFactor = more frequent reviews.
+								</Tooltip>
+							</div>
 							<p>
 								<span className='text-background-500 dark:text-background-400'>Created At: </span>
 								{DateTime.fromJSDate(new Date(flashcard.createdAt)).setLocale('en').toLocaleString(DateTime.DATE_MED)}
