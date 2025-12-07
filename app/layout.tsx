@@ -6,6 +6,7 @@ import {config} from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 config.autoAddCss = false
 
+import CookieConsent from '@/app/CookieConsent'
 import {ThemeProvider} from 'next-themes'
 import AppToast from './AppToast'
 import {ModalDataProvider} from './ModalDataProvider'
@@ -40,6 +41,7 @@ export default function RootLayout({
 							{modal}
 						</ModalDataProvider>
 						<AppToast />
+						<CookieConsent />
 					</ThemeProvider>
 				</QueryClientProvider>
 			</body>
