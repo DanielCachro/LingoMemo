@@ -20,24 +20,31 @@ export async function GET(request: NextRequest) {
 		const {error} = await supabase.auth.exchangeCodeForSession(code)
 
 		if (!error) {
-			const user = await supabase.auth.getUser()
+			const {
+				data: {user},
+				error: userError,
+			} = await supabase.auth.getUser()
 
 			async function signOutAndRedirect() {
 				await supabase.auth.signOut()
 				return NextResponse.redirect(`${origin}/auth/error`)
 			}
 
-			if (!user) {
+			if (userError || !user) {
+				console.error('Auth callback error: User not found or error fetching user', userError)
 				return await signOutAndRedirect()
 			}
 
 			try {
-				await createNewUser(user.data.user)
-			} catch {
+				await createNewUser(user)
+			} catch (e) {
+				console.error('Auth callback error: Failed to create new user', e)
 				return await signOutAndRedirect()
 			}
 
 			return NextResponse.redirect(`${origin}${next}/home`)
+		} else {
+			console.error('Auth callback error: Exchange code for session failed', error)
 		}
 	}
 
