@@ -8,6 +8,7 @@ config.autoAddCss = false
 
 import CookieConsent from '@/app/CookieConsent'
 import {ThemeProvider} from 'next-themes'
+import AnalyticsWrapper from './AnalyticsWrapper'
 import AppToast from './AppToast'
 import {ModalDataProvider} from './ModalDataProvider'
 import QueryClientProvider from './QueryClientProvider'
@@ -42,6 +43,7 @@ export default function RootLayout({
 						</ModalDataProvider>
 						<AppToast />
 						<CookieConsent />
+						<AnalyticsWrapper />
 					</ThemeProvider>
 				</QueryClientProvider>
 			</body>

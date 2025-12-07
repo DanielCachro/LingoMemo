@@ -19,11 +19,13 @@ export default function CookieConsent() {
 
 	const handleAccept = () => {
 		localStorage.setItem('cookieConsent', 'accepted')
+		window.dispatchEvent(new Event('cookie-consent-update'))
 		setIsVisible(false)
 	}
 
 	const handleDecline = () => {
 		localStorage.setItem('cookieConsent', 'declined')
+		window.dispatchEvent(new Event('cookie-consent-update'))
 		setIsVisible(false)
 	}
 
@@ -37,7 +39,8 @@ export default function CookieConsent() {
 					className='fixed bottom-0 left-0 z-50 p-16 sm:w-384'>
 					<SlabBorder className='space-y-16 p-12'>
 						<p>
-							We use essential cookies to offer you a better application experience. Learn more about our{' '}
+							We use essential cookies to offer you a better application experience. We&apos;d like to use other cookies
+							to analyse our website&apos;s performance, but only if you accept. Learn more about our{' '}
 							<Link href='/privacy' className='underline hover:text-primary-500 dark:hover:text-primary-600'>
 								cookie policy
 							</Link>

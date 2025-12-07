@@ -49,7 +49,25 @@ export default function PrivacyPage() {
 					</ul>
 				</Section>
 
-				<Section title='3. How We Use Your Information'>
+				<Section title='3. Third-Party Analytics'>
+					<p>
+						We use third-party analytics services to help us understand how our website is used and to improve our
+						services. These services may collect information about your use of the website, such as your IP address, web
+						browser, pages viewed, time spent on pages, links clicked and conversion information.
+					</p>
+					<ul className='space-y-2 mt-4 list-inside list-disc'>
+						<li>
+							<strong>Vercel Analytics:</strong> We use Vercel Analytics to track page views and visitor numbers.
+						</li>
+						<li>
+							<strong>Vercel Speed Insights:</strong> We use Vercel Speed Insights to analyze the performance of our
+							website (e.g., loading times).
+						</li>
+					</ul>
+					<p className='mt-4'>These services are only enabled if you have given your consent via our cookie banner.</p>
+				</Section>
+
+				<Section title='4. How We Use Your Personal Data'>
 					<p>
 						We will only use your personal data when the law allows us to. Most commonly, we will use your personal data
 						in the following circumstances:
@@ -62,7 +80,7 @@ export default function PrivacyPage() {
 					</ul>
 				</Section>
 
-				<Section title='4. Data Security'>
+				<Section title='5. Data Security'>
 					<p>
 						We have put in place appropriate security measures to prevent your personal data from being accidentally
 						lost, used or accessed in an unauthorized way, altered or disclosed. In addition, we limit access to your
@@ -71,7 +89,7 @@ export default function PrivacyPage() {
 					</p>
 				</Section>
 
-				<Section title='5. Data Retention'>
+				<Section title='6. Data Retention'>
 					<p>
 						We will only retain your personal data for as long as necessary to fulfill the purposes we collected it for,
 						including for the purposes of satisfying any legal, accounting, or reporting requirements. Generally, we
@@ -80,7 +98,7 @@ export default function PrivacyPage() {
 					</p>
 				</Section>
 
-				<Section title='6. Your Legal Rights'>
+				<Section title='7. Your Legal Rights'>
 					<p>
 						Under certain circumstances, you have rights under data protection laws in relation to your personal data,
 						including the right to request access, correction, erasure, restriction, transfer, to object to processing,
@@ -88,7 +106,7 @@ export default function PrivacyPage() {
 					</p>
 				</Section>
 
-				<Section title='7. Third-Party Services'>
+				<Section title='8. Third-Party Services'>
 					<p className='mb-12'>We use trusted third-party services to operate our application:</p>
 					<ul className='list-inside list-disc space-y-4'>
 						<li>
@@ -106,7 +124,7 @@ export default function PrivacyPage() {
 					</ul>
 				</Section>
 
-				<Section title='8. Contact Details'>
+				<Section title='9. Contact Details'>
 					<p>
 						If you have any questions about this privacy policy or our privacy practices, please contact us at:{' '}
 						<span className='italic'>danielcachro@gmail.com</span>.
