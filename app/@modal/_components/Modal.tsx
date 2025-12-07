@@ -135,7 +135,7 @@ export default function Modal({
 						dragListener={false}
 						dragControls={dragControls}
 						className={cn(
-							'fixed left-1/2 z-50 h-full max-h-full w-full max-w-full -translate-x-1/2 rounded-sm border-background-200 bg-background-100 text-background-800 scrollbar sm:top-64 sm:h-fit sm:max-w-512 sm:translate-y-0 sm:border-2 sm:shadow-2xl md:max-w-640 lg:max-w-768 dark:border-background-800 dark:bg-background-900 dark:text-background-200',
+							'fixed left-1/2 z-50 h-full max-h-full w-full max-w-full -translate-x-1/2 rounded-sm border-background-200 bg-background-100 text-background-800 scrollbar sm:top-1/2 sm:h-fit sm:max-h-[80vh] sm:max-w-512 sm:-translate-y-1/2 sm:border-2 sm:shadow-2xl md:max-w-640 lg:max-w-768 dark:border-background-800 dark:bg-background-900 dark:text-background-200 [@media(min-height:600px)]:sm:top-64 [@media(min-height:600px)]:sm:translate-y-0',
 							className,
 						)}
 						style={
@@ -145,7 +145,7 @@ export default function Modal({
 									}
 								: {}
 						}>
-						<div onClick={e => e.stopPropagation()} className='grid h-full w-full grid-rows-[auto_1fr] sm:max-h-768'>
+						<div onClick={e => e.stopPropagation()} className='grid h-full w-full grid-rows-[auto_1fr] sm:max-h-[80vh]'>
 							<div onPointerDown={event => dragControls.start(event)} style={{touchAction: 'none'}}>
 								<div className='flex w-full justify-center py-16 sm:hidden'>
 									<span className='h-4 w-32 rounded-full bg-background-400 dark:bg-background-700' />
