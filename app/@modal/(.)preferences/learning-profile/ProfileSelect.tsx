@@ -26,10 +26,15 @@ export default function ProfileSelect({
 
 	const handleDelete = async (profileId: number) => {
 		try {
-			await deleteLearningProfile(profileId)
+			const result = await deleteLearningProfile(profileId)
+			if (!result.success) {
+				toast.error(result.error || 'Failed to delete profile. Please try again.')
+				return
+			}
 		} catch (error) {
-			toast.error(error instanceof Error ? error.message : 'Failed to delete profile. Please try again.')
+			toast.error('Failed to delete profile. Please try again.')
 			console.error(error)
+			return
 		}
 
 		deleteStartTransition(() => {

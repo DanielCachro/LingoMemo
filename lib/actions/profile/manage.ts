@@ -11,39 +11,47 @@ import {z} from 'zod'
 
 export async function deleteLearningProfile(profileId: number, config: RevalidationConfig = {revalidateAfter: false}) {
 	const user = await getCurrentUser()
-	if (!user) throw new Error('User not authenticated')
+	if (!user) return {success: false, error: 'User not authenticated'}
 
 	const activeLearningProfile = user.activeLearningProfile
 	const activeLearningProfileId = user.activeLearningProfileId
 
-	if (!activeLearningProfile || !activeLearningProfileId) throw new Error('No active learning profile found.')
+	if (!activeLearningProfile || !activeLearningProfileId)
+		return {success: false, error: 'No active learning profile found.'}
 
-	if (activeLearningProfileId === profileId) {
-		if (user.learningProfiles.length === 1) {
-			throw new Error('Cannot delete the only learning profile.')
-		}
-		const newActiveProfile = user.learningProfiles.find(profile => profile.id !== profileId)
-		if (!newActiveProfile) {
-			throw new Error('No alternative learning profile found to set as active.')
+	try {
+		if (activeLearningProfileId === profileId) {
+			if (user.learningProfiles.length === 1) {
+				return {success: false, error: 'Cannot delete the only learning profile.'}
+			}
+			const newActiveProfile = user.learningProfiles.find(profile => profile.id !== profileId)
+			if (!newActiveProfile) {
+				return {success: false, error: 'No alternative learning profile found to set as active.'}
+			}
+
+			await setActiveLearningProfile(newActiveProfile.id, {
+				revalidateAfter: true,
+				pathToRevalidate: '/home',
+				type: 'layout',
+			})
 		}
 
-		await setActiveLearningProfile(newActiveProfile.id, {
-			revalidateAfter: true,
-			pathToRevalidate: '/home',
-			type: 'layout',
+		await prisma.learningProfile.delete({
+			where: {
+				id: profileId,
+				userId: user.id,
+			},
 		})
+	} catch (error) {
+		console.error('Error deleting profile:', error)
+		return {success: false, error: 'Failed to delete profile. Please try again.'}
 	}
-
-	await prisma.learningProfile.delete({
-		where: {
-			id: profileId,
-			userId: user.id,
-		},
-	})
 
 	if (config.revalidateAfter) {
 		revalidatePath(config.pathToRevalidate)
 	}
+
+	return {success: true}
 }
 
 // Create learning profile
