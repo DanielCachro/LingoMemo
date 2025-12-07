@@ -6,6 +6,7 @@ import {redirect} from 'next/navigation'
 import BottomNavigation from './BottomNavigation'
 import MainNavigation from './MainNavigation'
 import ProfileToast from './ProfileToast'
+import StreakSynchronizer from './StreakSynchronizer'
 import {TimeZoneUpdater} from './TimeZoneUpdater'
 
 export default async function RootLayout({
@@ -31,6 +32,7 @@ export default async function RootLayout({
 		<div className={'flex h-dvh flex-col overflow-y-hidden antialiased sm:flex-row'}>
 			<HydrationBoundary state={dehydrate(queryClient)}>
 				<TimeZoneUpdater />
+				<StreakSynchronizer />
 				<ProfileToast activeLearningProfile={activeLearningProfile} />
 				<MainNavigation activeLearningProfileType={activeLearningProfileType} />
 				<main className='w-full grow overflow-y-auto scrollbar'>{children}</main>
