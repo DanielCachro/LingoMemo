@@ -12,7 +12,11 @@ export default function FlashcardsBulkDeletePage() {
 
 	async function handleConfirmDelete() {
 		try {
-			await bulkDeleteFlashcards(flashcardsToDelete)
+			const result = await bulkDeleteFlashcards(flashcardsToDelete)
+			if (!result.success) {
+				toast.error(result.error || 'Failed to delete flashcards. Please try again.')
+				return
+			}
 			setData('flashcardsToBulkDelete', [])
 			queryClient.refetchQueries({queryKey: ['flashcards']})
 		} catch (error) {

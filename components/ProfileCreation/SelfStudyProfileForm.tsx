@@ -21,8 +21,8 @@ export default function Form({redirectTo, className}: {redirectTo: string; class
 				return result
 			}}>
 			{(formErrors, setFormErrors) => {
-				const fieldError = formErrors?.errors.find(error => error.location === 'profileName')
-				const formError = formErrors?.errors.find(error => error.location === 'form')
+				const fieldError = formErrors?.errors?.find(error => error.location === 'profileName')
+				const formError = formErrors?.errors?.find(error => error.location === 'form')
 				return (
 					<>
 						<CreateProfileField
@@ -37,9 +37,9 @@ export default function Form({redirectTo, className}: {redirectTo: string; class
 									if (!prevErrors) return null
 									return {
 										...prevErrors,
-										errors: prevErrors.errors.filter(
-											error => error.location !== 'profileName' && error.location !== 'form',
-										),
+										errors: prevErrors.errors
+											? prevErrors.errors.filter(error => error.location !== 'profileName' && error.location !== 'form')
+											: undefined,
 									}
 								})
 							}}

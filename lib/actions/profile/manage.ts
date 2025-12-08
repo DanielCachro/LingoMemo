@@ -77,9 +77,9 @@ interface CreateLearningProfileError {
 export async function createLearningProfile(
 	params: CreateLanguageProfile | CreateSelfStudyProfile,
 	config: RevalidationConfig = {revalidateAfter: false},
-): Promise<{errors: CreateLearningProfileError[]} | void> {
+): Promise<{success: boolean; errors?: CreateLearningProfileError[]; error?: string}> {
 	const user = await getCurrentUser()
-	if (!user) throw new Error('User not authenticated')
+	if (!user) return {success: false, error: 'User not authenticated'}
 
 	try {
 		let createData: Record<string, unknown>
@@ -91,12 +91,13 @@ export async function createLearningProfile(
 			if (!sourceLang) errors.push({message: 'Source language is required.', location: 'sourceLang'})
 			if (!targetLang) errors.push({message: 'Target language is required.', location: 'targetLang'})
 			if (errors.length > 0) {
-				return {errors}
+				return {success: false, errors}
 			}
 
 			const validation = createLanguageProfileSchema.safeParse(params)
 			if (!validation.success) {
 				return {
+					success: false,
 					errors: [
 						{message: 'Validation error, at least one of the selected languages is incorrect.', location: 'form'},
 					],
@@ -110,11 +111,15 @@ export async function createLearningProfile(
 			}
 		} else {
 			const {profileName} = params
-			if (!profileName) return {errors: [{message: 'Profile name is required.', location: 'profileName'}]}
+			if (!profileName)
+				return {success: false, errors: [{message: 'Profile name is required.', location: 'profileName'}]}
 
 			const validation = createSelfStudyProfileSchema.safeParse(params)
 			if (!validation.success) {
-				return {errors: [{message: 'Please enter a valid name between 2 and 50 characters.', location: 'profileName'}]}
+				return {
+					success: false,
+					errors: [{message: 'Please enter a valid name between 2 and 50 characters.', location: 'profileName'}],
+				}
 			}
 
 			createData = {
@@ -132,12 +137,15 @@ export async function createLearningProfile(
 		}
 
 		if (config.revalidateAfter) {
-			revalidatePath(config.pathToRevalidate)
+			revalidatePath(config.pathToRevalidate, config.type)
 		}
+
+		return {success: true}
 	} catch (error) {
 		if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-			return {errors: [{message: 'Learning profile already exists.', location: 'form'}]}
+			return {success: false, errors: [{message: 'Learning profile already exists.', location: 'form'}]}
 		}
-		throw new Error((error as Error).message)
+		console.error('Error creating profile:', error)
+		return {success: false, error: 'Failed to create profile. Please try again.'}
 	}
 }

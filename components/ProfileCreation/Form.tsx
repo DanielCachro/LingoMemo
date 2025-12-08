@@ -7,6 +7,7 @@ import {IconDefinition} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {useRouter} from 'next/navigation'
 import {Dispatch, useState, useTransition} from 'react'
+import {toast} from 'react-toastify'
 
 type FormErrorsType = Awaited<ReturnType<typeof createLearningProfile>> | null
 
@@ -42,10 +43,14 @@ export default function CreateProfileForm({
 		startTransition(async () => {
 			const result = await onSubmit(event)
 
-			if (result?.errors) {
+			if (!result.success) {
+				if (result.error) {
+					toast.error(result.error)
+				}
 				setFormErrors(result)
 			} else {
 				router.push(redirectTo)
+				router.refresh()
 			}
 		})
 	}

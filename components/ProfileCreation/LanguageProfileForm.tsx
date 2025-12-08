@@ -17,7 +17,7 @@ const targetLanguageOptions = Object.values(TargetLanguages).map(lang => ({
 	label: languageCodeToName(lang),
 }))
 
-export default function Form({redirectTo, className}: {redirectTo: string, className?: string}) {
+export default function Form({redirectTo, className}: {redirectTo: string; className?: string}) {
 	return (
 		<CreateProfileForm
 			heading='Creating Language Profile'
@@ -36,9 +36,9 @@ export default function Form({redirectTo, className}: {redirectTo: string, class
 				return result
 			}}>
 			{(formErrors, setFormErrors) => {
-				const sourceError = formErrors?.errors.find(error => error.location === 'sourceLang')
-				const targetError = formErrors?.errors.find(error => error.location === 'targetLang')
-				const formError = formErrors?.errors.find(error => error.location === 'form')
+				const sourceError = formErrors?.errors?.find(error => error.location === 'sourceLang')
+				const targetError = formErrors?.errors?.find(error => error.location === 'targetLang')
+				const formError = formErrors?.errors?.find(error => error.location === 'form')
 				return (
 					<>
 						<CreateProfileField
@@ -52,9 +52,9 @@ export default function Form({redirectTo, className}: {redirectTo: string, class
 									if (!prevErrors) return null
 									return {
 										...prevErrors,
-										errors: prevErrors.errors.filter(
-											error => error.location !== 'sourceLang' && error.location !== 'form',
-										),
+										errors: prevErrors.errors
+											? prevErrors.errors.filter(error => error.location !== 'sourceLang' && error.location !== 'form')
+											: undefined,
 									}
 								})
 							}}
@@ -71,9 +71,11 @@ export default function Form({redirectTo, className}: {redirectTo: string, class
 									if (!prevErrors) return null
 									return {
 										...prevErrors,
-										errors: prevErrors.errors.filter(
-											error => error.location !== 'targetLang' && error.location !== 'form',
-										),
+										errors: prevErrors.errors
+											? prevErrors.errors.filter(
+													error => error.location !== 'targetLang' && error.location !== 'form',
+											  )
+											: undefined,
 									}
 								})
 							}}

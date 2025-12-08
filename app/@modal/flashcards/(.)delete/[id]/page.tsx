@@ -20,7 +20,11 @@ export default function FlashcardsDeleteModal({
 
 	async function handleDelete() {
 		try {
-			await deleteFlashcard(flashcardId)
+			const result = await deleteFlashcard(flashcardId)
+			if (!result.success) {
+				toast.error(result.error || 'Failed to delete flashcard. Please try again.')
+				return
+			}
 			queryClient.refetchQueries({queryKey: ['flashcards']})
 		} catch (error) {
 			toast.error('Failed to delete flashcard. Please try again.')
