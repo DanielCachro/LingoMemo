@@ -32,7 +32,7 @@ export default async function RootLayout({
 		<div className={'flex h-dvh flex-col overflow-y-hidden antialiased sm:flex-row'}>
 			<HydrationBoundary state={dehydrate(queryClient)}>
 				<TimeZoneUpdater />
-				<StreakSynchronizer />
+				<StreakSynchronizer activeLearningProfileId={activeLearningProfile.id} />
 				<ProfileToast activeLearningProfile={activeLearningProfile} />
 				<MainNavigation activeLearningProfileType={activeLearningProfileType} />
 				<main className='w-full grow overflow-y-auto scrollbar'>{children}</main>

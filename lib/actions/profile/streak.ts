@@ -59,12 +59,12 @@ async function calculateStreakStatus() {
 
 	// Update streak if no flashcard reviews planned for today
 	// New profiles don't have studyCompletionLog entry, so we dont need to worry that we will increment streak for them at first login
-	else if (
+	if (
 		toReviewToday === 0 &&
 		studyLastCompletedDate &&
 		startOfTodayUTC.diff(studyLastCompletedDate, 'days').days !== 0
 	) {
-		calculatedStreakCount = streakCount + 1
+		calculatedStreakCount = calculatedStreakCount + 1
 		shouldIncrement = true
 	}
 
@@ -96,6 +96,38 @@ export async function updateStreak() {
 
 	const {activeLearningProfileId, streakCount, longestStreak, shouldReset, shouldIncrement} = status
 
+	if (shouldReset && shouldIncrement) {
+		try {
+			await prisma.$transaction([
+				prisma.learningProfile.update({
+					where: {id: activeLearningProfileId},
+					data: {
+						streakCount: 1,
+						longestStreak: Math.max(longestStreak, 1),
+					},
+				}),
+				prisma.studyCompletionLog.create({
+					data: {
+						learningProfileId: activeLearningProfileId,
+						completedAt: DateTime.now().toUTC().startOf('day').toJSDate(),
+					},
+				}),
+			])
+			console.log(
+				`Streak broken but recovered immediately. Resetting and incrementing for profile ID: ${activeLearningProfileId}`,
+			)
+			return {
+				updated: true,
+				newStreak: 1,
+				message:
+					'You missed a day, so your streak reset. 💔 But since you have no cards today, you get a free point! Start of a new streak! 🚀',
+			}
+		} catch (error) {
+			console.error('Error updating streak:', error)
+			throw new Error((error as Error).message || 'Unknown error')
+		}
+	}
+
 	if (shouldReset) {
 		try {
 			await prisma.learningProfile.update({
@@ -103,7 +135,12 @@ export async function updateStreak() {
 				data: {streakCount: 0},
 			})
 			console.log(`Streak is broken. Resetting streak for profile ID: ${activeLearningProfileId}`)
-			return {updated: true, newStreak: 0}
+			return {
+				updated: true,
+				newStreak: 0,
+				message:
+					"Oh. You missed a day. Your streak is gone. 💔 But don't just stare at the zero. Show me you can beat your old record. Start now!",
+			}
 		} catch (error) {
 			console.error('Error updating streak:', error)
 			throw new Error((error as Error).message || 'Unknown error')
@@ -130,7 +167,11 @@ export async function updateStreak() {
 				}),
 			])
 			console.log(`No reviews planned for today. Incrementing streak for profile ID: ${activeLearningProfileId}`)
-			return {updated: true, newStreak: streakCount + 1}
+			return {
+				updated: true,
+				newStreak: streakCount + 1,
+				message: 'It’s quiet... too quiet. No cards for today! Enjoy the free streak point. 👀',
+			}
 		} catch (error) {
 			console.error('Error updating streak:', error)
 			throw new Error((error as Error).message || 'Unknown error')
