@@ -5,6 +5,7 @@ import {Prisma} from '@/lib/generated/prisma/client'
 import {prisma} from '@/prisma/client'
 import type {RevalidationConfig} from '@/types/revalidate'
 import {revalidatePath} from 'next/cache'
+import {redirect} from 'next/navigation'
 import {z} from 'zod'
 
 // Delete learning profile
@@ -76,7 +77,7 @@ interface CreateLearningProfileError {
 
 export async function createLearningProfile(
 	params: CreateLanguageProfile | CreateSelfStudyProfile,
-	config: RevalidationConfig = {revalidateAfter: false},
+	config: RevalidationConfig & {redirectTo?: string} = {revalidateAfter: false},
 ): Promise<{success: boolean; errors?: CreateLearningProfileError[]; error?: string}> {
 	const user = await getCurrentUser()
 	if (!user) return {success: false, error: 'User not authenticated'}
@@ -135,12 +136,6 @@ export async function createLearningProfile(
 				data: {activeLearningProfileId: newProfile.id},
 			})
 		}
-
-		if (config.revalidateAfter) {
-			revalidatePath(config.pathToRevalidate, config.type)
-		}
-
-		return {success: true}
 	} catch (error) {
 		if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
 			return {success: false, errors: [{message: 'Learning profile already exists.', location: 'form'}]}
@@ -148,4 +143,14 @@ export async function createLearningProfile(
 		console.error('Error creating profile:', error)
 		return {success: false, error: 'Failed to create profile. Please try again.'}
 	}
+
+	if (config.revalidateAfter) {
+		revalidatePath(config.pathToRevalidate, config.type)
+	}
+
+	if (config.redirectTo) {
+		redirect(config.redirectTo)
+	}
+
+	return {success: true}
 }

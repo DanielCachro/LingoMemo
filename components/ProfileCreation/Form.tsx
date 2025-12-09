@@ -5,7 +5,6 @@ import {createLearningProfile} from '@/lib/actions/profile/manage'
 import {cn} from '@/lib/utils'
 import {IconDefinition} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {useRouter} from 'next/navigation'
 import {Dispatch, useState, useTransition} from 'react'
 import {toast} from 'react-toastify'
 
@@ -15,7 +14,6 @@ interface Props {
 	heading: string
 	subheading: string
 	icon: IconDefinition
-	redirectTo: string
 	className?: string
 	children: (
 		formErrors: FormErrorsType,
@@ -24,18 +22,9 @@ interface Props {
 	onSubmit: (event: React.FormEvent) => ReturnType<typeof createLearningProfile>
 }
 
-export default function CreateProfileForm({
-	heading,
-	subheading,
-	icon,
-	redirectTo,
-	className,
-	children,
-	onSubmit,
-}: Props) {
+export default function Form({heading, subheading, icon, className, children, onSubmit}: Props) {
 	const [formErrors, setFormErrors] = useState<FormErrorsType>(null)
 	const [isPending, startTransition] = useTransition()
-	const router = useRouter()
 
 	const handleSubmit = async (event: React.FormEvent) => {
 		event.preventDefault()
@@ -48,9 +37,6 @@ export default function CreateProfileForm({
 					toast.error(result.error)
 				}
 				setFormErrors(result)
-			} else {
-				router.push(redirectTo)
-				router.refresh()
 			}
 		})
 	}

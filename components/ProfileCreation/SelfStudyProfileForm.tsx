@@ -10,14 +10,16 @@ export default function Form({redirectTo, className}: {redirectTo: string; class
 			heading='Creating Self-Study Profile'
 			subheading='Name your learning profile'
 			icon={faSignature}
-			redirectTo={redirectTo}
 			className={className}
 			onSubmit={async event => {
 				const formData = new FormData(event.currentTarget as HTMLFormElement)
 				const data = Object.fromEntries(formData.entries())
 				const profileName = data.profileName as string
 
-				const result = await createLearningProfile({type: 'self-study', profileName})
+				const result = await createLearningProfile(
+					{type: 'self-study', profileName},
+					{revalidateAfter: true, pathToRevalidate: redirectTo, type: 'page', redirectTo},
+				)
 				return result
 			}}>
 			{(formErrors, setFormErrors) => {

@@ -23,7 +23,6 @@ export default function Form({redirectTo, className}: {redirectTo: string; class
 			heading='Creating Language Profile'
 			subheading='Select your learning languages'
 			icon={faLanguage}
-			redirectTo={redirectTo}
 			className={className}
 			onSubmit={async event => {
 				const formData = new FormData(event.currentTarget as HTMLFormElement)
@@ -32,7 +31,10 @@ export default function Form({redirectTo, className}: {redirectTo: string; class
 				const sourceLang = data['sourceLanguage[value]'] as SourceLanguages
 				const targetLang = data['targetLanguage[value]'] as TargetLanguages
 
-				const result = await createLearningProfile({type: 'language', sourceLang, targetLang})
+				const result = await createLearningProfile(
+					{type: 'language', sourceLang, targetLang},
+					{revalidateAfter: true, pathToRevalidate: redirectTo, type: 'page', redirectTo},
+				)
 				return result
 			}}>
 			{(formErrors, setFormErrors) => {
@@ -72,9 +74,7 @@ export default function Form({redirectTo, className}: {redirectTo: string; class
 									return {
 										...prevErrors,
 										errors: prevErrors.errors
-											? prevErrors.errors.filter(
-													error => error.location !== 'targetLang' && error.location !== 'form',
-											  )
+											? prevErrors.errors.filter(error => error.location !== 'targetLang' && error.location !== 'form')
 											: undefined,
 									}
 								})
