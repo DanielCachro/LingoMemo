@@ -13,14 +13,14 @@ export default function Statistics() {
 	return (
 		<>
 			<Statistic
-				icon={faFireFlameSimple}
-				record={`${longestStreak} day${longestStreak !== 1 ? 's' : ''}`}
-				measure='in a row'
-			/>
-			<Statistic
 				icon={faClockRotateLeft}
 				record={`${weekFlashcardCount} card${weekFlashcardCount !== 1 ? 's' : ''}`}
-				measure='in a week'
+				measure='this week'
+			/>
+			<Statistic
+				icon={faFireFlameSimple}
+				record={`${longestStreak} day${longestStreak !== 1 ? 's' : ''}`}
+				measure='your record'
 			/>
 		</>
 	)
