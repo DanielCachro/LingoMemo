@@ -1,8 +1,7 @@
-'use client'
 import AnimatedNumber from '@/components/AnimatedNumber'
-import {useStreak} from '@/hooks/useStreak'
-export default function TotalStreakAnimated() {
-	const {data} = useStreak()
-	const targetValue = data?.streakCount ?? 0
-	return <AnimatedNumber targetValue={targetValue} />
+import {getStreakData} from '@/lib/actions/profile/streak'
+
+export default async function TotalStreakAnimated() {
+	const {streakCount} = await getStreakData()
+	return <AnimatedNumber targetValue={streakCount} />
 }

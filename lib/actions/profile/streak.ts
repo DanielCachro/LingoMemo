@@ -3,6 +3,7 @@ import {getCurrentUser} from '@/lib/actions/user'
 import {getUserDayRangeUTC, getUserTimeZoneString} from '@/lib/time'
 import {prisma} from '@/prisma/client'
 import {DateTime} from 'luxon'
+import {cache} from 'react'
 
 async function calculateStreakStatus() {
 	const user = await getCurrentUser()
@@ -78,7 +79,7 @@ async function calculateStreakStatus() {
 	}
 }
 
-export async function getStreakData() {
+export const getStreakData = cache(async () => {
 	const status = await calculateStreakStatus()
 	if (!status) throw new Error('User not authenticated or no profile')
 
@@ -88,7 +89,7 @@ export async function getStreakData() {
 			? Math.max(status.longestStreak, status.calculatedStreakCount)
 			: status.longestStreak,
 	}
-}
+})
 
 export async function updateStreak() {
 	const status = await calculateStreakStatus()
