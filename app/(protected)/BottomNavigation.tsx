@@ -1,16 +1,14 @@
 'use client'
-import NavigationItems from '@/components/NavigationItems'
 import {cn} from '@/lib/utils'
-import type {LearningProfileTypes} from '@/types/profile'
 import {motion} from 'motion/react'
 import {usePathname} from 'next/navigation'
 
 interface Props {
 	className?: string
-	activeLearningProfileType: LearningProfileTypes
+	children?: React.ReactNode
 }
 
-export default function BottomNavigation({activeLearningProfileType, className}: Props) {
+export default function BottomNavigation({className, children}: Props) {
 	const pathname = usePathname()
 
 	return (
@@ -20,22 +18,7 @@ export default function BottomNavigation({activeLearningProfileType, className}:
 				className,
 				{hidden: pathname.startsWith('/study')},
 			)}>
-			<NavigationItems className='flex flex-wrap justify-center gap-x-32'>
-				{item => {
-					if (!item.displayForProfile.includes(activeLearningProfileType)) {
-						return null
-					}
-					return (
-						<NavigationItems.NavigationItem
-							key={item.title}
-							className='py-16 text-xs [&>a]:h-full [&>a]:flex-col [&>a]:justify-center [&>a>svg]:text-base'
-							item={item}
-							indicatorLayoutId='bottom-navigation-indicator'
-							indicatorPosition='top'
-						/>
-					)
-				}}
-			</NavigationItems>
+			{children}
 		</motion.nav>
 	)
 }

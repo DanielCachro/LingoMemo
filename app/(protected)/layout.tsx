@@ -2,7 +2,8 @@ import {getActiveLearningProfile} from '@/lib/actions/user'
 import {Suspense} from 'react'
 import DefferedLayoutContent from './DefferedLayoutContent'
 
-function Skeleton() {
+async function Skeleton() {
+	'use cache'
 	return (
 		<div
 			role='status'

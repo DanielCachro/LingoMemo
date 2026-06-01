@@ -6,21 +6,21 @@ import Link from 'next/link'
 import {useSelectedLayoutSegment} from 'next/navigation'
 
 interface Props {
-	className?: string
+	item: (typeof navigationItems)[number]
+	indicatorLayoutId: string
 	activeItemClassName?: string
 	indicatorClassName?: string
-	item: (typeof navigationItems)[number]
-	indicatorLayoutId?: string
 	indicatorPosition?: 'top' | 'right' | 'bottom' | 'left'
+	className?: string
 }
 
 export default function NavigationItem({
-	className,
-	activeItemClassName,
 	item,
 	indicatorLayoutId,
+	activeItemClassName,
 	indicatorClassName,
 	indicatorPosition = 'top',
+	className,
 }: Props) {
 	const segment = useSelectedLayoutSegment()
 	const isActive = `/${segment}` === item.href
@@ -38,7 +38,7 @@ export default function NavigationItem({
 			<Link href={item.href} className='flex items-center gap-8'>
 				{item.icon}
 				<span>{item.title}</span>
-				{indicatorLayoutId && isActive && (
+				{isActive && (
 					<motion.div
 						layoutId={indicatorLayoutId}
 						className={cn(
