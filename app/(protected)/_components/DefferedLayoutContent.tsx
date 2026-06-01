@@ -2,10 +2,10 @@ import NavigationItems from '@/components/NavigationItems'
 import {getActiveLearningProfile} from '@/lib/actions/user'
 import type {LearningProfileTypes} from '@/types/profile'
 import {redirect} from 'next/navigation'
-import BottomNavigation from './BottomNavigation'
-import MainNavigation from './MainNavigation'
 import StreakSynchronizer from './StreakSynchronizer'
 import {TimeZoneUpdater} from './TimeZoneUpdater'
+import BottomNavigation from './BottomNavigation'
+import MainNavigation from './MainNavigation'
 import WelcomeToast from './WelcomeToast'
 
 interface DefferedLayoutContentProps {

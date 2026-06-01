@@ -1,6 +1,6 @@
 import {getActiveLearningProfile} from '@/lib/actions/user'
 import {Suspense} from 'react'
-import DefferedLayoutContent from './DefferedLayoutContent'
+import DefferedLayoutContent from './_components/DefferedLayoutContent'
 
 async function Skeleton() {
 	'use cache'
