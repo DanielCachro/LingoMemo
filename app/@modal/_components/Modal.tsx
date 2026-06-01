@@ -79,8 +79,22 @@ export default function Modal({
 		}
 
 		document.addEventListener('keydown', handleKeyDown)
-		return () => document.removeEventListener('keydown', handleKeyDown)
+		return () => {
+			document.removeEventListener('keydown', handleKeyDown)
+		}
 	}, [handleClose])
+
+	// In Next.js 16, intercepted routes and modals are not unmounted on navigation.
+	// Instead, they are hidden using the <Activity> API (kept in the DOM with display: none).
+	// This cleanup function triggers right before the component goes to sleep.
+	// By resetting the state here, we guarantee that when the user opens the modal again,
+	// it wakes up with a fresh state and renders properly.
+	useEffect(() => {
+		return () => {
+			setIsOpen(true)
+			setModalNavCount(0)
+		}
+	}, [])
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	function onDragEnd(_event: any, info: {offset: {y: number}; velocity: {y: number}}) {
