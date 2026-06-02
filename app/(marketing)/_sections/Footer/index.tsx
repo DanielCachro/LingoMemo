@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import CurrentYear from './CurrentYear'
 
 export default function Footer() {
 	return (
@@ -10,7 +11,7 @@ export default function Footer() {
 					<span className='font-bold text-background-700 dark:text-background-300'>LingoMemo</span>
 				</div>
 				<div className='text-sm text-background-500'>
-					&copy; {new Date().getFullYear()} LingoMemo. All rights reserved.
+					&copy; <CurrentYear /> LingoMemo. All rights reserved.
 				</div>
 				<div className='relative flex gap-24 md:flex-1 md:justify-end'>
 					<Link href='/privacy' className='text-background-500 hover:text-primary-500 dark:hover:text-primary-600'>
