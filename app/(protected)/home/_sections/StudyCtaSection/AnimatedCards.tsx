@@ -4,7 +4,7 @@ import type {Transition, Variants} from 'motion/react'
 import {motion} from 'motion/react'
 
 import PrimaryButton from '@/components/PrimaryButton'
-import {useRouter} from 'next/navigation'
+import Link from 'next/link'
 
 const transition: Transition = {
 	type: 'spring',
@@ -26,7 +26,6 @@ const variants: Variants = {
 }
 
 export default function AnimatedCards({frontCardText}: {frontCardText?: string}) {
-	const router = useRouter()
 	return (
 		<motion.div initial='rest' animate='rest' whileHover='hover' className='relative mx-32'>
 			<motion.div
@@ -37,15 +36,14 @@ export default function AnimatedCards({frontCardText}: {frontCardText?: string})
 					<p className='line-clamp-3 w-full px-32 text-center wrap-break-word text-primary-50'>{frontCardText}</p>
 				</div>
 
-				<PrimaryButton
-					className={
-						'border-2 border-primary-700 focus-visible:border-primary-600 dark:border-primary-800 pointer-fine:hover:border-primary-800 pointer-fine:hover:dark:border-primary-900'
-					}
-					onClick={() => {
-						router.push('/study')
-					}}>
-					Let’s do some cards!
-				</PrimaryButton>
+				<Link href='/study'>
+					<PrimaryButton
+						className={
+							'border-2 border-primary-700 focus-visible:border-primary-600 dark:border-primary-800 pointer-fine:hover:border-primary-800 pointer-fine:hover:dark:border-primary-900'
+						}>
+						Let’s do some cards!
+					</PrimaryButton>
+				</Link>
 			</motion.div>
 
 			<motion.div

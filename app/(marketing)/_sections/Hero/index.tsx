@@ -5,7 +5,7 @@ import SecondaryButton from '@/components/SecondaryButton'
 import {faBrain, faGraduationCap, faStar} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {motion, stagger, useScroll, useTransform, Variants} from 'motion/react'
-import {useRouter} from 'next/navigation'
+import Link from 'next/link'
 import {useRef} from 'react'
 import FloatingCard from './FloatingCard'
 
@@ -33,7 +33,6 @@ const itemVariants: Variants = {
 }
 
 export default function HeroSection() {
-	const router = useRouter()
 	const targetRef = useRef<HTMLDivElement>(null)
 	const {scrollYProgress} = useScroll({
 		target: targetRef,
@@ -70,9 +69,9 @@ export default function HeroSection() {
 				</motion.p>
 
 				<motion.div variants={itemVariants} className='flex flex-col items-center justify-center gap-16 sm:flex-row'>
-					<PrimaryButton onClick={() => router.push('/auth/signin')} className='h-64 px-32 text-lg'>
-						Start Learning Now
-					</PrimaryButton>
+					<Link href='/auth/signin'>
+						<PrimaryButton className='h-64 px-32 text-lg'>Start Learning Now</PrimaryButton>
+					</Link>
 					<SecondaryButton
 						onClick={() => {
 							document.getElementById('features')?.scrollIntoView({behavior: 'smooth'})

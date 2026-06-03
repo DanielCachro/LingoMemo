@@ -3,7 +3,8 @@ import {faPalette, faUsers} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import SignoutButton from './SignoutButton'
 
-export default function PreferencesModal() {
+export default async function PreferencesModal() {
+	'use cache'
 	return (
 		<div className='flex h-full flex-col justify-between gap-24'>
 			<ul className='space-y-12'>

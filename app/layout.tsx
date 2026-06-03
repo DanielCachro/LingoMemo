@@ -37,7 +37,6 @@ export default function RootLayout({
 				<QueryClientProvider>
 					<ThemeProvider>
 						<ModalDataProvider>
-							<div id='modal-root' />
 							{children}
 							{modal}
 						</ModalDataProvider>

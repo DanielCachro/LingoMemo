@@ -1,8 +1,7 @@
-'use client'
 import PrimaryButton from '@/components/PrimaryButton'
 import {cn} from '@/lib/utils'
 import Image from 'next/image'
-import {useRouter} from 'next/navigation'
+import Link from 'next/link'
 
 const statusMap = {
 	done: {
@@ -21,7 +20,6 @@ const statusMap = {
 	},
 }
 export default function StudyStatus({status}: {status: keyof typeof statusMap}) {
-	const router = useRouter()
 	return (
 		<div
 			className={cn(
@@ -34,7 +32,9 @@ export default function StudyStatus({status}: {status: keyof typeof statusMap}) 
 			<div className='w-192 space-y-24'>
 				<p>{statusMap[status].message}</p>
 				{status === 'empty' && (
-					<PrimaryButton onClick={() => router.push('/flashcards')}>Head To Flashcards!</PrimaryButton>
+					<Link href='/flashcards'>
+						<PrimaryButton>Head To Flashcards!</PrimaryButton>
+					</Link>
 				)}
 			</div>
 			<Image

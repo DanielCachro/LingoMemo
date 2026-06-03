@@ -5,7 +5,6 @@ import {cn} from '@/lib/utils'
 import {AnimatePresence, motion, useAnimationControls, useDragControls} from 'motion/react'
 import {usePathname} from 'next/navigation'
 import {ReactNode, useCallback, useEffect, useState} from 'react'
-import {createPortal} from 'react-dom'
 
 export interface ModalDisableAnimations {
 	disableEntryAnimation?: boolean
@@ -33,32 +32,37 @@ export default function Modal({
 	className,
 	disableAnimations,
 }: ModalProps) {
-	const OPEN = () => {
+	const pathname = usePathname()
+	const [isOpen, setIsOpen] = useState(true)
+	const [modalNavCount, setModalNavCount] = useState(process.env.NODE_ENV === 'development' ? -1 : 0)
+
+	const isDesktop = useMediaQuery('(min-width: 40rem)')
+	const animationControls = useAnimationControls()
+	const dragControls = useDragControls()
+
+	const shouldAnimateEntry = !disableAnimations?.disableEntryAnimation
+	const shouldAnimateExit = !disableAnimations?.disableExitAnimation
+
+	const getOpenPosition = useCallback(() => {
+		if (typeof window === 'undefined') return 0
+
 		if (mobileScreenCoverage === 'full') return 0
 		const heightRatioParts = mobileScreenCoverage.split('/')
 		const [numerator, denominator] = heightRatioParts.map(Number)
 		return window.innerHeight * ((denominator - numerator) / denominator)
-	}
-	const CLOSED = () => window.innerHeight * 1.5
-	const [isOpen, setIsOpen] = useState(true)
-	const [modalNavCount, setModalNavCount] = useState(process.env.NODE_ENV === 'development' ? -1 : 0)
-	const pathname = usePathname()
-	const isDesktop = useMediaQuery('(min-width: 40rem)')
-	const animationControls = useAnimationControls()
-	const dragControls = useDragControls()
-	const shouldAnimateEntry = !disableAnimations?.disableEntryAnimation
-	const shouldAnimateExit = !disableAnimations?.disableExitAnimation
+	}, [mobileScreenCoverage])
+
+	const CLOSED_POSITION = typeof window !== 'undefined' ? window.innerHeight * 1.05 : 1500
+	const openPosition = getOpenPosition()
 
 	const animations = isDesktop
 		? {
 				initial: shouldAnimateEntry ? {scale: 0.95, opacity: 0} : {scale: 1, opacity: 1},
-				animate: {scale: 1, opacity: 1},
 				exit: shouldAnimateExit ? {scale: 0.95, opacity: 0} : {scale: 1, opacity: 1, transition: {duration: 0}},
 			}
 		: {
-				initial: shouldAnimateEntry ? {y: CLOSED()} : {y: OPEN()},
-				animate: {y: OPEN()},
-				exit: shouldAnimateExit ? {y: CLOSED()} : {y: OPEN(), transition: {duration: 0}},
+				initial: shouldAnimateEntry ? {y: CLOSED_POSITION} : {y: openPosition},
+				exit: shouldAnimateExit ? {y: CLOSED_POSITION} : {y: openPosition, transition: {duration: 0}},
 			}
 
 	const backdropAnimations = {
@@ -98,6 +102,8 @@ export default function Modal({
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	function onDragEnd(_event: any, info: {offset: {y: number}; velocity: {y: number}}) {
+		if (typeof window === 'undefined') return
+
 		const closeThreshold = window.innerHeight * 0.15
 		const offsetY = info.offset.y
 		const velocityY = info.velocity.y
@@ -105,22 +111,27 @@ export default function Modal({
 		if (offsetY > closeThreshold || velocityY > 800) {
 			handleClose()
 		} else {
-			animationControls.start({y: OPEN()})
+			animationControls.start({y: openPosition})
 		}
 	}
 
 	useEffect(() => {
 		if (isOpen) {
-			animationControls.start(animations.animate)
+			animationControls.start(isDesktop ? {scale: 1, opacity: 1} : {y: openPosition})
 		}
-	}, [isOpen, animationControls, animations.animate])
+	}, [isOpen, isDesktop, openPosition, animationControls])
 
 	useEffect(() => {
-		// Count how many navigations have occurred within the modal
 		setModalNavCount(prevCount => prevCount + 1)
 	}, [pathname])
 
-	return createPortal(
+	const getMobileHeight = () => {
+		if (isDesktop || mobileScreenCoverage === 'full') return undefined
+		const [numerator, denominator] = mobileScreenCoverage.split('/').map(Number)
+		return `${(numerator / denominator) * 100}vh`
+	}
+
+	return (
 		<AnimatePresence
 			onExitComplete={() => {
 				if (closingType === 'dialogClose') {
@@ -144,21 +155,17 @@ export default function Modal({
 						initial={animations.initial}
 						animate={animationControls}
 						exit={animations.exit}
-						transition={{type: 'tween', ease: 'easeOut', duration: isDesktop ? 0.2 : 0.3}}
+						transition={{type: 'tween', ease: 'easeInOut', duration: isDesktop ? 0.2 : 0.3}}
 						drag={isDesktop ? false : 'y'}
 						dragListener={false}
 						dragControls={dragControls}
+						dragConstraints={{top: 0}}
+						dragElastic={{top: 0, bottom: 0.6}}
 						className={cn(
 							'fixed top-0 left-1/2 z-50 h-full max-h-full w-full max-w-full -translate-x-1/2 rounded-sm border-background-200 bg-background-100 text-background-800 scrollbar sm:top-1/2 sm:h-fit sm:max-h-[80vh] sm:max-w-512 sm:-translate-y-1/2 sm:border-2 sm:shadow-2xl md:max-w-640 lg:max-w-768 dark:border-background-800 dark:bg-background-900 dark:text-background-200 [@media(min-height:600px)]:sm:top-64 [@media(min-height:600px)]:sm:translate-y-0',
 							className,
 						)}
-						style={
-							!isDesktop && mobileScreenCoverage !== 'full'
-								? {
-										height: `${window.innerHeight * (Number(mobileScreenCoverage.split('/')[0]) / Number(mobileScreenCoverage.split('/')[1]))}px`,
-									}
-								: {}
-						}>
+						style={{height: getMobileHeight()}}>
 						<div
 							onClick={e => e.stopPropagation()}
 							className='grid h-full w-full grid-rows-[auto_1fr] sm:h-auto sm:max-h-[80vh]'>
@@ -185,7 +192,6 @@ export default function Modal({
 					</motion.div>
 				</>
 			)}
-		</AnimatePresence>,
-		document.getElementById('modal-root') as HTMLElement,
+		</AnimatePresence>
 	)
 }

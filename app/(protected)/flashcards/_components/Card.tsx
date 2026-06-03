@@ -9,7 +9,6 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {DateTime} from 'luxon'
 import {motion, stagger, useAnimation, Variants} from 'motion/react'
 import Link from 'next/link'
-import {useRouter} from 'next/navigation'
 import {useEffect, useRef, useState} from 'react'
 
 function DetailsBlock({title, children}: {title: string; children: React.ReactNode}) {
@@ -31,7 +30,6 @@ interface CardProps {
 
 export default function Card({flashcard, isSelected, onSelectionChange}: CardProps) {
 	const [showDetails, setShowDetails] = useState(false)
-	const router = useRouter()
 	const controls = useAnimation()
 	const currentVariantRef = useRef('initial')
 
@@ -99,26 +97,21 @@ export default function Card({flashcard, isSelected, onSelectionChange}: CardPro
 						</div>
 					</div>
 					<div className='ml-8 flex shrink-0 items-center gap-4 self-start'>
-						<button
-							onClick={() => {
-								router.push(`/flashcards/edit/${flashcard.id}`)
-							}}>
+						<Link href={`/flashcards/edit/${flashcard.id}`} prefetch={false} scroll={false}>
 							<FontAwesomeIcon
 								icon={faPenToSquare}
 								className='text-background-600 transition-colors duration-150 hover:cursor-pointer hover:text-background-500 dark:text-background-300 dark:hover:text-background-200'
 							/>
-						</button>
-						<button
-							onClick={() => {
-								router.push(
-									`/flashcards/delete/${flashcard.id}?question=${encodeURIComponent(flashcard.question)}&answer=${encodeURIComponent(flashcard.answer.text)}`,
-								)
-							}}>
+						</Link>
+						<Link
+							href={`/flashcards/delete/${flashcard.id}?question=${encodeURIComponent(flashcard.question)}&answer=${encodeURIComponent(flashcard.answer.text)}`}
+							prefetch={false}
+							scroll={false}>
 							<FontAwesomeIcon
 								icon={faTrashCan}
 								className='text-error-500 transition-colors duration-150 hover:cursor-pointer hover:text-error-600'
 							/>
-						</button>
+						</Link>
 
 						<Checkbox className='ml-4' checked={isSelected} onChange={onSelectionChange} />
 					</div>
