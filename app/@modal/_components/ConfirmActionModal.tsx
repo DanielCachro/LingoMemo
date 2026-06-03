@@ -2,12 +2,10 @@
 
 import PrimaryButton from '@/components/PrimaryButton'
 import SecondaryButton from '@/components/SecondaryButton'
-import dynamic from 'next/dynamic'
 import {useRouter} from 'next/navigation'
 import {KeyboardEvent, useState} from 'react'
 import {toast} from 'react-toastify'
-import {ModalDisableAnimations} from './Modal'
-const Modal = dynamic(() => import('./Modal'), {ssr: false})
+import Modal, {ModalDisableAnimations} from './Modal'
 
 interface Props {
 	heading: string

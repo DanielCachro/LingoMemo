@@ -1,11 +1,8 @@
 'use client'
 import PrimaryButton from '@/components/PrimaryButton'
 import {Fieldset, Legend} from '@headlessui/react'
-import dynamic from 'next/dynamic'
 import {FormEvent, ReactNode} from 'react'
-import {ModalDisableAnimations} from './Modal'
-
-const Modal = dynamic(() => import('./Modal'), {ssr: false})
+import Modal, {ModalDisableAnimations} from './Modal'
 
 type MobileScreenCoverage = React.ComponentProps<typeof Modal>['mobileScreenCoverage']
 
