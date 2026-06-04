@@ -2,10 +2,9 @@ import {getNextFlashcards} from '@/lib/actions/study'
 import {NextRequest, NextResponse} from 'next/server'
 
 export async function GET(request: NextRequest) {
+	const limit = Number(request.nextUrl.searchParams.get('limit') ?? 5)
+	const excludeParam = request.nextUrl.searchParams.get('excludeIds') ?? ''
 	try {
-		const limit = Number(request.nextUrl.searchParams.get('limit') ?? 5)
-
-		const excludeParam = request.nextUrl.searchParams.get('excludeIds') ?? ''
 		const excludeIds = excludeParam
 			.split(',')
 			.map(id => Number(id))
