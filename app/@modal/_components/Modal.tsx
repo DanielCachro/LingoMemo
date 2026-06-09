@@ -4,7 +4,7 @@ import {useMediaQuery} from '@/hooks/useMediaQuery'
 import {cn} from '@/lib/utils'
 import {AnimatePresence, motion, useAnimationControls, useDragControls} from 'motion/react'
 import {usePathname} from 'next/navigation'
-import {ReactNode, useCallback, useEffect, useState} from 'react'
+import {CSSProperties, PointerEvent, ReactNode, useCallback, useEffect, useState} from 'react'
 
 export interface ModalDisableAnimations {
 	disableEntryAnimation?: boolean
@@ -22,6 +22,55 @@ interface ModalProps {
 	disableAnimations?: ModalDisableAnimations
 }
 
+type ModalSkeletonProps = Partial<Pick<ModalProps, 'header' | 'heading'>> &
+	Pick<ModalProps, 'mobileScreenCoverage' | 'className' | 'disableAnimations'> & {
+		children: ReactNode
+	}
+
+const BACKDROP_BASE_CLASSES = 'fixed inset-0 z-50 bg-background-950/60'
+const MODAL_BASE_CLASSES = cn(
+	'fixed inset-x-0 z-50 mx-auto w-full max-w-full rounded-sm border-background-200 bg-background-100 text-background-800 scrollbar dark:border-background-800 dark:bg-background-900 dark:text-background-200',
+	'sm:inset-y-0 sm:my-auto sm:h-fit sm:max-h-[80vh] sm:max-w-512 sm:border-2 sm:shadow-2xl md:max-w-640 lg:max-w-768',
+	'[@media(min-height:600px)]:sm:top-64 [@media(min-height:600px)]:sm:bottom-auto [@media(min-height:600px)]:sm:my-0',
+)
+
+const getMobileDimensions = (coverage: string) => {
+	if (coverage === 'full') return {height: '100%', top: '0px'}
+	const [numerator, denominator] = coverage.split('/').map(Number)
+	return {
+		height: `${(numerator / denominator) * 100}dvh`,
+		top: `${((denominator - numerator) / denominator) * 100}dvh`,
+	}
+}
+
+function ModalHeaderLayout({
+	header,
+	heading,
+	onPointerDown,
+}: {
+	header: ModalProps['header']
+	heading: string
+	onPointerDown?: (e: PointerEvent<HTMLDivElement>) => void
+}) {
+	return (
+		<div onPointerDown={onPointerDown} style={onPointerDown ? {touchAction: 'none'} : undefined}>
+			<div className='flex w-full justify-center py-16 sm:hidden'>
+				<span className='h-4 w-32 rounded-full bg-background-400 dark:bg-background-700' />
+			</div>
+			{header !== 'none' && (
+				<div
+					className={cn('flex items-center border-b border-background-200 px-16 pb-8 dark:border-background-700', {
+						'block sm:hidden': header === 'mobile',
+						'hidden sm:block': header === 'desktop',
+						block: header === 'both',
+					})}>
+					<p className='w-full text-center font-bold'>{heading}</p>
+				</div>
+			)}
+		</div>
+	)
+}
+
 export default function Modal({
 	children,
 	header,
@@ -34,6 +83,7 @@ export default function Modal({
 }: ModalProps) {
 	const pathname = usePathname()
 	const [isOpen, setIsOpen] = useState(true)
+	const [isExiting, setIsExiting] = useState(false)
 	const [modalNavCount, setModalNavCount] = useState(process.env.NODE_ENV === 'development' ? -1 : 0)
 
 	const isDesktop = useMediaQuery('(min-width: 40rem)')
@@ -43,35 +93,8 @@ export default function Modal({
 	const shouldAnimateEntry = !disableAnimations?.disableEntryAnimation
 	const shouldAnimateExit = !disableAnimations?.disableExitAnimation
 
-	const getOpenPosition = useCallback(() => {
-		if (typeof window === 'undefined') return 0
-
-		if (mobileScreenCoverage === 'full') return 0
-		const heightRatioParts = mobileScreenCoverage.split('/')
-		const [numerator, denominator] = heightRatioParts.map(Number)
-		return window.innerHeight * ((denominator - numerator) / denominator)
-	}, [mobileScreenCoverage])
-
-	const CLOSED_POSITION = typeof window !== 'undefined' ? window.innerHeight * 1.05 : 1500
-	const openPosition = getOpenPosition()
-
-	const animations = isDesktop
-		? {
-				initial: shouldAnimateEntry ? {scale: 0.95, opacity: 0} : {scale: 1, opacity: 1},
-				exit: shouldAnimateExit ? {scale: 0.95, opacity: 0} : {scale: 1, opacity: 1, transition: {duration: 0}},
-			}
-		: {
-				initial: shouldAnimateEntry ? {y: CLOSED_POSITION} : {y: openPosition},
-				exit: shouldAnimateExit ? {y: CLOSED_POSITION} : {y: openPosition, transition: {duration: 0}},
-			}
-
-	const backdropAnimations = {
-		initial: shouldAnimateEntry ? {opacity: 0} : {opacity: 1},
-		animate: {opacity: 1},
-		exit: shouldAnimateExit ? {opacity: 0} : {opacity: 1, transition: {duration: 0}},
-	}
-
 	const handleClose = useCallback(() => {
+		setIsExiting(true)
 		setIsOpen(false)
 	}, [])
 
@@ -96,6 +119,7 @@ export default function Modal({
 	useEffect(() => {
 		return () => {
 			setIsOpen(true)
+			setIsExiting(false)
 			setModalNavCount(0)
 		}
 	}, [])
@@ -111,25 +135,21 @@ export default function Modal({
 		if (offsetY > closeThreshold || velocityY > 800) {
 			handleClose()
 		} else {
-			animationControls.start({y: openPosition})
+			animationControls.start({y: 0})
 		}
 	}
 
 	useEffect(() => {
 		if (isOpen) {
-			animationControls.start(isDesktop ? {scale: 1, opacity: 1} : {y: openPosition})
+			animationControls.set({scale: 1, opacity: 1, y: 0})
 		}
-	}, [isOpen, isDesktop, openPosition, animationControls])
+	}, [isOpen, animationControls])
 
 	useEffect(() => {
 		setModalNavCount(prevCount => prevCount + 1)
 	}, [pathname])
 
-	const getMobileHeight = () => {
-		if (isDesktop || mobileScreenCoverage === 'full') return undefined
-		const [numerator, denominator] = mobileScreenCoverage.split('/').map(Number)
-		return `${(numerator / denominator) * 100}vh`
-	}
+	const {height: mobileHeight, top: mobileTop} = getMobileDimensions(mobileScreenCoverage)
 
 	return (
 		<AnimatePresence
@@ -143,18 +163,24 @@ export default function Modal({
 			{isOpen && (
 				<>
 					<motion.div
-						initial={backdropAnimations.initial}
-						animate={backdropAnimations.animate}
-						exit={backdropAnimations.exit}
-						className='fixed inset-0 z-50 bg-background-950/60'
+						initial={false}
+						animate={{opacity: 1}}
+						exit={shouldAnimateExit ? {opacity: 0} : {opacity: 1, transition: {duration: 0}}}
+						className={cn(BACKDROP_BASE_CLASSES, shouldAnimateEntry && !isExiting && 'modal-backdrop-entry')}
 						onClick={handleClose}
 					/>
 					<motion.div
 						aria-label={heading}
 						onDragEnd={onDragEnd}
-						initial={animations.initial}
+						initial={false}
 						animate={animationControls}
-						exit={animations.exit}
+						exit={
+							shouldAnimateExit
+								? isDesktop
+									? {scale: 0.95, opacity: 0, y: 0}
+									: {y: '100vh'}
+								: {transition: {duration: 0}}
+						}
 						transition={{type: 'tween', ease: 'easeInOut', duration: isDesktop ? 0.2 : 0.3}}
 						drag={isDesktop ? false : 'y'}
 						dragListener={false}
@@ -162,36 +188,65 @@ export default function Modal({
 						dragConstraints={{top: 0}}
 						dragElastic={{top: 0, bottom: 0.6}}
 						className={cn(
-							'fixed top-0 left-1/2 z-50 h-full max-h-full w-full max-w-full -translate-x-1/2 rounded-sm border-background-200 bg-background-100 text-background-800 scrollbar sm:top-1/2 sm:h-fit sm:max-h-[80vh] sm:max-w-512 sm:-translate-y-1/2 sm:border-2 sm:shadow-2xl md:max-w-640 lg:max-w-768 dark:border-background-800 dark:bg-background-900 dark:text-background-200 [@media(min-height:600px)]:sm:top-64 [@media(min-height:600px)]:sm:translate-y-0',
+							MODAL_BASE_CLASSES,
+							'top-(--mobile-top) h-(--mobile-height)',
+							shouldAnimateEntry && !isExiting && 'modal-content-entry',
 							className,
 						)}
-						style={{height: getMobileHeight()}}>
+						style={
+							{
+								'--mobile-height': mobileHeight,
+								'--mobile-top': mobileTop,
+							} as CSSProperties
+						}>
 						<div
 							onClick={e => e.stopPropagation()}
 							className='grid h-full w-full grid-rows-[auto_1fr] sm:h-auto sm:max-h-[80vh]'>
-							<div onPointerDown={event => dragControls.start(event)} style={{touchAction: 'none'}}>
-								<div className='flex w-full justify-center py-16 sm:hidden'>
-									<span className='h-4 w-32 rounded-full bg-background-400 dark:bg-background-700' />
-								</div>
-								{header !== 'none' && (
-									<div
-										className={cn(
-											'flex items-center border-b border-background-200 px-16 pb-8 dark:border-background-700',
-											{
-												'block sm:hidden': header === 'mobile',
-												'hidden sm:block': header === 'desktop',
-												block: header === 'both',
-											},
-										)}>
-										<p className='w-full text-center font-bold'>{heading}</p>
-									</div>
-								)}
-							</div>
+							<ModalHeaderLayout header={header} heading={heading} onPointerDown={event => dragControls.start(event)} />
 							<div className='overflow-y-auto'>{typeof children === 'function' ? children(handleClose) : children}</div>
 						</div>
 					</motion.div>
 				</>
 			)}
 		</AnimatePresence>
+	)
+}
+
+export function ModalSkeleton({
+	header = 'none',
+	heading = '',
+	children,
+	mobileScreenCoverage = 'full',
+	className,
+	disableAnimations,
+}: ModalSkeletonProps) {
+	const shouldAnimate = !disableAnimations?.disableEntryAnimation
+	const {height: mobileHeight, top: mobileTop} = getMobileDimensions(mobileScreenCoverage)
+
+	return (
+		<>
+			<div
+				className={cn(BACKDROP_BASE_CLASSES, shouldAnimate && 'modal-backdrop-entry [animation-fill-mode:forwards]')}
+			/>
+
+			<div
+				className={cn(
+					MODAL_BASE_CLASSES,
+					'top-(--mobile-top) h-(--mobile-height)',
+					shouldAnimate && 'modal-content-entry [animation-fill-mode:forwards]',
+					className,
+				)}
+				style={
+					{
+						'--mobile-height': mobileHeight,
+						'--mobile-top': mobileTop,
+					} as CSSProperties
+				}>
+				<div className='grid h-full w-full grid-rows-[auto_1fr] sm:h-auto sm:max-h-[80vh]'>
+					<ModalHeaderLayout header={header} heading={heading} />
+					<div className='overflow-y-auto'>{children}</div>
+				</div>
+			</div>
+		</>
 	)
 }

@@ -1,5 +1,5 @@
 'use client'
-import DeleteItemModal from '@/app/@modal/_components/ConfirmActionModal'
+import ConfirmActionModal from '@/app/@modal/_components/ConfirmActionModal'
 import {deleteFlashcard} from '@/lib/actions/flashcards/manage'
 import {useQueryClient} from '@tanstack/react-query'
 import {use} from 'react'
@@ -33,7 +33,7 @@ export default function FlashcardsDeleteModal({
 	}
 
 	return (
-		<DeleteItemModal
+		<ConfirmActionModal
 			heading='You are about to delete flashcard'
 			confirmButtonText='Yes, delete'
 			confirmButtonTextPending='Deleting...'
@@ -42,6 +42,6 @@ export default function FlashcardsDeleteModal({
 				<p className='font-bold'>{answer}</p>
 				<p>{question}</p>
 			</div>
-		</DeleteItemModal>
+		</ConfirmActionModal>
 	)
 }
