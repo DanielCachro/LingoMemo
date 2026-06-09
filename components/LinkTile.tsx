@@ -8,13 +8,15 @@ interface Props {
 	icon: JSX.Element
 	title: string
 	href: string
+	prefetch?: boolean | 'auto' | null
 }
 
-export default function LinkTile({icon, title, href}: Props) {
+export default function LinkTile({icon, title, href, prefetch}: Props) {
 	return (
 		<SlabBorder className='hover:bg-background-50 dark:hover:bg-background-800'>
 			<Link
 				href={href}
+				prefetch={prefetch}
 				className='group bold flex items-center gap-12 border-background-300 p-16 font-bold transition-colors duration-100'>
 				{icon}
 				<span>{title}</span>
