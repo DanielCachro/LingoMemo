@@ -97,7 +97,7 @@ export default function Card({flashcard, isSelected, onSelectionChange}: CardPro
 						</div>
 					</div>
 					<div className='ml-8 flex shrink-0 items-center gap-4 self-start'>
-						<Link href={`/flashcards/edit/${flashcard.id}`} prefetch={false} scroll={false}>
+						<Link href={`/flashcards/edit/${flashcard.id}`} scroll={false}>
 							<FontAwesomeIcon
 								icon={faPenToSquare}
 								className='text-background-600 transition-colors duration-150 hover:cursor-pointer hover:text-background-500 dark:text-background-300 dark:hover:text-background-200'
@@ -105,7 +105,6 @@ export default function Card({flashcard, isSelected, onSelectionChange}: CardPro
 						</Link>
 						<Link
 							href={`/flashcards/delete/${flashcard.id}?question=${encodeURIComponent(flashcard.question)}&answer=${encodeURIComponent(flashcard.answer.text)}`}
-							prefetch={false}
 							scroll={false}>
 							<FontAwesomeIcon
 								icon={faTrashCan}
