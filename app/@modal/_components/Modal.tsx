@@ -27,7 +27,7 @@ type ModalSkeletonProps = Partial<Pick<ModalProps, 'header' | 'heading'>> &
 		children: ReactNode
 	}
 
-const BACKDROP_BASE_CLASSES = 'fixed inset-0 z-50 bg-background-950/60'
+const BACKDROP_BASE_CLASSES = 'fixed m-0 inset-0 z-50 bg-background-950/60 '
 const MODAL_BASE_CLASSES = cn(
 	'fixed inset-x-0 z-50 mx-auto w-full max-w-full rounded-sm border-background-200 bg-background-100 text-background-800 scrollbar dark:border-background-800 dark:bg-background-900 dark:text-background-200',
 	'sm:inset-y-0 sm:my-auto sm:h-fit sm:max-h-[80vh] sm:max-w-512 sm:border-2 sm:shadow-2xl md:max-w-640 lg:max-w-768',
