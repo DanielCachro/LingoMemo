@@ -1,15 +1,7 @@
-import {cn} from '@/lib/utils'
-import {HTMLMotionProps} from 'motion/react'
-import {ReactNode} from 'react'
-import PrimaryButton from './PrimaryButton'
+'use client'
 
-interface Props extends HTMLMotionProps<'button'> {
-	children: ReactNode
-	className?: string
-	wrapperClassName?: string
-	shadowClassName?: string
-	pressed?: boolean
-}
+import {cn} from '@/lib/utils'
+import PrimaryButton, {PrimaryButtonProps} from './PrimaryButton'
 
 export default function SecondaryButton({
 	children,
@@ -18,10 +10,10 @@ export default function SecondaryButton({
 	shadowClassName,
 	pressed = false,
 	...props
-}: Props) {
+}: PrimaryButtonProps) {
 	return (
 		<PrimaryButton
-			{...props}
+			{...(props as PrimaryButtonProps)}
 			pressed={pressed}
 			wrapperClassName={wrapperClassName}
 			className={cn(

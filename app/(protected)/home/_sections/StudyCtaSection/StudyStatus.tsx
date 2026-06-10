@@ -1,7 +1,6 @@
 import PrimaryButton from '@/components/PrimaryButton'
 import {cn} from '@/lib/utils'
 import Image from 'next/image'
-import Link from 'next/link'
 
 const statusMap = {
 	done: {
@@ -31,11 +30,7 @@ export default function StudyStatus({status}: {status: keyof typeof statusMap}) 
 			)}>
 			<div className='w-192 space-y-24'>
 				<p>{statusMap[status].message}</p>
-				{status === 'empty' && (
-					<Link href='/flashcards'>
-						<PrimaryButton>Head To Flashcards!</PrimaryButton>
-					</Link>
-				)}
+				{status === 'empty' && <PrimaryButton href='/flashcards'>Head To Flashcards!</PrimaryButton>}
 			</div>
 			<Image
 				src={`/cats/${statusMap[status].image}.svg`}
