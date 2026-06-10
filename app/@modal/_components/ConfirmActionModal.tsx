@@ -3,7 +3,8 @@
 import PrimaryButton from '@/components/PrimaryButton'
 import SecondaryButton from '@/components/SecondaryButton'
 import {useRouter} from 'next/navigation'
-import {KeyboardEvent, useState} from 'react'
+import {KeyboardEvent, useEffect, useState} from 'react'
+import {createPortal} from 'react-dom'
 import {toast} from 'react-toastify'
 import Modal, {ModalDisableAnimations, ModalSkeleton} from './Modal'
 
@@ -32,6 +33,11 @@ export default function ConfirmActionModal({
 }: Props) {
 	const router = useRouter()
 	const [isLoading, setIsLoading] = useState(false)
+	const [isMounted, setIsMounted] = useState(false)
+
+	useEffect(() => {
+		setIsMounted(true)
+	}, [])
 
 	const isDialogMode = !!onClose
 
@@ -56,7 +62,7 @@ export default function ConfirmActionModal({
 		}
 	}
 
-	return (
+	const modalContent = (
 		<Modal
 			header='none'
 			heading='confirmation modal'
@@ -107,6 +113,10 @@ export default function ConfirmActionModal({
 			</div>
 		</Modal>
 	)
+
+	if (!isMounted) return null
+
+	return createPortal(modalContent, document.body)
 }
 
 export function Skeleton({heading, disableAnimations}: {heading: string; disableAnimations?: ModalDisableAnimations}) {
