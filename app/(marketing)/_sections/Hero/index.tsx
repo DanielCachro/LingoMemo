@@ -40,6 +40,10 @@ export default function HeroSection() {
 	const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
 	const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.9])
 
+	const handleAuthRedirect = () => {
+		window.location.href = '/auth/signin'
+	}
+
 	return (
 		<section
 			ref={targetRef}
@@ -60,7 +64,7 @@ export default function HeroSection() {
 				</motion.p>
 
 				<motion.div variants={itemVariants} className='flex flex-col items-center justify-center gap-16 sm:flex-row'>
-					<PrimaryButton href='/auth/signin' className='h-64 px-32 text-lg'>
+					<PrimaryButton onClick={handleAuthRedirect} className='h-64 px-32 text-lg'>
 						Start Learning Now
 					</PrimaryButton>
 
