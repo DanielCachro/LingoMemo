@@ -2,8 +2,7 @@ import {getActiveLearningProfile} from '@/lib/actions/user'
 import {Suspense} from 'react'
 import DefferedLayoutContent from './_components/DefferedLayoutContent'
 
-async function Skeleton() {
-	'use cache'
+function Skeleton() {
 	return (
 		<div
 			role='status'
@@ -24,7 +23,7 @@ async function Skeleton() {
 	)
 }
 
-export default async function RootLayout({
+export default function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode

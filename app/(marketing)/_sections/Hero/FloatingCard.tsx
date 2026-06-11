@@ -1,3 +1,4 @@
+'use client'
 import SlabBorder from '@/components/SlabBorder'
 import {IconDefinition} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'

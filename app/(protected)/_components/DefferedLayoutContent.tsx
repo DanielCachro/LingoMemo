@@ -2,17 +2,17 @@ import NavigationItems from '@/components/NavigationItems'
 import {getActiveLearningProfile} from '@/lib/actions/user'
 import type {LearningProfileTypes} from '@/types/profile'
 import {redirect} from 'next/navigation'
-import StreakSynchronizer from './StreakSynchronizer'
-import {TimeZoneUpdater} from './TimeZoneUpdater'
 import BottomNavigation from './BottomNavigation'
 import MainNavigation from './MainNavigation'
+import StreakSynchronizer from './StreakSynchronizer'
+import {TimeZoneUpdater} from './TimeZoneUpdater'
 import WelcomeToast from './WelcomeToast'
 
 interface DefferedLayoutContentProps {
 	activeLearningProfilePromise: ReturnType<typeof getActiveLearningProfile>
 }
 
-async function AppNav({
+function AppNav({
 	activeLearningProfileType,
 	indicatorLayoutId,
 	indicatorPosition = 'right',
@@ -25,7 +25,6 @@ async function AppNav({
 	itemsClassName?: string
 	itemClassName?: string
 }) {
-	'use cache'
 	return (
 		<nav>
 			<NavigationItems className={itemsClassName}>

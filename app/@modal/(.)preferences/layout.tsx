@@ -2,8 +2,7 @@ import Breadcrumbs from '@/components/Breadcrumbs'
 import AnimatedModalContent from '../_components/AnimatedModalContent'
 import Modal from '../_components/Modal'
 
-export default async function PreferencesLayout({children}: {children: React.ReactNode}) {
-	'use cache'
+export default function PreferencesLayout({children}: {children: React.ReactNode}) {
 	return (
 		<>
 			<Modal header='mobile' heading='Preferences' className='sm:w-640'>

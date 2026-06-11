@@ -33,7 +33,6 @@ const themeOptions: RadioOption[] = [
 	},
 ]
 
-export default async function ThemeModal() {
-	'use cache'
+export default function ThemeModal() {
 	return <ThemeSelect themeOptions={themeOptions} />
 }
