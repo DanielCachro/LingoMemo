@@ -1,7 +1,5 @@
-import { Skeleton as RadioFormSkeleton } from '@/components/Form/RadioForm'
+import {Skeleton as RadioFormSkeleton} from '@/components/Form/RadioForm'
 
 export default function Loading() {
-	return (
-		<RadioFormSkeleton />
-	)
+	return <RadioFormSkeleton />
 }

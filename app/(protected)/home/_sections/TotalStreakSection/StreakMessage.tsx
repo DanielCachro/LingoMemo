@@ -1,8 +1,5 @@
-'use client'
-
-import {useStreak} from '@/hooks/useStreak'
-import {motion} from 'motion/react'
-import {useLayoutEffect, useState} from 'react'
+import {MotionP} from '@/components/MotionWrappers'
+import {getStreakData} from '@/lib/actions/profile/streak'
 
 const zeroStreakMessages = ['The perfect time to begin!']
 const superSmallStreakMessages = ['Keep it up!']
@@ -17,21 +14,25 @@ const bigStreakMessages = [
 ]
 
 function getStreakMessage(streakCount: number) {
-	const key = 'streakMessage'
+	// Removed localStorage caching for streak messages to keep code simple and avoid to deal with hydration issues or making component structure more complex.
+	// Old code commented out below for reference, but it can be safely deleted in the future if we are sure we won’t need it anymore.
+	// Alternatively we can cache streak messages in database.
+
+	// const key = 'streakMessage'
 
 	if (streakCount < 0) {
 		throw new Error('Streak count cannot be negative')
 	}
 
-	const stored = localStorage.getItem(key)
-	if (stored) {
-		try {
-			const data = JSON.parse(stored)
-			if (data.streakCount === streakCount) {
-				return data.message
-			}
-		} catch {}
-	}
+	// const stored = localStorage.getItem(key)
+	// if (stored) {
+	// 	try {
+	// 		const data = JSON.parse(stored)
+	// 		if (data.streakCount === streakCount) {
+	// 			return data.message
+	// 		}
+	// 	} catch {}
+	// }
 
 	let streakMessage: string
 
@@ -45,33 +46,27 @@ function getStreakMessage(streakCount: number) {
 		streakMessage = bigStreakMessages[Math.floor(Math.random() * bigStreakMessages.length)]
 	}
 
-	const dataToStore = {
-		streakCount,
-		message: streakMessage,
-	}
+	// const dataToStore = {
+	// 	streakCount,
+	// 	message: streakMessage,
+	// }
 
-	localStorage.setItem(key, JSON.stringify(dataToStore))
+	// localStorage.setItem(key, JSON.stringify(dataToStore))
 
 	return streakMessage
 }
 
-export default function StreakMessage() {
-	const {data} = useStreak()
-	const streakCount = data?.streakCount ?? 0
-	const [streakMessage, setStreakMessage] = useState('')
-
-	useLayoutEffect(() => {
-		const message = getStreakMessage(streakCount)
-		setStreakMessage(message)
-	}, [streakCount])
+export default async function StreakMessage() {
+	const {streakCount} = await getStreakData()
+	const streakMessage = getStreakMessage(streakCount)
 
 	return (
-		<motion.p
+		<MotionP
 			initial={{scale: 0, rotate: -10}}
 			animate={{scale: 1, rotate: 0}}
 			transition={{visualDuration: 0.7, type: 'spring'}}
 			className='text-xl font-bold text-background-500 sm:text-2xl'>
-			{streakMessage || <span className='opacity-0'>Loading...</span>}
-		</motion.p>
+			{streakMessage}
+		</MotionP>
 	)
 }

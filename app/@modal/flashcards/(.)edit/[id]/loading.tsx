@@ -5,7 +5,6 @@ export default function Loading() {
 		<CreateEditModalSkeleton
 			title='Edit Flashcard'
 			subtitle='Make changes to your flashcard below.'
-			buttonContent='Edit Flashcard'
 			disableAnimations={{disableExitAnimation: true}}
 		/>
 	)

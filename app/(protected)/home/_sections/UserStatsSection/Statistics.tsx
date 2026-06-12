@@ -1,15 +1,12 @@
-'use client'
-
-import {useStreak} from '@/hooks/useStreak'
-import {useWeekFlashcardCount} from '@/hooks/useWeekFlashcardCount'
+import {getStreakData} from '@/lib/actions/profile/streak'
+import {getWeekFlashcardCount} from '@/lib/actions/profile/week'
 import {faClockRotateLeft, faFireFlameSimple} from '@fortawesome/free-solid-svg-icons'
 import Statistic from './Statistic'
 
-export default function Statistics() {
-	const {data: streakData} = useStreak()
-	const {data: weekFlashcardCountData} = useWeekFlashcardCount()
-	const longestStreak = streakData?.longestStreak ?? 0
-	const weekFlashcardCount = weekFlashcardCountData ?? 0
+export default async function Statistics() {
+	const {longestStreak} = await getStreakData()
+	const weekFlashcardCount = await getWeekFlashcardCount()
+
 	return (
 		<>
 			<Statistic

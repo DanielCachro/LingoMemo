@@ -3,7 +3,6 @@ import {DateTime} from 'luxon'
 import {NextResponse} from 'next/server'
 
 // This route is intended to be called by a cron job to clean logs older than three months.
-export const dynamic = 'force-dynamic'
 export async function GET() {
 	try {
 		const threeMonthsAgo = DateTime.now().minus({months: 3}).toJSDate()

@@ -14,7 +14,7 @@ import {useRouter} from 'next/navigation'
 import {useActionState, useEffect, useRef, useState, useTransition} from 'react'
 import {toast} from 'react-toastify'
 import LeftAlignedModal from '../../_components/LeftAlignedModal'
-import {ModalDisableAnimations} from '../../_components/Modal'
+import {ModalDisableAnimations, ModalSkeleton} from '../../_components/Modal'
 import FormBlock from './FormBlock'
 import FormSection from './FormSection'
 
@@ -254,55 +254,46 @@ function SkeletonField({type = 'input'}: {type?: 'input' | 'textarea'}) {
 export function Skeleton({
 	title,
 	subtitle,
-	buttonContent,
 	disableAnimations,
 }: {
 	title: string
 	subtitle: string
-	buttonContent: React.ReactNode
 	disableAnimations?: ModalDisableAnimations
 }) {
 	return (
-		<LeftAlignedModal
-			title={title}
-			subtitleContent={subtitle}
-			buttonContent={buttonContent}
-			useForm={false}
-			onSubmit={() => {}}
-			disableAnimations={disableAnimations}>
-			<div className='mt-12 animate-pulse space-y-24'>
-				<div className='space-y-16'>
-					<SkeletonTextLine />
-					<div className='space-y-12'>
-						<SkeletonTextLine />
-						<SkeletonField />
+		<ModalSkeleton
+			mobileScreenCoverage='9/10' // LeftAlignedModal uses 9/10 by default
+			disableAnimations={disableAnimations}
+			className='overflow-hidden'>
+			<div className='flex h-full flex-col justify-between space-y-16 p-16 pt-0'>
+				<div className='flex min-h-0 w-full min-w-0 flex-col space-y-24'>
+					<div className='flex justify-between sm:mt-16'>
+						<div>
+							<h2 className='text-xl font-bold'>{title}</h2>
+							<p>{subtitle}</p>
+						</div>
 					</div>
-					<div className='space-y-12'>
-						<SkeletonTextLine />
-						<SkeletonField />
-					</div>
-					<div className='space-y-12'>
-						<SkeletonTextLine />
-						<SkeletonField type='textarea' />
-					</div>
-				</div>
-				<div className='space-y-16'>
-					<SkeletonTextLine />
-					<div className='space-y-12'>
-						<SkeletonTextLine />
-						<SkeletonField />
-					</div>
-					<div className='space-y-12'>
-						<SkeletonTextLine />
-						<SkeletonField />
-					</div>
-					<div className='space-y-12'>
-						<SkeletonTextLine />
-						<SkeletonField />
-						<SkeletonField />
+
+					<div className='-mr-16 flex h-full min-h-0 animate-pulse flex-col justify-start space-y-24 overflow-y-auto pr-16'>
+						<div className='space-y-16'>
+							<SkeletonTextLine />
+							<div className='space-y-12'>
+								<SkeletonTextLine />
+								<SkeletonField />
+							</div>
+							<div className='space-y-12'>
+								<SkeletonTextLine />
+								<SkeletonField />
+							</div>
+							<div className='space-y-12'>
+								<SkeletonTextLine />
+								<SkeletonField type='textarea' />
+							</div>
+						</div>
 					</div>
 				</div>
+				<div className='h-48 w-full shrink-0 animate-pulse rounded-md bg-skeleton opacity-50' />
 			</div>
-		</LeftAlignedModal>
+		</ModalSkeleton>
 	)
 }

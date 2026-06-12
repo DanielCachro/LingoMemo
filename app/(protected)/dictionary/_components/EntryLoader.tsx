@@ -1,7 +1,10 @@
+import {cacheLife} from 'next/cache'
 import type {DictionaryEntry, NotFoundEntry} from '../_lib/types'
 import Entry from './Entry'
 
 async function fetchAudioUrls(search: string) {
+	'use cache'
+	cacheLife('max')
 	if (!search) return []
 
 	try {
@@ -18,6 +21,8 @@ async function fetchAudioUrls(search: string) {
 }
 
 async function fetchEntry(search: string, targetLang: string): Promise<DictionaryEntry | NotFoundEntry> {
+	'use cache'
+	cacheLife('max')
 	try {
 		const result = await fetch(`https://freedictionaryapi.com/api/v1/entries/${targetLang}/${search}`)
 

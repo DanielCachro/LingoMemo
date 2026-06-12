@@ -7,7 +7,7 @@ import {LearningProfile} from '@/lib/generated/prisma/browser'
 import {languageCodeToName} from '@/lib/utils'
 import {useQueryClient} from '@tanstack/react-query'
 import {useRouter} from 'next/navigation'
-import {KeyboardEvent, useTransition} from 'react'
+import {KeyboardEvent, useEffect, useTransition} from 'react'
 import {toast} from 'react-toastify'
 import DeleteProfileButton from './DeleteProfileButton'
 import ProfileDetails from './ProfileDetails'
@@ -96,6 +96,10 @@ export default function ProfileSelect({
 			),
 		}
 	})
+
+	useEffect(() => {
+		router.prefetch('/preferences/learning-profile/create')
+	}, [router])
 
 	return (
 		<>

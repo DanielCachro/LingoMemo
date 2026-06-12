@@ -2,12 +2,11 @@
 
 import PrimaryButton from '@/components/PrimaryButton'
 import SecondaryButton from '@/components/SecondaryButton'
-import dynamic from 'next/dynamic'
 import {useRouter} from 'next/navigation'
-import {KeyboardEvent, useState} from 'react'
+import {KeyboardEvent, useEffect, useState} from 'react'
+import {createPortal} from 'react-dom'
 import {toast} from 'react-toastify'
-import {ModalDisableAnimations} from './Modal'
-const Modal = dynamic(() => import('./Modal'), {ssr: false})
+import Modal, {ModalDisableAnimations, ModalSkeleton} from './Modal'
 
 interface Props {
 	heading: string
@@ -21,7 +20,7 @@ interface Props {
 	disableAnimations?: ModalDisableAnimations
 }
 
-export default function DeleteItemModal({
+export default function ConfirmActionModal({
 	heading,
 	children,
 	confirmButtonText = 'Yes',
@@ -34,6 +33,11 @@ export default function DeleteItemModal({
 }: Props) {
 	const router = useRouter()
 	const [isLoading, setIsLoading] = useState(false)
+	const [isMounted, setIsMounted] = useState(false)
+
+	useEffect(() => {
+		setIsMounted(true)
+	}, [])
 
 	const isDialogMode = !!onClose
 
@@ -58,7 +62,7 @@ export default function DeleteItemModal({
 		}
 	}
 
-	return (
+	const modalContent = (
 		<Modal
 			header='none'
 			heading='confirmation modal'
@@ -108,5 +112,34 @@ export default function DeleteItemModal({
 				</div>
 			</div>
 		</Modal>
+	)
+
+	if (!isMounted) return null
+
+	return createPortal(modalContent, document.body)
+}
+
+export function Skeleton({heading, disableAnimations}: {heading: string; disableAnimations?: ModalDisableAnimations}) {
+	return (
+		<ModalSkeleton mobileScreenCoverage='2/3' disableAnimations={disableAnimations}>
+			<div className='animate-pulse space-y-16 p-24'>
+				<p>{heading}</p>
+
+				<div className='max-h-[15rem] w-full overflow-y-auto rounded-sm border-2 border-background-200 p-16 dark:border-background-800'>
+					<div className='space-y-12'>
+						<div className='h-16 w-3/4 rounded-full bg-skeleton' />
+						<div className='h-16 w-full rounded-full bg-skeleton' />
+						<div className='h-16 w-5/6 rounded-full bg-skeleton' />
+					</div>
+				</div>
+
+				<p>Are you sure?</p>
+
+				<div className='flex space-x-16'>
+					<div className='h-48 w-128 shrink-0 rounded-md bg-skeleton opacity-50' />
+					<div className='h-48 w-128 shrink-0 rounded-md bg-skeleton opacity-50' />
+				</div>
+			</div>
+		</ModalSkeleton>
 	)
 }

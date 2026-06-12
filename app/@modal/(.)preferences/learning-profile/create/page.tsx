@@ -10,11 +10,13 @@ export default function CreateLearningProfileModal() {
 				icon={<FontAwesomeIcon icon={faLanguage} />}
 				title='Language Profile'
 				href='/preferences/learning-profile/create/language'
+				prefetch={true}
 			/>
 			<LinkTile
 				icon={<FontAwesomeIcon icon={faSignature} />}
 				title='Self-Study Profile'
 				href='/preferences/learning-profile/create/self-study'
+				prefetch={true}
 			/>
 		</div>
 	)

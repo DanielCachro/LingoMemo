@@ -2,10 +2,8 @@
 
 import PrimaryButton from '@/components/PrimaryButton'
 import SecondaryButton from '@/components/SecondaryButton'
-import {faBrain, faGraduationCap, faStar} from '@fortawesome/free-solid-svg-icons'
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faBrain, faGraduationCap} from '@fortawesome/free-solid-svg-icons'
 import {motion, stagger, useScroll, useTransform, Variants} from 'motion/react'
-import {useRouter} from 'next/navigation'
 import {useRef} from 'react'
 import FloatingCard from './FloatingCard'
 
@@ -33,7 +31,6 @@ const itemVariants: Variants = {
 }
 
 export default function HeroSection() {
-	const router = useRouter()
 	const targetRef = useRef<HTMLDivElement>(null)
 	const {scrollYProgress} = useScroll({
 		target: targetRef,
@@ -42,6 +39,10 @@ export default function HeroSection() {
 
 	const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
 	const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.9])
+
+	const handleAuthRedirect = () => {
+		window.location.href = '/auth/signin'
+	}
 
 	return (
 		<section
@@ -53,13 +54,6 @@ export default function HeroSection() {
 				initial='hidden'
 				animate='visible'
 				className='relative z-10 max-w-768 space-y-32'>
-				<motion.div variants={itemVariants} className='mx-auto w-fit'>
-					<div className='rounded-full bg-primary-100 px-16 py-8 text-sm font-bold text-primary-700 dark:bg-primary-900/30 dark:text-primary-300'>
-						<FontAwesomeIcon icon={faStar} className='mr-8 text-accent-500' />
-						The smarter way to learn vocabulary
-					</div>
-				</motion.div>
-
 				<motion.h1 variants={itemVariants} className='text-5xl leading-tight font-black md:text-7xl'>
 					Master any language <br />
 					<span className='text-primary-500 dark:text-primary-600'>effortlessly.</span>
@@ -70,9 +64,10 @@ export default function HeroSection() {
 				</motion.p>
 
 				<motion.div variants={itemVariants} className='flex flex-col items-center justify-center gap-16 sm:flex-row'>
-					<PrimaryButton onClick={() => router.push('/auth/signin')} className='h-64 px-32 text-lg'>
+					<PrimaryButton onClick={handleAuthRedirect} className='h-64 px-32 text-lg'>
 						Start Learning Now
 					</PrimaryButton>
+
 					<SecondaryButton
 						onClick={() => {
 							document.getElementById('features')?.scrollIntoView({behavior: 'smooth'})

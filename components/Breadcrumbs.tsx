@@ -1,19 +1,20 @@
 'use client'
+
 import {cn} from '@/lib/utils'
 import {faChevronRight} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import Link from 'next/link'
-import {useSelectedLayoutSegments} from 'next/navigation'
+import {usePathname} from 'next/navigation'
 
 interface BreadcrumbsProps {
 	variant?: 'light' | 'bordered'
-	rootSegment?: string
 	className?: string
 }
 
-export default function Breadcrumbs({variant = 'light', rootSegment, className}: BreadcrumbsProps) {
-	const layoutSegments = useSelectedLayoutSegments()
-	const breadcrumbsSegments = rootSegment ? [rootSegment, ...layoutSegments] : layoutSegments
+export default function Breadcrumbs({variant = 'light', className}: BreadcrumbsProps) {
+	const pathname = usePathname()
+	const breadcrumbsSegments = pathname.split('/').filter(Boolean)
+
 	const segments = breadcrumbsSegments.map((segment, index) => {
 		const removedHyphens = segment.replace(/-/g, ' ')
 		const formatted = removedHyphens
@@ -32,7 +33,7 @@ export default function Breadcrumbs({variant = 'light', rootSegment, className}:
 			className={cn(
 				'w-fit max-w-full text-sm',
 				{
-					'rounded-sm border-[1px] border-background-300 px-8 py-4 dark:border-background-700': variant === 'bordered',
+					'rounded-sm border border-background-300 px-8 py-4 dark:border-background-700': variant === 'bordered',
 				},
 				className,
 			)}>

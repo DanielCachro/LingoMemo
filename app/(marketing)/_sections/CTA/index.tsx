@@ -1,9 +1,11 @@
 'use client'
 import PrimaryButton from '@/components/PrimaryButton'
-import {useRouter} from 'next/navigation'
 
 export default function CTASection() {
-	const router = useRouter()
+	const handleAuthRedirect = () => {
+		window.location.href = '/auth/signin'
+	}
+
 	return (
 		<section className='text-white cta-pattern py-96'>
 			<div className='relative z-10 mx-auto w-fit max-w-1440 px-24 text-center md:px-48'>
@@ -13,7 +15,7 @@ export default function CTASection() {
 				</p>
 				<div className='flex justify-center'>
 					<PrimaryButton
-						onClick={() => router.push('auth/signin')}
+						onClick={handleAuthRedirect}
 						className='h-64 bg-primary-600 px-48 text-xl dark:bg-primary-600 pointer-fine:hover:bg-primary-700 dark:pointer-fine:hover:bg-primary-800'
 						shadowClassName='bg-primary-800 dark:bg-primary-800 pointer-fine:peer-hover:bg-primary-900'>
 						Get Started for Free

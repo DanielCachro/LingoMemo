@@ -1,5 +1,4 @@
 'use server'
-import 'server-only'
 
 import {prisma} from '@/prisma/client'
 import type {RevalidationConfig} from '@/types/revalidate'

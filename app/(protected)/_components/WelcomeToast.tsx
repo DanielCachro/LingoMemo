@@ -5,7 +5,7 @@ import {languageCodeToName} from '@/lib/utils'
 import {useEffect, useRef} from 'react' // Dodano useRef
 import {toast} from 'react-toastify'
 
-export default function ProfileToast({activeLearningProfile}: {activeLearningProfile: LearningProfile}) {
+export default function WelcomeToast({activeLearningProfile}: {activeLearningProfile: LearningProfile}) {
 	const mounted = useRef(false)
 
 	useEffect(() => {
