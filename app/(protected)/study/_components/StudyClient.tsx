@@ -3,6 +3,7 @@ import FlashcardsStatus from '@/components/Status'
 import {cn} from '@/lib/utils'
 import type {Flashcard, FlashcardResponseQuality} from '@/types/study'
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query'
+import {useRouter} from 'next/navigation'
 import {useEffect, useRef, useState} from 'react'
 import {toast} from 'react-toastify'
 import AnswerDisplay from './AnswerDisplay'
@@ -25,6 +26,7 @@ export type UserAnswer = {
 }
 
 export default function StudyClient({initialFlashcard, initialDone, toReviewToday}: Props) {
+	const router = useRouter()
 	const [isDesktop, setIsDesktop] = useState(false)
 	const textfieldRef = useRef<HTMLTextAreaElement | null>(null)
 	const queryClient = useQueryClient()
@@ -137,6 +139,7 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 					toast.error('Error: Failed to update streak. Please try again.')
 				}
 				queryClient.invalidateQueries({queryKey: ['profile']})
+				router.refresh()
 			}
 		},
 		onError: (error, data, context) => {
