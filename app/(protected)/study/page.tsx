@@ -1,4 +1,4 @@
-import {getStudyData} from '@/lib/actions/study'
+import {getStudyData} from '@/lib/queries/study'
 import type {Viewport} from 'next'
 import StudyClient from './_components/StudyClient'
 

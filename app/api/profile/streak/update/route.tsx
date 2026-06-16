@@ -1,4 +1,4 @@
-import {getCurrentUser} from '@/lib/actions/user'
+import {getCurrentUser} from '@/lib/queries/user'
 import {getUserDayRangeUTC} from '@/lib/time'
 import {prisma} from '@/prisma/client'
 import {DateTime} from 'luxon'

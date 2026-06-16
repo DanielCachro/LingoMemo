@@ -1,4 +1,4 @@
-import {getNextFlashcards} from '@/lib/actions/study'
+import {getNextFlashcards} from '@/lib/queries/study'
 import {NextRequest, NextResponse} from 'next/server'
 
 export async function GET(request: NextRequest) {

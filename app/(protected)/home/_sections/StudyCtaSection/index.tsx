@@ -1,4 +1,4 @@
-import {getStudyData} from '@/lib/actions/study'
+import {getStudyData} from '@/lib/queries/study'
 import AnimatedCards from './AnimatedCards'
 import StudyStatus from './StudyStatus'
 

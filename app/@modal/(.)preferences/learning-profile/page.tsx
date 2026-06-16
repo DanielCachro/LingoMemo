@@ -1,4 +1,4 @@
-import {getCurrentUser} from '@/lib/actions/user'
+import {getCurrentUser} from '@/lib/queries/user'
 import ProfileSelect from './ProfileSelect'
 
 export default async function LearningProfileModal() {

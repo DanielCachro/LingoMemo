@@ -1,4 +1,4 @@
-import {getStreakData} from '@/lib/actions/profile/streak'
+import {getStreakData} from '@/lib/queries/profile/streak'
 import {faFireFlameSimple} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 

@@ -1,5 +1,5 @@
 import {MotionP} from '@/components/MotionWrappers'
-import {getStreakData} from '@/lib/actions/profile/streak'
+import {getStreakData} from '@/lib/queries/profile/streak'
 
 const zeroStreakMessages = ['The perfect time to begin!']
 const superSmallStreakMessages = ['Keep it up!']

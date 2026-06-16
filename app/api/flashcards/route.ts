@@ -1,7 +1,7 @@
 import {schema as flashcardsZodSchema, type FlashcardsFilter} from '@/app/@modal/flashcards/(.)filter/schema'
 import {initialFlashcardsSortOrder} from '@/app/@modal/flashcards/(.)sort/initial'
 import {type FlashcardsSort} from '@/app/@modal/flashcards/(.)sort/page'
-import {getCurrentUser} from '@/lib/actions/user'
+import {getCurrentUser} from '@/lib/queries/user'
 import {Prisma} from '@/lib/generated/prisma/client'
 import {prisma} from '@/prisma/client'
 import {NextRequest, NextResponse} from 'next/server'

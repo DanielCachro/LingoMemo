@@ -1,5 +1,5 @@
-import {getStreakData} from '@/lib/actions/profile/streak'
-import {getWeekFlashcardCount} from '@/lib/actions/profile/week'
+import {getWeekFlashcardCount} from '@/lib/queries/profile/week'
+import {getStreakData} from '@/lib/queries/profile/streak'
 import {faClockRotateLeft, faFireFlameSimple} from '@fortawesome/free-solid-svg-icons'
 import Statistic from './Statistic'
 

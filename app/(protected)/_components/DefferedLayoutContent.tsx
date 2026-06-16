@@ -1,5 +1,5 @@
 import NavigationItems from '@/components/NavigationItems'
-import {getActiveLearningProfile} from '@/lib/actions/user'
+import {getActiveLearningProfile} from '@/lib/queries/user'
 import type {LearningProfileTypes} from '@/types/profile'
 import {redirect} from 'next/navigation'
 import BottomNavigation from './BottomNavigation'

@@ -2,7 +2,7 @@
 import SearchBar from '@/components/SearchBar'
 import {useRouter} from 'next/navigation'
 import {FormEvent, useTransition} from 'react'
-import {Skeleton as EntrySkeleton} from './Entry'
+import EntrySkeleton from './EntrySkeleton'
 
 export default function SearchBarWrapper({targetLang}: {targetLang: string}) {
 	const router = useRouter()

@@ -1,5 +1,6 @@
-import {getFlashcardById, updateFlashcard} from '@/lib/actions/flashcards/manage'
-import {FlashcardFormValues} from '@/lib/actions/flashcards/types'
+import {updateFlashcard} from '@/lib/actions/flashcards/manage'
+import {getFlashcardById} from '@/lib/queries/flashcard'
+import {FlashcardFormValues} from '@/types/flashcards'
 import {use} from 'react'
 import CreateEditModal from '../../_components/CreateEditModal'
 import FlashcardNotFound from './FlashcardNotFound'

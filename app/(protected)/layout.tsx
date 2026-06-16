@@ -1,4 +1,4 @@
-import {getActiveLearningProfile} from '@/lib/actions/user'
+import {getActiveLearningProfile} from '@/lib/queries/user'
 import {Suspense} from 'react'
 import DefferedLayoutContent from './_components/DefferedLayoutContent'
 

@@ -1,6 +1,6 @@
-import {FlashcardActionState} from './types'
+import {FlashcardActionState} from '@/types/flashcards'
 
-export const initialFlashcardState: FlashcardActionState = {
+const initialFlashcardState: FlashcardActionState = {
 	status: 'idle',
 	message: '',
 	errors: {
@@ -12,3 +12,5 @@ export const initialFlashcardState: FlashcardActionState = {
 		examples: undefined,
 	},
 }
+
+export default initialFlashcardState

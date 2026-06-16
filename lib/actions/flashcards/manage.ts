@@ -1,9 +1,9 @@
 'use server'
+import {getCurrentUser} from '@/lib/queries/user'
 import {prisma} from '@/prisma/client'
+import {FlashcardActionState, FlashcardFormErrors, FlashcardFormValues} from '@/types/flashcards'
 import {z} from 'zod'
-import {getCurrentUser} from '../user'
-import {flashcardFormSchema} from './schema'
-import {FlashcardActionState, FlashcardFormErrors, FlashcardFormValues} from './types'
+import {flashcardFormSchema} from '../../utils/flashcards/schema'
 
 function formatFlashcardErrors(error: z.ZodError): FlashcardFormErrors {
 	const errors: FlashcardFormErrors = {}
@@ -233,26 +233,5 @@ export async function bulkDeleteFlashcards(flashcardIds: number[]): Promise<{suc
 	} catch (error) {
 		console.error('Error deleting flashcards in bulk:', error)
 		return {success: false, error: 'Failed to delete flashcards.'}
-	}
-}
-
-export async function getFlashcardById(flashcardId: number) {
-	try {
-		const user = await getCurrentUser()
-		if (!user || !user.activeLearningProfileId) throw new Error('User or profile not found')
-
-		const flashcard = await prisma.flashcard.findFirst({
-			where: {
-				id: flashcardId,
-				learningProfileId: user.activeLearningProfileId,
-			},
-			include: {
-				answer: true,
-			},
-		})
-		return flashcard
-	} catch (error) {
-		console.error('Error fetching flashcard:', error)
-		return null
 	}
 }

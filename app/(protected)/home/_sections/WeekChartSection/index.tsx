@@ -1,5 +1,5 @@
 import FadeInChildren from '@/components/FadeInChildren'
-import {getLast7DaysCompletionCount} from '@/lib/actions/profile/week'
+import {getLast7DaysCompletionCount} from '@/lib/queries/profile/week'
 import Chart from './Chart'
 
 export default async function WeekChart() {
