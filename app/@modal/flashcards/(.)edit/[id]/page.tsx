@@ -1,17 +1,16 @@
 import {updateFlashcard} from '@/lib/actions/flashcards/manage'
 import {getFlashcardById} from '@/lib/queries/flashcard'
 import {FlashcardFormValues} from '@/types/flashcards'
-import {use} from 'react'
 import CreateEditModal from '../../_components/CreateEditModal'
 import FlashcardNotFound from './FlashcardNotFound'
 
-export default function FlashcardsEditModal({params}: {params: Promise<{id: number}>}) {
-	const {id} = use(params)
+export default async function FlashcardsEditModal({params}: {params: Promise<{id: number}>}) {
+	const {id} = await params
 	const flashcardId = Number(id)
 
 	const updateAction = updateFlashcard.bind(null, flashcardId)
 
-	const flashcard = use(getFlashcardById(flashcardId))
+	const flashcard = await getFlashcardById(flashcardId)
 	if (!flashcard) {
 		return <FlashcardNotFound />
 	}

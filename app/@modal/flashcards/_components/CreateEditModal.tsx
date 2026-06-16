@@ -41,7 +41,7 @@ export default function CreateEditModal({
 	initialValues,
 	disableAnimations,
 }: Props) {
-	const [formState, formAction] = useActionState(action, initialFlashcardState)
+	const [formState, formAction] = useActionState(action, {...initialFlashcardState, data: initialValues})
 	const router = useRouter()
 	const [isPending, startTransition] = useTransition()
 	const [formErrors, setFormErrors] = useState(initialFlashcardState.errors)
@@ -60,6 +60,13 @@ export default function CreateEditModal({
 		if (formState.status === 'success') {
 			toast.success(successMessage)
 			queryClient.invalidateQueries({queryKey: ['flashcards']})
+
+			formState.status = initialFlashcardState.status // Reset status to idle after handling success
+			formState.message = initialFlashcardState.message // Clear the success message
+			formState.errors = initialFlashcardState.errors // Clear any errors
+			// We are doing it to fix the issue with state not resetting after closing modal.
+			// This happens because client navigation in Next.js use React Activity to hide components instead of unmounting them.
+
 			if (modalCloseRef.current) {
 				modalCloseRef.current()
 			} else {
@@ -75,6 +82,12 @@ export default function CreateEditModal({
 			}
 		}
 	}, [formState, router, queryClient, successMessage, errorMessage])
+
+	useEffect(() => {
+		return () => {
+			router.refresh() // Refresh the page when the modal is closed to ensure state resets properly. This is a workaround for the issue with form state not resetting after closing modal due to Next.js using React Activity on client navigation to hide components instead of unmounting them.
+		}
+	}, [router])
 
 	return (
 		<LeftAlignedModal
@@ -101,7 +114,7 @@ export default function CreateEditModal({
 								name='answer'
 								placeholder='Answer for the question'
 								maxLength={inputsLengths.answer.max}
-								defaultValue={initialValues?.answer}
+								defaultValue={formState?.data?.answer}
 								error={!!formErrors.answer}
 								errorMessage={formErrors.answer}
 								onChange={() => {
@@ -121,7 +134,7 @@ export default function CreateEditModal({
 								name='question'
 								placeholder='Question on the front side'
 								maxLength={inputsLengths.question.max}
-								defaultValue={initialValues?.question}
+								defaultValue={formState?.data?.question}
 								error={!!formErrors.question}
 								errorMessage={formErrors.question}
 								onChange={() => {
@@ -141,7 +154,7 @@ export default function CreateEditModal({
 								name='note'
 								placeholder='Any additional notes or context'
 								maxLength={inputsLengths.note.max}
-								defaultValue={initialValues?.note}
+								defaultValue={formState?.data?.note}
 								error={!!formErrors.note}
 								errorMessage={formErrors.note}
 								onChange={() => {
@@ -163,7 +176,7 @@ export default function CreateEditModal({
 								name='phonetic'
 								placeholder='e.g., /həˈləʊ/'
 								maxLength={inputsLengths.phonetic.max}
-								defaultValue={initialValues?.phonetic}
+								defaultValue={formState?.data?.phonetic}
 								error={!!formErrors.phonetic}
 								errorMessage={formErrors.phonetic}
 								onChange={() => {
@@ -181,7 +194,7 @@ export default function CreateEditModal({
 							<TagInput
 								name='synonyms'
 								maxLength={inputsLengths.synonym.max}
-								initialTags={initialValues?.synonyms}
+								initialTags={formState?.data?.synonyms}
 								errorInTag={formErrors.synonyms}
 								onTagRemove={tagIndex => {
 									setFormErrors(prev => ({
@@ -204,7 +217,7 @@ export default function CreateEditModal({
 								name='examples'
 								buttonContent='Add New Example'
 								maxLength={inputsLengths.example.max}
-								initialInputs={initialValues?.examples}
+								initialInputs={formState?.data?.examples}
 								errorInInput={formErrors.examples}
 								onInputChange={inputIndex => {
 									setFormErrors(prev => ({

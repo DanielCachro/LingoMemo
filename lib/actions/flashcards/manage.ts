@@ -1,9 +1,9 @@
 'use server'
 import {getCurrentUser} from '@/lib/queries/user'
 import {prisma} from '@/prisma/client'
-import {FlashcardActionState, FlashcardFormErrors, FlashcardFormValues} from '@/types/flashcards'
 import {z} from 'zod'
 import {flashcardFormSchema} from '../../utils/flashcards/schema'
+import {FlashcardActionState, FlashcardFormErrors, FlashcardFormValues} from '@/types/flashcards'
 
 function formatFlashcardErrors(error: z.ZodError): FlashcardFormErrors {
 	const errors: FlashcardFormErrors = {}
@@ -191,7 +191,7 @@ export async function updateFlashcard(
 			})
 		}
 
-		return {status: 'success', message: 'Flashcard updated successfully.', errors: {}}
+		return {status: 'success', message: 'Flashcard updated successfully.', errors: {}, data: validation.data}
 	} catch (error) {
 		console.error('Error updating flashcard:', error)
 		return {status: 'error', message: 'Failed to update flashcard.', errors: {}}

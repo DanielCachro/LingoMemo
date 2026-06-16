@@ -13,4 +13,5 @@ export type FlashcardActionState = {
 	status: 'idle' | 'success' | 'error'
 	message?: string
 	errors: FlashcardFormErrors
+	data?: FlashcardFormValues
 }
