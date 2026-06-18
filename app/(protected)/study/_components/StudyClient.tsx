@@ -276,7 +276,10 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 					{!currentFlashcard && isQueueError ? (
 						<FlashcardsStatus status='error' />
 					) : !currentFlashcard && queueEnabled ? (
-						<p className='animate-pulse'>Loading more flashcards...</p>
+						<>
+							<FlashcardComponentSkeleton />
+							<TextareaSkeleton />
+						</>
 					) : toReviewToday === 0 ? (
 						<FlashcardsStatus status='empty'>
 							No flashcards scheduled for today! You can add a new one now or come back another day to keep learning.

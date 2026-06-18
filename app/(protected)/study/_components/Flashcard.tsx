@@ -28,7 +28,7 @@ export function Skeleton() {
 	return (
 		<div
 			role='status'
-			className='flex aspect-4/3 flex-col items-center rounded-sm bg-skeleton px-32 dark:text-primary-100'>
+			className='flex aspect-4/3 animate-pulse flex-col items-center rounded-sm bg-skeleton px-32 dark:text-primary-100'>
 			<div className='flex w-full max-w-384 grow flex-col items-center justify-center gap-24 pt-32 pb-48'>
 				<div className='w-full space-y-8'>
 					<div className='h-8 w-11/12 rounded-full bg-skeleton-accent'></div>
