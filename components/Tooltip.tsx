@@ -1,11 +1,19 @@
+'use client'
 import {faCircleQuestion} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {useEffect, useRef, useState} from 'react'
+import {useEffect, useId, useRef, useState} from 'react'
 
-export default function Tooltip({children}: {children: React.ReactNode}) {
+export default function Tooltip({
+	children,
+	ariaLabel = 'More information',
+}: {
+	children: React.ReactNode
+	ariaLabel?: string
+}) {
 	const [isOpen, setIsOpen] = useState(false)
 	const [openMethod, setOpenMethod] = useState<'hover' | 'focus' | 'touch' | null>(null)
 	const containerRef = useRef<HTMLSpanElement>(null)
+	const tooltipId = useId()
 
 	useEffect(() => {
 		if (!isOpen) return
@@ -17,8 +25,20 @@ export default function Tooltip({children}: {children: React.ReactNode}) {
 			}
 		}
 
+		const handleEscapeKey = (event: KeyboardEvent) => {
+			if (event.key === 'Escape') {
+				setIsOpen(false)
+				setOpenMethod(null)
+			}
+		}
+
 		document.addEventListener('click', handleClickOutside)
-		return () => document.removeEventListener('click', handleClickOutside)
+		document.addEventListener('keydown', handleEscapeKey)
+
+		return () => {
+			document.removeEventListener('click', handleClickOutside)
+			document.removeEventListener('keydown', handleEscapeKey)
+		}
 	}, [isOpen])
 
 	const handleMouseEnter = () => {
@@ -60,6 +80,8 @@ export default function Tooltip({children}: {children: React.ReactNode}) {
 			<button
 				type='button'
 				className='text-background-400 hover:text-primary-500 dark:hover:text-primary-600'
+				aria-label={ariaLabel}
+				aria-describedby={isOpen ? tooltipId : undefined}
 				onFocus={handleFocus}
 				onBlur={handleBlur}
 				onTouchStart={handleTouchStart}
@@ -69,7 +91,10 @@ export default function Tooltip({children}: {children: React.ReactNode}) {
 				<FontAwesomeIcon icon={faCircleQuestion} />
 			</button>
 			{isOpen && (
-				<div className='absolute bottom-full left-1/2 z-10 mb-4 w-192 -translate-x-1/2 rounded-sm bg-background-600 p-12 text-xs text-background-50 shadow-lg dark:bg-background-200 dark:text-background-900'>
+				<div
+					id={tooltipId}
+					role='tooltip'
+					className='absolute bottom-full left-1/2 z-10 mb-4 w-192 -translate-x-1/2 rounded-sm bg-background-600 p-12 text-xs text-background-50 shadow-lg dark:bg-background-200 dark:text-background-900'>
 					{children}
 				</div>
 			)}

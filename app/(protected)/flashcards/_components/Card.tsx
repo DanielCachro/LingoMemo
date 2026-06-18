@@ -177,7 +177,7 @@ export default function Card({flashcard, isSelected, onSelectionChange}: CardPro
 								<p>
 									<span className='text-background-500 dark:text-background-400'>eFactor:</span> {flashcard.eFactor}
 								</p>
-								<Tooltip>
+								<Tooltip ariaLabel='eFactor information'>
 									eFactor shows how easy a card is for you and lets the app decide how quickly to extend the time
 									between its reviews: higher eFactor = rarer reviews, lower eFactor = more frequent reviews.
 								</Tooltip>
