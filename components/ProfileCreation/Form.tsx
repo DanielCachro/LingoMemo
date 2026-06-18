@@ -2,7 +2,7 @@
 import PrimaryButton from '@/components/PrimaryButton'
 import SlabBorder from '@/components/SlabBorder'
 import {createLearningProfile} from '@/lib/actions/profile/manage'
-import {cn} from '@/lib/utils'
+import {cn} from '@/lib/utils/cn'
 import {IconDefinition} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {Dispatch, useState, useTransition} from 'react'

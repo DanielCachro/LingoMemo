@@ -3,9 +3,9 @@ import ArrayInput from '@/components/Form/ArrayInput'
 import Input from '@/components/Form/Input'
 import TagInput from '@/components/Form/TagInput'
 import Textarea from '@/components/Form/Textarea'
-import {cn} from '@/lib/utils'
-import initialFlashcardState from '@/lib/utils/flashcards/initialFlashcardState'
-import {lengths as inputsLengths} from '@/lib/utils/flashcards/schema'
+import initialFlashcardState from '@/lib/flashcards/initialFlashcardState'
+import {flashcardFieldsLimits} from '@/lib/flashcards/schema'
+import {cn} from '@/lib/utils/cn'
 import {FlashcardFormValues} from '@/types/flashcards'
 import {Field, Label} from '@headlessui/react'
 import {useQueryClient} from '@tanstack/react-query'
@@ -113,7 +113,7 @@ export default function CreateEditModal({
 								type='text'
 								name='answer'
 								placeholder='Answer for the question'
-								maxLength={inputsLengths.answer.max}
+								maxLength={flashcardFieldsLimits.answer.max}
 								defaultValue={formState?.data?.answer}
 								error={!!formErrors.answer}
 								errorMessage={formErrors.answer}
@@ -133,7 +133,7 @@ export default function CreateEditModal({
 								type='text'
 								name='question'
 								placeholder='Question on the front side'
-								maxLength={inputsLengths.question.max}
+								maxLength={flashcardFieldsLimits.question.max}
 								defaultValue={formState?.data?.question}
 								error={!!formErrors.question}
 								errorMessage={formErrors.question}
@@ -153,7 +153,7 @@ export default function CreateEditModal({
 								className='max-h-192'
 								name='note'
 								placeholder='Any additional notes or context'
-								maxLength={inputsLengths.note.max}
+								maxLength={flashcardFieldsLimits.note.max}
 								defaultValue={formState?.data?.note}
 								error={!!formErrors.note}
 								errorMessage={formErrors.note}
@@ -175,7 +175,7 @@ export default function CreateEditModal({
 								type='text'
 								name='phonetic'
 								placeholder='e.g., /həˈləʊ/'
-								maxLength={inputsLengths.phonetic.max}
+								maxLength={flashcardFieldsLimits.phonetic.max}
 								defaultValue={formState?.data?.phonetic}
 								error={!!formErrors.phonetic}
 								errorMessage={formErrors.phonetic}
@@ -193,7 +193,7 @@ export default function CreateEditModal({
 							<Label className='sr-only'>Synonyms</Label>
 							<TagInput
 								name='synonyms'
-								maxLength={inputsLengths.synonym.max}
+								maxLength={flashcardFieldsLimits.synonym.max}
 								initialTags={formState?.data?.synonyms}
 								errorInTag={formErrors.synonyms}
 								onTagRemove={tagIndex => {
@@ -216,7 +216,7 @@ export default function CreateEditModal({
 							<ArrayInput
 								name='examples'
 								buttonContent='Add New Example'
-								maxLength={inputsLengths.example.max}
+								maxLength={flashcardFieldsLimits.example.max}
 								initialInputs={formState?.data?.examples}
 								errorInInput={formErrors.examples}
 								onInputChange={inputIndex => {

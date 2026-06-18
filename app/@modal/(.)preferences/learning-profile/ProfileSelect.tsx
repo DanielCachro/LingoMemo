@@ -4,7 +4,7 @@ import RadioForm, {Skeleton as RadioFormSkeleton, RadioOption} from '@/component
 import {deleteLearningProfile} from '@/lib/actions/profile/manage'
 import {setActiveLearningProfile} from '@/lib/actions/user'
 import {LearningProfile} from '@/lib/generated/prisma/browser'
-import {languageCodeToName} from '@/lib/utils'
+import {languageCodeToName} from '@/lib/utils/languageCodeToName'
 import {useQueryClient} from '@tanstack/react-query'
 import {useRouter} from 'next/navigation'
 import {KeyboardEvent, useEffect, useTransition} from 'react'

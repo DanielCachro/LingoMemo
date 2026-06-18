@@ -1,6 +1,6 @@
 'use client'
 import FlashcardsStatus from '@/components/Status'
-import {cn} from '@/lib/utils'
+import {cn} from '@/lib/utils/cn'
 import type {Flashcard, FlashcardResponseQuality} from '@/types/study'
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query'
 import {useRouter} from 'next/navigation'

@@ -1,4 +1,4 @@
-import {navigationItems} from '@/lib/navigationItems'
+import {navigationItems} from '@/lib/constants/navigationItems'
 import {ReactNode} from 'react'
 import NavigationItem from './NavigationItem'
 

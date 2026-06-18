@@ -1,6 +1,6 @@
 'use client'
 
-import {cn} from '@/lib/utils'
+import {cn} from '@/lib/utils/cn'
 import PrimaryButton, {PrimaryButtonProps} from './PrimaryButton'
 
 export default function SecondaryButton({

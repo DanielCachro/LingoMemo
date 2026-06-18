@@ -1,7 +1,7 @@
 'use client'
 import PrimaryButton from '@/components/PrimaryButton'
 import SecondaryButton from '@/components/SecondaryButton'
-import {cn} from '@/lib/utils'
+import {cn} from '@/lib/utils/cn'
 import {FlashcardResponseQuality} from '@/types/study'
 import {useCallback, useEffect, useState} from 'react'
 import {UserAnswer} from './StudyClient'

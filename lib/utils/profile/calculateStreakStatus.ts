@@ -1,5 +1,5 @@
 import {getCurrentUser} from '@/lib/queries/user'
-import {getUserDayRangeUTC, getUserTimeZoneString} from '@/lib/time'
+import {getUserDayRangeUTC, getUserTimeZoneString} from '@/lib/utils/time'
 import {prisma} from '@/prisma/client'
 import {DateTime} from 'luxon'
 import 'server-only'

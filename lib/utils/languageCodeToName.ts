@@ -1,10 +1,4 @@
 import {TargetLanguages} from '@/lib/generated/prisma/browser'
-import {ClassValue, clsx} from 'clsx'
-import {twMerge} from 'tailwind-merge'
-
-export function cn(...inputs: ClassValue[]) {
-	return twMerge(clsx(inputs))
-}
 
 const unresolvedLanguageNames = new Map([
 	['ang', 'Old English'],

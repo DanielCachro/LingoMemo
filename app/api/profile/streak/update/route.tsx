@@ -1,5 +1,5 @@
 import {getCurrentUser} from '@/lib/queries/user'
-import {getUserDayRangeUTC} from '@/lib/time'
+import {getUserDayRangeUTC} from '@/lib/utils/time'
 import {prisma} from '@/prisma/client'
 import {DateTime} from 'luxon'
 import {NextResponse} from 'next/server'

@@ -1,7 +1,7 @@
 'use client'
 
 import type {getWeekdaysCompletion} from '@/lib/queries/profile/week'
-import {cn} from '@/lib/utils'
+import {cn} from '@/lib/utils/cn'
 import {motion, stagger} from 'motion/react'
 import {useEffect, useState} from 'react'
 

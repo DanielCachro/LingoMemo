@@ -1,5 +1,5 @@
 'use client'
-import {cn} from '@/lib/utils'
+import {cn} from '@/lib/utils/cn'
 import {motion} from 'motion/react'
 import {usePathname} from 'next/navigation'
 

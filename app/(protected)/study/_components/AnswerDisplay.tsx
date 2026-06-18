@@ -1,6 +1,6 @@
 import AudioIcon from '@/components/AudioIcon'
 import AudioPlayback from '@/components/AudioPlayback'
-import {cn} from '@/lib/utils'
+import {cn} from '@/lib/utils/cn'
 import {Flashcard} from '@/types/study'
 import Link from 'next/link'
 import {Fragment} from 'react'

@@ -1,4 +1,4 @@
-import {cn} from '@/lib/utils'
+import {cn} from '@/lib/utils/cn'
 import Image from 'next/image'
 import {redirect} from 'next/navigation'
 import EntryLoader from './_components/EntryLoader'

@@ -1,7 +1,7 @@
 'use client'
 
 import {LearningProfile} from '@/lib/generated/prisma/browser'
-import {languageCodeToName} from '@/lib/utils'
+import {languageCodeToName} from '@/lib/utils/languageCodeToName'
 import {useEffect, useRef} from 'react' // Dodano useRef
 import {toast} from 'react-toastify'
 

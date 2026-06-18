@@ -1,7 +1,7 @@
 'use client'
 
 import {useMediaQuery} from '@/hooks/useMediaQuery'
-import {cn} from '@/lib/utils'
+import {cn} from '@/lib/utils/cn'
 import {AnimatePresence, motion, useAnimationControls, useDragControls} from 'motion/react'
 import {usePathname} from 'next/navigation'
 import {CSSProperties, PointerEvent, ReactNode, useCallback, useEffect, useState} from 'react'

@@ -1,4 +1,4 @@
-import {flashcardFormSchema} from '@/lib/utils/flashcards/schema'
+import {flashcardFormSchema} from '@/lib/flashcards/schema'
 import {z} from 'zod'
 
 export type FlashcardFormValues = z.infer<typeof flashcardFormSchema>

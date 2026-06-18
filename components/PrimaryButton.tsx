@@ -1,6 +1,6 @@
 'use client'
 
-import {cn} from '@/lib/utils'
+import {cn} from '@/lib/utils/cn'
 import {HTMLMotionProps, motion} from 'motion/react'
 import Link from 'next/link'
 import {isValidElement, ReactNode} from 'react'

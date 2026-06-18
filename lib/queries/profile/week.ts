@@ -1,7 +1,7 @@
 import 'server-only'
 
 import {getCurrentUser} from '@/lib/queries/user'
-import {getUserTimeZoneString} from '@/lib/time'
+import {getUserTimeZoneString} from '@/lib/utils/time'
 import {prisma} from '@/prisma/client'
 import {DateTime} from 'luxon'
 

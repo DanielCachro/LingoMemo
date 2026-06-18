@@ -1,4 +1,4 @@
-import {languageCodeToName} from '@/lib/utils'
+import {languageCodeToName} from '@/lib/utils/languageCodeToName'
 import {LearningProfile} from '@/lib/generated/prisma/browser'
 
 export default function ProfileDetails({profile}: {profile: LearningProfile}) {

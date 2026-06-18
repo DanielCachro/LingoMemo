@@ -1,5 +1,5 @@
 'use client'
-import {cn} from '@/lib/utils'
+import {cn} from '@/lib/utils/cn'
 import {faPlusCircle, faTrashCan} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {Textarea as HeadlessTextarea, TextareaProps} from '@headlessui/react'

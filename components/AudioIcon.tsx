@@ -1,5 +1,5 @@
 'use client'
-import {cn} from '@/lib/utils'
+import {cn} from '@/lib/utils/cn'
 import {faVolumeLow, faVolumeOff} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {HTMLAttributes, useEffect, useRef, useState} from 'react'

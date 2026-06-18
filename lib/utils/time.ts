@@ -1,6 +1,11 @@
 import {DateTime} from 'luxon'
 
-export function getUserDayRangeUTC(userZone: {timezone?: string; offsetMinutes?: number}): {
+export interface UserZone {
+	timezone?: string
+	offsetMinutes?: number
+}
+
+export function getUserDayRangeUTC(userZone: UserZone): {
 	startOfTodayUTC: DateTime
 	endOfTodayUTC: DateTime
 } {
@@ -25,7 +30,7 @@ export function getUserDayRangeUTC(userZone: {timezone?: string; offsetMinutes?:
 	return {startOfTodayUTC, endOfTodayUTC}
 }
 
-export function getUserTimeZoneString(userZone: {timezone?: string; offsetMinutes?: number}): string {
+export function getUserTimeZoneString(userZone: UserZone): string {
 	if (userZone.timezone) {
 		return userZone.timezone
 	} else if (userZone.offsetMinutes) {

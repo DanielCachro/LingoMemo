@@ -1,7 +1,7 @@
 import 'server-only'
 
 import {Prisma} from '@/lib/generated/prisma/client'
-import {getUserDayRangeUTC} from '@/lib/time'
+import {getUserDayRangeUTC} from '@/lib/utils/time'
 import {prisma} from '@/prisma/client'
 import {getCurrentUser} from './user'
 

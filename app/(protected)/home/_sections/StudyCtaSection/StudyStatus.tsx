@@ -1,5 +1,5 @@
 import PrimaryButton from '@/components/PrimaryButton'
-import {cn} from '@/lib/utils'
+import {cn} from '@/lib/utils/cn'
 import Image from 'next/image'
 
 const statusMap = {

@@ -1,4 +1,4 @@
-import {cn} from '@/lib/utils'
+import {cn} from '@/lib/utils/cn'
 import {IconDefinition} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {Url} from 'next/dist/shared/lib/router/router'

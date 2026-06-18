@@ -1,4 +1,4 @@
-import {cn} from '@/lib/utils'
+import {cn} from '@/lib/utils/cn'
 import {Field, Checkbox as HeadlessCheckbox, Label} from '@headlessui/react'
 import ErrorMessage from './ErrorMessage'
 

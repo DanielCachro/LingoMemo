@@ -2,7 +2,7 @@
 
 import {createLearningProfile} from '@/lib/actions/profile/manage'
 import {SourceLanguages, TargetLanguages} from '@/lib/generated/prisma/browser'
-import {languageCodeToName} from '@/lib/utils'
+import {languageCodeToName} from '@/lib/utils/languageCodeToName'
 import {faLanguage} from '@fortawesome/free-solid-svg-icons'
 import CreateProfileField from './Field'
 import CreateProfileForm from './Form'

@@ -1,6 +1,6 @@
 'use client'
 import type {getLast7DaysCompletionCount} from '@/lib/queries/profile/week'
-import {cn} from '@/lib/utils'
+import {cn} from '@/lib/utils/cn'
 import {motion} from 'motion/react'
 import {useEffect, useState} from 'react'
 

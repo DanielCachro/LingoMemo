@@ -1,6 +1,6 @@
 'use client'
-import {navigationItems} from '@/lib/navigationItems'
-import {cn} from '@/lib/utils'
+import {navigationItems} from '@/lib/constants/navigationItems'
+import {cn} from '@/lib/utils/cn'
 import {motion} from 'motion/react'
 import Link from 'next/link'
 import {useSelectedLayoutSegment} from 'next/navigation'

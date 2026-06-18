@@ -1,9 +1,9 @@
 'use server'
 import {getCurrentUser} from '@/lib/queries/user'
 import {prisma} from '@/prisma/client'
-import {z} from 'zod'
-import {flashcardFormSchema} from '../../utils/flashcards/schema'
 import {FlashcardActionState, FlashcardFormErrors, FlashcardFormValues} from '@/types/flashcards'
+import {z} from 'zod'
+import {flashcardFormSchema} from '../../flashcards/schema'
 
 function formatFlashcardErrors(error: z.ZodError): FlashcardFormErrors {
 	const errors: FlashcardFormErrors = {}

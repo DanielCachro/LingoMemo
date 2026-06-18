@@ -1,7 +1,7 @@
 'use client'
 import PrimaryButton from '@/components/PrimaryButton'
 import SecondaryButton from '@/components/SecondaryButton'
-import {cn} from '@/lib/utils'
+import {cn} from '@/lib/utils/cn'
 import {RadioGroup} from '@headlessui/react'
 import {FormEvent, ReactNode, useId, useState} from 'react'
 import RadioButton from './RadioButton'
