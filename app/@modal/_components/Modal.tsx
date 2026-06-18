@@ -4,7 +4,7 @@ import {useMediaQuery} from '@/hooks/useMediaQuery'
 import {cn} from '@/lib/utils/cn'
 import {AnimatePresence, motion, useAnimationControls, useDragControls} from 'motion/react'
 import {usePathname} from 'next/navigation'
-import {CSSProperties, PointerEvent, ReactNode, useCallback, useEffect, useState} from 'react'
+import {CSSProperties, PointerEvent, ReactNode, useCallback, useEffect, useRef, useState} from 'react'
 
 export interface ModalDisableAnimations {
 	disableEntryAnimation?: boolean
@@ -82,6 +82,7 @@ export default function Modal({
 	disableAnimations,
 }: ModalProps) {
 	const pathname = usePathname()
+	const modalRef = useRef<HTMLDivElement>(null)
 	const [isOpen, setIsOpen] = useState(true)
 	const [isExiting, setIsExiting] = useState(false)
 	const [modalNavCount, setModalNavCount] = useState(process.env.NODE_ENV === 'development' ? -1 : 0)
@@ -98,6 +99,7 @@ export default function Modal({
 		setIsOpen(false)
 	}, [])
 
+	// Close on Escape key press
 	useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
 			if (event.key === 'Escape') {
@@ -110,6 +112,76 @@ export default function Modal({
 			document.removeEventListener('keydown', handleKeyDown)
 		}
 	}, [handleClose])
+
+	// Body scroll lock
+	useEffect(() => {
+		if (isOpen) {
+			document.body.style.overflow = 'hidden'
+		} else {
+			document.body.style.overflow = ''
+		}
+		return () => {
+			document.body.style.overflow = ''
+		}
+	}, [isOpen])
+
+	// Focus trap
+	useEffect(() => {
+		const modalElement = modalRef.current
+		if (!isOpen || !modalElement) return
+
+		const getFocusableElements = () => {
+			const focusableSelectors = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+			return modalElement.querySelectorAll<HTMLElement>(focusableSelectors)
+		}
+
+		// Small delay to allow Next.js 16 routes and framer-motion to render/animate new elements
+		const focusTimer = setTimeout(() => {
+			const focusableElements = getFocusableElements()
+
+			if (focusableElements.length === 0) {
+				modalElement.focus()
+				return
+			}
+
+			// Only auto-focus if focus is currently lost or outside the modal
+			if (!modalElement.contains(document.activeElement)) {
+				focusableElements[0].focus()
+			}
+		}, 100)
+
+		// Loop focus within the modal
+		const handleTabKey = (event: KeyboardEvent) => {
+			if (event.key !== 'Tab') return
+
+			const focusableElements = getFocusableElements()
+			if (focusableElements.length === 0) return
+
+			const firstElement = focusableElements[0]
+			const lastElement = focusableElements[focusableElements.length - 1]
+
+			// Shift + Tab
+			if (event.shiftKey) {
+				if (document.activeElement === firstElement || document.activeElement === modalElement) {
+					event.preventDefault()
+					lastElement.focus()
+				}
+			}
+			// Regular Tab
+			else {
+				if (document.activeElement === lastElement) {
+					event.preventDefault()
+					firstElement.focus()
+				}
+			}
+		}
+
+		document.addEventListener('keydown', handleTabKey)
+		return () => {
+			document.removeEventListener('keydown', handleTabKey)
+			clearTimeout(focusTimer)
+		}
+	}, [isOpen, pathname])
 
 	// In Next.js 16, intercepted routes and modals are not unmounted on navigation.
 	// Instead, they are hidden using the <Activity> API (kept in the DOM with display: none).
@@ -124,6 +196,7 @@ export default function Modal({
 		}
 	}, [])
 
+	// Drag to close logic for mobile
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	function onDragEnd(_event: any, info: {offset: {y: number}; velocity: {y: number}}) {
 		if (typeof window === 'undefined') return
@@ -139,12 +212,14 @@ export default function Modal({
 		}
 	}
 
+	// Trigger entry animation when modal opens
 	useEffect(() => {
 		if (isOpen) {
 			animationControls.set({scale: 1, opacity: 1, y: 0})
 		}
 	}, [isOpen, animationControls])
 
+	// Track navigation events to determine how many times the user has navigated while the modal is open (for proper back navigation on close)
 	useEffect(() => {
 		setModalNavCount(prevCount => prevCount + 1)
 	}, [pathname])
@@ -170,10 +245,14 @@ export default function Modal({
 						onClick={handleClose}
 					/>
 					<motion.div
+						ref={modalRef}
+						tabIndex={-1} // Allow progammatic focus for focus trap
 						aria-label={heading}
 						onDragEnd={onDragEnd}
 						initial={false}
 						animate={animationControls}
+						role='dialog'
+						aria-modal='true'
 						exit={
 							shouldAnimateExit
 								? isDesktop
