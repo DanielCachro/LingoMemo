@@ -20,6 +20,7 @@ function AnimatedCheck() {
 	// copies or substantial portions of the Software.
 	return (
 		<svg
+			aria-hidden='true'
 			xmlns='http://www.w3.org/2000/svg'
 			width='24'
 			height='24'
@@ -50,33 +51,44 @@ export default function StaggeredWeekItems({weekDaysCompletion}: Props) {
 	}, [])
 
 	return (
-		<motion.ul initial='hidden' animate='visible' transition={{delayChildren: stagger(0.1)}} className='flex gap-8'>
-			{weekDaysCompletion.map(({day, dayLabel, datetime, completed}) => (
-				<motion.li
-					variants={{
-						hidden: {opacity: 0, y: 20},
-						visible: {opacity: 1, y: 0},
-					}}
-					key={`${day}-${dayLabel}`}
-					className={cn('space-y-16 text-center text-sm text-background-400 dark:text-background-600', {
-						'text-background-800 dark:text-background-200': currentDay === day,
-					})}>
-					<p>
-						<time dateTime={datetime}>{dayLabel}</time>
-					</p>
-					<motion.p
+		<motion.ul
+			initial='hidden'
+			animate='visible'
+			transition={{delayChildren: stagger(0.1)}}
+			className='flex gap-8'
+			aria-label='Current week study session completion'>
+			{weekDaysCompletion.map(({day, dayLabel, datetime, completed}) => {
+				const isCurrentDay = currentDay === day
+				return (
+					<motion.li
 						variants={{
-							hidden: {rotate: -160, scale: 0.5},
-							visible: {rotate: 0, scale: 1},
+							hidden: {opacity: 0, y: 20},
+							visible: {opacity: 1, y: 0},
 						}}
-						transition={{type: 'spring'}}
-						className={cn('flex size-32 items-center justify-center font-bold', {
-							'rounded-full bg-primary-500 text-primary-50 dark:bg-primary-600': completed,
+						aria-label={`${dayLabel} study session ${completed ? 'completed' : 'not completed'}`}
+						aria-current={isCurrentDay ? 'date' : undefined}
+						key={`${day}-${dayLabel}`}
+						className={cn('space-y-16 text-center text-sm text-background-400 dark:text-background-600', {
+							'text-background-800 dark:text-background-200': isCurrentDay,
 						})}>
-						<time dateTime={datetime}>{completed ? <AnimatedCheck /> : day}</time>
-					</motion.p>
-				</motion.li>
-			))}
+						<p aria-hidden='true'>
+							<time dateTime={datetime}>{dayLabel}</time>
+						</p>
+						<motion.p
+							aria-hidden='true'
+							variants={{
+								hidden: {rotate: -160, scale: 0.5},
+								visible: {rotate: 0, scale: 1},
+							}}
+							transition={{type: 'spring'}}
+							className={cn('flex size-32 items-center justify-center font-bold', {
+								'rounded-full bg-primary-500 text-primary-50 dark:bg-primary-600': completed,
+							})}>
+							<time dateTime={datetime}>{completed ? <AnimatedCheck /> : day}</time>
+						</motion.p>
+					</motion.li>
+				)
+			})}
 		</motion.ul>
 	)
 }

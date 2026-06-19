@@ -7,6 +7,7 @@ export default function GradientIcon({size = 24}: {size?: number}) {
 
 	return (
 		<svg
+			aria-hidden='true'
 			style={{width: `${size / 16}rem`, height: `${size / 16}rem`}}
 			viewBox='0 0 51 56'
 			fill='none'

@@ -37,6 +37,7 @@ export default function AnimatedCards({frontCardText}: {frontCardText?: string})
 
 				<PrimaryButton
 					href='/study'
+					aria-label='Start studying'
 					className={
 						'border-2 border-primary-700 focus-visible:border-primary-600 dark:border-primary-800 pointer-fine:hover:border-primary-800 pointer-fine:hover:dark:border-primary-900'
 					}>
@@ -50,7 +51,7 @@ export default function AnimatedCards({frontCardText}: {frontCardText?: string})
 				className={
 					'pointer-events-none absolute z-10 h-192 w-[calc(theme(--spacing-256)-theme(--spacing-4))] origin-bottom-right rounded-sm bg-primary-400 dark:bg-primary-500'
 				}
-				aria-hidden
+				aria-hidden='true'
 			/>
 			<motion.div
 				custom={0}
@@ -58,7 +59,7 @@ export default function AnimatedCards({frontCardText}: {frontCardText?: string})
 				className={
 					'pointer-events-none absolute z-0 h-192 w-[calc(theme(--spacing-256)-theme(--spacing-8))] origin-bottom-right rounded-sm bg-primary-300 dark:bg-primary-400'
 				}
-				aria-hidden
+				aria-hidden='true'
 			/>
 		</motion.div>
 	)

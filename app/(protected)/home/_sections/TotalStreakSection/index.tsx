@@ -13,7 +13,9 @@ export default async function TotalStreak() {
 				</p>
 			</div>
 			<div className='text-center'>
-				<h1 className='text-2xl font-black sm:text-3xl dark:text-background-200'>Total Streak</h1>
+				<h1 className='text-2xl font-black sm:text-3xl dark:text-background-200' aria-hidden>
+					Total Streak
+				</h1>
 				<StreakMessage />
 			</div>
 			<div className='absolute -top-48 right-0 -bottom-48 left-0 -z-50 section-pattern sm:-top-64'></div>

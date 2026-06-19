@@ -56,7 +56,7 @@ export default function Chart({last7Days}: {last7Days: Awaited<ReturnType<typeof
 									},
 								)}></motion.data>
 							<motion.p
-								aria-hidden
+								aria-hidden='true'
 								className={cn(
 									'order-1 text-sm opacity-0 transition-opacity duration-100 peer-hover:opacity-100 peer-focus-visible:opacity-100',
 									{
@@ -66,7 +66,9 @@ export default function Chart({last7Days}: {last7Days: Awaited<ReturnType<typeof
 								{day.cardsCompleted}
 							</motion.p>
 						</div>
-						<time dateTime={day.datetime} className='text-sm'>{`${day.month} ${day.day}`}</time>
+						<time dateTime={day.datetime} className='text-sm' aria-hidden='true'>
+							{`${day.month} ${day.day}`}{' '}
+						</time>
 					</motion.div>
 				)
 			})}
