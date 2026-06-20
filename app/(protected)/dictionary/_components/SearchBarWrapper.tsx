@@ -27,7 +27,7 @@ export default function SearchBarWrapper({targetLang}: {targetLang: string}) {
 	}
 	return (
 		<div className='space-y-48'>
-			<SearchBar onSubmit={onSubmit} />
+			<SearchBar onSubmit={onSubmit} placeholder='Search for a dictionary entry...' />
 			{isPending && <EntrySkeleton />}
 		</div>
 	)

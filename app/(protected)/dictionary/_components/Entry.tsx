@@ -14,7 +14,7 @@ function Header({entry}: {entry: DictionaryEntry}) {
 			<h2 className='text-xl font-bold wrap-break-word'>{entry.word}</h2>
 			<p className='text-sm wrap-break-word'>
 				<>
-					{entry.phonetic}
+					<span aria-label='Phonetic transcription'>{entry.phonetic}</span>
 					{entry.audio.map((audio, index) => (
 						<AudioIcon
 							className='ml-8 text-background-700 transition-colors duration-200 hover:text-background-500 dark:text-background-400 dark:hover:text-background-200'
@@ -162,7 +162,7 @@ export default function Entry({entry}: {entry: DictionaryEntry | NotFoundEntry})
 				</EntryProvider>
 			)}
 			{'notFound' in entry && entry.word && (
-				<p>
+				<p role='alert'>
 					Definition for <span className='text-primary-500 dark:text-primary-600'>{entry.word}</span> not found.
 				</p>
 			)}
