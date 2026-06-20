@@ -135,7 +135,7 @@ export default function Modal({
 			return modalElement.querySelectorAll<HTMLElement>(focusableSelectors)
 		}
 
-		// Small delay to allow Next.js 16 routes and framer-motion to render/animate new elements
+		// Small delay to allow Next.js routes and framer-motion to render/animate new elements
 		const focusTimer = setTimeout(() => {
 			const focusableElements = getFocusableElements()
 
@@ -149,6 +149,19 @@ export default function Modal({
 				focusableElements[0].focus()
 			}
 		}, 100)
+
+		// Prevent focus from escaping when active element is removed from DOM
+		const handleFocusIn = (event: FocusEvent) => {
+			if (!modalElement.contains(event.target as Node)) {
+				event.preventDefault()
+				const focusableElements = getFocusableElements()
+				if (focusableElements.length > 0) {
+					focusableElements[0].focus()
+				} else {
+					modalElement.focus()
+				}
+			}
+		}
 
 		// Loop focus within the modal
 		const handleTabKey = (event: KeyboardEvent) => {
@@ -177,8 +190,11 @@ export default function Modal({
 		}
 
 		document.addEventListener('keydown', handleTabKey)
+		document.addEventListener('focusin', handleFocusIn)
+
 		return () => {
 			document.removeEventListener('keydown', handleTabKey)
+			document.removeEventListener('focusin', handleFocusIn)
 			clearTimeout(focusTimer)
 		}
 	}, [isOpen, pathname])
