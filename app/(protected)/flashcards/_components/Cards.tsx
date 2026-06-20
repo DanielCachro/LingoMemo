@@ -175,7 +175,8 @@ export default function Cards() {
 
 export function Skeleton() {
 	return (
-		<div className='animate-pulse space-y-16'>
+		<div className='animate-pulse space-y-16' role='status'>
+			<span className='sr-only'>Loading flashcards...</span>
 			<div className='h-[9rem] rounded-sm bg-skeleton' />
 			<div className='h-[9rem] rounded-sm bg-skeleton' />
 			<div className='h-[9rem] rounded-sm bg-skeleton' />

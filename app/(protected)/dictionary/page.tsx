@@ -1,9 +1,15 @@
 import {cn} from '@/lib/utils/cn'
+import {Metadata} from 'next'
 import Image from 'next/image'
 import {redirect} from 'next/navigation'
 import EntryLoader from './_components/EntryLoader'
 import SearchBarWrapper from './_components/SearchBarWrapper'
 import {getTargetLang} from './_lib/actions'
+
+export const metadata: Metadata = {
+	title: 'Dictionary - LingoMemo',
+	description: 'Browse dictionary entries and create flashcards with just one click.',
+}
 
 interface Props {
 	searchParams?: Promise<{search: string; lang: string}>

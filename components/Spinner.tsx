@@ -1,6 +1,6 @@
 export default function Spinner({height = 16, width = 16}) {
 	return (
-		<span className='inline-block' role='status'>
+		<span className='inline-block'>
 			<svg
 				aria-hidden='true'
 				className={`animate-spin fill-primary-500 text-background-300 dark:fill-primary-600 dark:text-background-800`}

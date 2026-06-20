@@ -18,5 +18,5 @@ export default function Textarea({
 }
 
 export function Skeleton() {
-	return <div role='status' className='h-48 w-full animate-pulse rounded-sm bg-skeleton'></div>
+	return <div className='h-48 w-full animate-pulse rounded-sm bg-skeleton'></div>
 }

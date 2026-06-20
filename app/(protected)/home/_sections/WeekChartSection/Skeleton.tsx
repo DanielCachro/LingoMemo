@@ -8,7 +8,7 @@ function ChartBarSkeleton({className}: {className?: string}) {
 
 export default function Skeleton() {
 	return (
-		<div role='status' className='mb-32 animate-pulse flex-col items-center overflow-hidden py-48 min-[26.8rem]:flex'>
+		<div className='mb-32 animate-pulse flex-col items-center overflow-hidden py-48 min-[26.8rem]:flex'>
 			<div className='flex flex-col items-start gap-48'>
 				<div className='ml-24 h-12 w-256 rounded-full bg-skeleton pb-8 sm:m-0'></div>
 				<div className='flex items-end gap-8 pl-24 sm:p-0'>
