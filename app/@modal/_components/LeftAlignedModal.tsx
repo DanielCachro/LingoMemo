@@ -62,7 +62,9 @@ export default function LeftAlignedModal(props: Props) {
 					<>
 						<div className='flex justify-between sm:mt-16'>
 							<div>
-								<h2 className='text-xl font-bold'>{title}</h2>
+								<h2 className='text-xl font-bold' aria-hidden={props.useForm ? true : undefined}>
+									{title}
+								</h2>
 								{subtitleContent}
 							</div>
 							{onReset && (

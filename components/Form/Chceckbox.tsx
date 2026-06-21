@@ -1,6 +1,6 @@
 import {cn} from '@/lib/utils/cn'
 import {Field, Checkbox as HeadlessCheckbox, Label} from '@headlessui/react'
-import ErrorMessage from './ErrorMessage'
+import ErrorMessage from './HeadlessErrorMessage'
 
 interface Props {
 	checked?: boolean
@@ -11,6 +11,7 @@ interface Props {
 	label?: string
 	error?: boolean
 	errorMessage?: string
+	props?: React.ComponentPropsWithoutRef<typeof HeadlessCheckbox>
 }
 
 export default function Checkbox({
@@ -22,6 +23,7 @@ export default function Checkbox({
 	defaultChecked,
 	error,
 	errorMessage,
+	...props
 }: Props) {
 	const CheckboxToRender = (
 		<HeadlessCheckbox
@@ -35,9 +37,10 @@ export default function Checkbox({
 					'dark:border-error- 700 border-error-600': error,
 				},
 				className,
-			)}>
+			)}
+			{...props}>
 			<svg
-				className='stroke-background-100 p-[0.0625rem] opacity-0 group-data-checked:opacity-100'
+				className='stroke-background-100 p-px opacity-0 group-data-checked:opacity-100'
 				viewBox='0 0 14 14'
 				fill='none'>
 				<path d='M3 8L6 11L11 3.5' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' />

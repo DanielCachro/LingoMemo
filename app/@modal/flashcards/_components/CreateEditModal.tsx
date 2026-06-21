@@ -48,6 +48,9 @@ export default function CreateEditModal({
 	const queryClient = useQueryClient()
 	const modalCloseRef = useRef<(() => void) | null>(null)
 
+	const [screenReaderMessage, setScreenReaderMessage] = useState('')
+	const srTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
 		const formData = new FormData(event.currentTarget)
@@ -61,12 +64,6 @@ export default function CreateEditModal({
 			toast.success(successMessage)
 			queryClient.invalidateQueries({queryKey: ['flashcards']})
 
-			formState.status = initialFlashcardState.status // Reset status to idle after handling success
-			formState.message = initialFlashcardState.message // Clear the success message
-			formState.errors = initialFlashcardState.errors // Clear any errors
-			// We are doing it to fix the issue with state not resetting after closing modal.
-			// This happens because client navigation in Next.js use React Activity to hide components instead of unmounting them.
-
 			if (modalCloseRef.current) {
 				modalCloseRef.current()
 			} else {
@@ -77,17 +74,44 @@ export default function CreateEditModal({
 		if (formState.status === 'error') {
 			setFormErrors(formState.errors)
 
+			const message =
+				formState.message ||
+				(_.isEmpty(formState.errors) ? errorMessage : 'Please fix the errors in the form and try again.')
+
 			if (_.isEmpty(formState.errors)) {
-				toast.error(formState.message || errorMessage)
+				toast.error(message)
 			}
+
+			if (srTimerRef.current) clearTimeout(srTimerRef.current)
+			setScreenReaderMessage('')
+			srTimerRef.current = setTimeout(() => setScreenReaderMessage(message), 50)
 		}
 	}, [formState, router, queryClient, successMessage, errorMessage])
 
 	useEffect(() => {
+		if (screenReaderMessage) {
+			const timer = setTimeout(() => {
+				setScreenReaderMessage('')
+			}, 5000)
+			return () => clearTimeout(timer)
+		}
+	}, [screenReaderMessage])
+
+	useEffect(() => {
 		return () => {
 			router.refresh() // Refresh the page when the modal is closed to ensure state resets properly. This is a workaround for the issue with form state not resetting after closing modal due to Next.js using React Activity on client navigation to hide components instead of unmounting them.
+
+			// We are doing it to fix the issue with state not resetting after closing modal.
+			// This happens because client navigation in Next.js use React Activity to hide components instead of unmounting the
+			formState.status = initialFlashcardState.status
+			formState.message = initialFlashcardState.message
+			formState.errors = initialFlashcardState.errors
+			setFormErrors(initialFlashcardState.errors)
+
+			setScreenReaderMessage('')
+			if (srTimerRef.current) clearTimeout(srTimerRef.current)
 		}
-	}, [router])
+	}, [router, formState])
 
 	return (
 		<LeftAlignedModal
@@ -108,7 +132,7 @@ export default function CreateEditModal({
 				<FormSection title='Core Details'>
 					<FormBlock title='Answer (back) *'>
 						<Field>
-							<Label className='sr-only'>Answer (back)</Label>
+							<Label className='hidden'>Answer (back)</Label>
 							<Input
 								type='text'
 								name='answer'
@@ -128,7 +152,7 @@ export default function CreateEditModal({
 					</FormBlock>
 					<FormBlock title='Question (front) *'>
 						<Field>
-							<Label className='sr-only'>Question (front)</Label>
+							<Label className='hidden'>Question (front)</Label>
 							<Input
 								type='text'
 								name='question'
@@ -148,7 +172,7 @@ export default function CreateEditModal({
 					</FormBlock>
 					<FormBlock title='Note'>
 						<Field>
-							<Label className='sr-only'>Note</Label>
+							<Label className='hidden'>Note</Label>
 							<Textarea
 								className='max-h-192'
 								name='note'
@@ -170,7 +194,7 @@ export default function CreateEditModal({
 				<FormSection title='Vocabulary Related'>
 					<FormBlock title='Phonetic'>
 						<Field>
-							<Label className='sr-only'>Phonetic</Label>
+							<Label className='hidden'>Phonetic</Label>
 							<Input
 								type='text'
 								name='phonetic'
@@ -190,7 +214,7 @@ export default function CreateEditModal({
 					</FormBlock>
 					<FormBlock title='Synonyms'>
 						<Field>
-							<Label className='sr-only'>Synonyms</Label>
+							<Label className='hidden'>Synonyms</Label>
 							<TagInput
 								name='synonyms'
 								maxLength={flashcardFieldsLimits.synonym.max}
@@ -212,7 +236,7 @@ export default function CreateEditModal({
 					</FormBlock>
 					<FormBlock title='Examples'>
 						<Field>
-							<Label className='sr-only'>Examples</Label>
+							<Label className='hidden'>Examples</Label>
 							<ArrayInput
 								name='examples'
 								buttonContent='Add New Example'
@@ -240,6 +264,11 @@ export default function CreateEditModal({
 						</Field>
 					</FormBlock>
 				</FormSection>
+				{screenReaderMessage && (
+					<div role='alert' className='sr-only'>
+						{screenReaderMessage}
+					</div>
+				)}
 			</>
 		</LeftAlignedModal>
 	)

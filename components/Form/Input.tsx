@@ -1,6 +1,6 @@
 import {cn} from '@/lib/utils/cn'
 import {Input as HeadlessInput, InputProps} from '@headlessui/react'
-import ErrorMessage from './ErrorMessage'
+import HeadlessErrorMessage from './HeadlessErrorMessage'
 
 interface Props extends InputProps {
 	className?: string
@@ -19,9 +19,11 @@ export default function Input({error, errorMessage, className, ...props}: Props)
 					},
 					className,
 				)}
+				invalid={error}
 				{...props}
 			/>
-			{errorMessage && <ErrorMessage error={errorMessage} />}
+
+			{errorMessage && <HeadlessErrorMessage error={errorMessage} />}
 		</div>
 	)
 }

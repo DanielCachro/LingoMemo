@@ -28,7 +28,7 @@ export function FlashcardButtons({flashcardId, definition, userTargetLang}: Prop
 		if (screenReaderMessage) {
 			const timer = setTimeout(() => {
 				setScreenReaderMessage('')
-			}, 3000)
+			}, 5000)
 			return () => clearTimeout(timer)
 		}
 	}, [screenReaderMessage])

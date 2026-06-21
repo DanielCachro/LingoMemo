@@ -19,6 +19,7 @@ export default function FlashcardsBulkDeletePage() {
 			}
 			setData('flashcardsToBulkDelete', [])
 			queryClient.refetchQueries({queryKey: ['flashcards']})
+			toast.success('Flashcards deleted successfully.')
 		} catch (error) {
 			toast.error('Failed to delete flashcards. Please try again.')
 			console.error('Failed to delete flashcards:', error)

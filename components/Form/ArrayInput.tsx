@@ -4,7 +4,7 @@ import {faPlusCircle, faTrashCan} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {Textarea as HeadlessTextarea, TextareaProps} from '@headlessui/react'
 import {useEffect, useLayoutEffect, useRef, useState} from 'react'
-import ErrorMessage from './ErrorMessage'
+import ErrorMessage from './HeadlessErrorMessage'
 
 interface Props extends TextareaProps {
 	name: string
@@ -31,10 +31,12 @@ export default function ArrayInput({
 }: Props) {
 	const [inputs, setInputs] = useState<string[]>(initialInputs)
 	const [errors, setErrors] = useState(errorInInput ?? [])
+	const [screenReaderMessage, setScreenReaderMessage] = useState('')
 
 	function handleAddInput() {
 		const updated = [...inputs, '']
 		setInputs(updated)
+		setScreenReaderMessage(`New input added. Total inputs: ${updated.length}`)
 	}
 
 	function handleRemoveInput(index: number) {
@@ -48,8 +50,18 @@ export default function ArrayInput({
 
 		setInputs(updatedInputs)
 		setErrors(updatedErrors)
+		setScreenReaderMessage(`Input removed. Total inputs: ${updatedInputs.length}`)
 		onInputRemove?.(index)
 	}
+
+	useEffect(() => {
+		if (screenReaderMessage) {
+			const timer = setTimeout(() => {
+				setScreenReaderMessage('')
+			}, 5000)
+			return () => clearTimeout(timer)
+		}
+	}, [screenReaderMessage])
 
 	useEffect(() => {
 		setErrors(errorInInput ?? [])
@@ -88,6 +100,9 @@ export default function ArrayInput({
 				<FontAwesomeIcon icon={faPlusCircle} />
 				{buttonContent}
 			</button>
+			<div className='sr-only' role='status'>
+				{screenReaderMessage}
+			</div>
 		</div>
 	)
 }
@@ -139,7 +154,7 @@ function InputItem({
 					{...props}
 					className='no-scrollbar grow resize-none focus:outline-none'
 				/>
-				<button type='button' className='h-24 w-24 cursor-pointer'>
+				<button type='button' className='h-24 w-24 cursor-pointer' aria-label='Remove input'>
 					<FontAwesomeIcon
 						icon={faTrashCan}
 						onClick={onRemove}
