@@ -13,18 +13,22 @@ export default function ProgressBar({value, max}: Props) {
 
 	return (
 		<div className='flex w-full items-center gap-12'>
-			<Link href='/home' className='hover:cursor-pointer'>
+			<Link href='/home' className='hover:cursor-pointer' aria-label='Return to home'>
 				<FontAwesomeIcon icon={faChevronLeft} />
 			</Link>
-			<div className='relative h-8 grow overflow-hidden rounded-full bg-background-200 dark:bg-background-800'>
+			<div
+				className='relative h-8 grow overflow-hidden rounded-full bg-background-200 dark:bg-background-800'
+				aria-hidden='true'>
 				<div
 					className={cn('h-full rounded-full bg-primary-500 transition-all dark:bg-primary-600', {
 						'bg-success-500 dark:bg-success-600': percent === 100,
 					})}
 					style={{width: `${percent}%`}}></div>
 			</div>
-			<p>
-				{value}/{max}
+			<p aria-label={`Completed: ${value} out of ${max} flashcards for today`}>
+				<span aria-hidden='true'>
+					{value}/{max}
+				</span>
 			</p>
 		</div>
 	)

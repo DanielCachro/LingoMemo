@@ -87,6 +87,7 @@ export default function Status({
 				height={statusMap[status].height}
 				priority
 				className='w-128'
+				aria-hidden='true'
 			/>
 		</div>
 	)

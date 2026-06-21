@@ -13,6 +13,7 @@ export default function SetupLayout({children}: {children: React.ReactNode}) {
 						height={112}
 						priority
 						className='w-32'
+						aria-hidden='true'
 					/>
 					<h1 className='text-xl font-bold sm:text-2xl'>Welcome to LingoMemo!</h1>
 				</div>
