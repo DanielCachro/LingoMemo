@@ -8,9 +8,10 @@ interface Props {
 	icon: IconDefinition
 	href: Url
 	isActive?: boolean
+	props?: React.ComponentPropsWithoutRef<typeof Link>
 }
 
-export default function SearchOptionsLinkButton({icon, href, isActive = false}: Props) {
+export default function SearchOptionsLinkButton({icon, href, isActive = false, ...props}: Props) {
 	return (
 		<Link
 			href={href}
@@ -20,7 +21,8 @@ export default function SearchOptionsLinkButton({icon, href, isActive = false}: 
 					'border-primary-500 bg-primary-100 hover:border-primary-400 dark:border-primary-500 dark:bg-primary-700 dark:hover:border-primary-400':
 						isActive,
 				},
-			)}>
+			)}
+			{...props}>
 			<FontAwesomeIcon
 				icon={icon}
 				className={cn(

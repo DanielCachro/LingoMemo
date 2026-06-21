@@ -82,7 +82,9 @@ export default function Card({flashcard, isSelected, onSelectionChange}: CardPro
 			<div className='space-y-12'>
 				<div className='flex justify-between gap-8'>
 					<div className='flex min-w-0 flex-1 flex-wrap items-baseline gap-x-12 gap-y-4'>
-						<p className='font-bold break-all whitespace-pre-wrap'>{flashcard.answer.text}</p>
+						<p className='font-bold break-all whitespace-pre-wrap' aria-label='Flashcard answer'>
+							{flashcard.answer.text}
+						</p>
 
 						<div className='flex flex-wrap items-center gap-4'>
 							{flashcard.answer.audio.map((audio, index) => (
@@ -91,13 +93,15 @@ export default function Card({flashcard, isSelected, onSelectionChange}: CardPro
 								</div>
 							))}
 
-							<p className='wrap-break-word break-all whitespace-pre-wrap text-background-400 dark:text-background-500'>
+							<p
+								className='wrap-break-word break-all whitespace-pre-wrap text-background-400 dark:text-background-500'
+								aria-label='Flashcard phonetic'>
 								{flashcard.answer.phonetic}
 							</p>
 						</div>
 					</div>
 					<div className='ml-8 flex shrink-0 items-center gap-4 self-start'>
-						<Link href={`/flashcards/edit/${flashcard.id}`} scroll={false}>
+						<Link href={`/flashcards/edit/${flashcard.id}`} scroll={false} aria-label='Edit flashcard'>
 							<FontAwesomeIcon
 								icon={faPenToSquare}
 								className='text-background-600 transition-colors duration-150 hover:cursor-pointer hover:text-background-500 dark:text-background-300 dark:hover:text-background-200'
@@ -105,18 +109,26 @@ export default function Card({flashcard, isSelected, onSelectionChange}: CardPro
 						</Link>
 						<Link
 							href={`/flashcards/delete/${flashcard.id}?question=${encodeURIComponent(flashcard.question)}&answer=${encodeURIComponent(flashcard.answer.text)}`}
-							scroll={false}>
+							scroll={false}
+							aria-label='Delete flashcard'>
 							<FontAwesomeIcon
 								icon={faTrashCan}
 								className='text-error-500 transition-colors duration-150 hover:cursor-pointer hover:text-error-600'
 							/>
 						</Link>
 
-						<Checkbox className='ml-4' checked={isSelected} onChange={onSelectionChange} />
+						<Checkbox
+							className='ml-4'
+							checked={isSelected}
+							onChange={onSelectionChange}
+							aria-label='Select flashcard for bulk delete'
+						/>
 					</div>
 				</div>
 
-				<p className='w-full wrap-break-word whitespace-pre-wrap text-background-700 dark:text-background-300'>
+				<p
+					className='w-full wrap-break-word whitespace-pre-wrap text-background-700 dark:text-background-300'
+					aria-label='Flashcard question'>
 					{flashcard.question}
 				</p>
 
