@@ -233,6 +233,9 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
 
 # App Configuration
 NEXT_PUBLIC_BASE_URL=your_actual_base_url (e.g., http://localhost:3000 for local dev)
+
+# SEO / Analytics (Optional)
+NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=your_google_search_console_verification_code
 ```
 
 **How to get these values:**
@@ -242,6 +245,7 @@ NEXT_PUBLIC_BASE_URL=your_actual_base_url (e.g., http://localhost:3000 for local
 - Copy `DATABASE_URL` and `DIRECT_URL`
 - For `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, find them under **Connect → Framework → Next.js**
 - For `NEXT_PUBLIC_BASE_URL`, use http://localhost:3000 for local development. In production, this must be set to your actual domain (e.g., https://lingomemo.vercel.app)
+- For `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`, this is an optional key used to verify domain ownership in Google Search Console without hardcoding HTML tags directly into the repository.
 
 #### 4. Set Up the Database
 
@@ -301,6 +305,7 @@ Vercel is optimized for Next.js and provides the best performance:
      - `NEXT_PUBLIC_SUPABASE_URL`
      - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
      - `NEXT_PUBLIC_BASE_URL` (Set this to your production Vercel domain, e.g., `https://lingomemo.vercel.app` - without the trailing slash)
+     - `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` (Optional - your Google Search Console verification string)
 
 3. **Deploy**
    - Click **Deploy**
