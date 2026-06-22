@@ -1,6 +1,7 @@
 export default function Skeleton() {
 	return (
-		<div role='status' className='animate-pulse'>
+		<div className='animate-pulse' role='status'>
+			<span className='sr-only'>Loading dictionary entry...</span>
 			<div className='relative mb-48 w-full space-y-24'>
 				<div className='space-y-4'>
 					<div className='h-8 w-64 rounded-full bg-skeleton'></div>

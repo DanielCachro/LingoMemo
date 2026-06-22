@@ -92,8 +92,9 @@ export default function AnswerDisplay({
 			<AudioPlayback audio={answer.audio[0]} />
 
 			<div className='flex flex-col gap-8 font-bold'>
+				<div className='sr-only'>{`Your answer: ${userAnswer.answer}, Correct answer: ${answer.text}`}</div>
 				{userAnswer.answer && (
-					<div className='w-full wrap-break-word'>
+					<div className='w-full wrap-break-word' aria-hidden='true'>
 						<HighlightIncorrectElements
 							userAnswer={userAnswer.answer}
 							correctAnswer={answer.text}
@@ -105,7 +106,7 @@ export default function AnswerDisplay({
 
 				<div className='mb-8 flex flex-wrap items-start gap-x-16 gap-y-4'>
 					<p className='min-w-0 wrap-break-word'>
-						<span>{answer.text}</span>
+						<span aria-hidden='true'>{answer.text}</span>
 						{answer.audio && answer.audio.length > 0 && (
 							<span className='ml-8 inline-flex flex-wrap gap-4 align-middle'>
 								{answer.audio.map((audio, index) => (
@@ -115,7 +116,9 @@ export default function AnswerDisplay({
 						)}
 					</p>
 
-					<p className='font-medium break-all whitespace-pre-wrap'>{answer.phonetic}</p>
+					<p className='font-medium break-all whitespace-pre-wrap' aria-label={`Phonetic`}>
+						{answer.phonetic}
+					</p>
 				</div>
 			</div>
 

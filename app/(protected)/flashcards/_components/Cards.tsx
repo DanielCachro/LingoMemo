@@ -109,13 +109,22 @@ export default function Cards() {
 					href='/flashcards/sort'
 					icon={faUpDown}
 					isActive={sort.length > 0 && !_.isEqual(sort, initialFlashcardsSortOrder)}
+					aria-label='Sort flashcards'
 				/>
 				<SearchOptionsLinkButton
 					href='/flashcards/filter'
 					icon={faFilter}
 					isActive={!_.isEmpty(filter) && !_.isEqual(filter, initialFlashcardsFilter)}
+					aria-label='Filter flashcards'
 				/>
 			</div>
+
+			<BulkSelectFloatingButton
+				visible={selectedCardIds.length > 0}
+				numberOfSelectedItems={selectedCardIds.length}
+				onDelete={handleBulkDelete}
+				onClear={handleClearSelection}
+			/>
 
 			{status === 'pending' ? (
 				<Skeleton />
@@ -162,20 +171,14 @@ export default function Cards() {
 			<div ref={ref} className='flex justify-center py-16'>
 				{isFetchingNextPage ? <Spinner height={24} width={24} /> : undefined}
 			</div>
-
-			<BulkSelectFloatingButton
-				visible={selectedCardIds.length > 0}
-				numberOfSelectedItems={selectedCardIds.length}
-				onDelete={handleBulkDelete}
-				onClear={handleClearSelection}
-			/>
 		</div>
 	)
 }
 
 export function Skeleton() {
 	return (
-		<div className='animate-pulse space-y-16'>
+		<div className='animate-pulse space-y-16' role='status'>
+			<span className='sr-only'>Loading flashcards...</span>
 			<div className='h-[9rem] rounded-sm bg-skeleton' />
 			<div className='h-[9rem] rounded-sm bg-skeleton' />
 			<div className='h-[9rem] rounded-sm bg-skeleton' />

@@ -42,6 +42,7 @@ export default function Breadcrumbs({variant = 'light', className}: BreadcrumbsP
 					<li className='flex' key={`${index}-${segment}`}>
 						<Link
 							href={segment.href}
+							aria-current={index === segments.length - 1 ? 'location' : undefined}
 							className='pointer-coarse:active:text-background-600 pointer-coarse:dark:active:text-background-300 pointer-fine:hover:text-background-600 pointer-fine:dark:hover:text-background-300'>
 							{segment.formatted}
 						</Link>

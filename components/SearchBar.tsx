@@ -1,3 +1,4 @@
+'use client'
 import {cn} from '@/lib/utils/cn'
 import {faSearch} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
@@ -20,7 +21,7 @@ export default function SearchBar({className, placeholder, formAction, onSubmit,
 				className,
 			)}>
 			<form className='flex' action={formAction} onSubmit={onSubmit}>
-				<button tabIndex={-1} type='submit' className='pr-12 pl-16 text-background-400'>
+				<button type='submit' className='pr-12 pl-16 text-background-400' aria-label='Search'>
 					<FontAwesomeIcon icon={faSearch} />
 				</button>
 				<Input
@@ -42,6 +43,7 @@ export default function SearchBar({className, placeholder, formAction, onSubmit,
 export function Skeleton() {
 	return (
 		<div role='status' className='flex w-full max-w-640 items-center gap-16 rounded-sm bg-skeleton p-16'>
+			<span className='sr-only'>Loading dictionary entries...</span>
 			<div className='h-24 w-24 animate-pulse rounded-full bg-skeleton-accent' />
 			<div className='h-8 grow animate-pulse rounded-full bg-skeleton-accent' />
 		</div>

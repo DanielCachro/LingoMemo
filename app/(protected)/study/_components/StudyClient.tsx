@@ -34,6 +34,8 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 	const [doneToday, setDoneToday] = useState(initialDone ?? 0)
 	const inFlight = useRef<Set<number>>(new Set())
 	const successSoundRef = useRef<HTMLAudioElement | null>(null)
+	const [screenReaderMessage, setScreenReaderMessage] = useState('')
+
 	const [userAnswer, setUserAnswer] = useState<UserAnswer>({
 		answer: '',
 		isAnswered: false,
@@ -121,6 +123,7 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 			if (variables.q >= 3) setDoneToday(done => done + 1)
 			if (prevCurrentFlashcard?.id === variables.flashcardId) {
 				setCurrentFlashcard(newQueue.length ? newQueue[0] : null)
+				setScreenReaderMessage('') 
 			}
 			setUserAnswer({answer: '', isAnswered: false, isCorrect: false, hintCount: 0})
 
@@ -182,16 +185,18 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 		const correctAnswer = currentFlashcard?.answer.text.trim()
 		if (!correctAnswer) return
 
-		if (userAnswer.answer.toLowerCase().trim() === correctAnswer.toLowerCase().trim()) {
-			setUserAnswer(prevAnswer => {
-				const newAnswer = {...prevAnswer, isAnswered: true, isCorrect: true}
-				return newAnswer
-			})
+		const isCorrect = userAnswer.answer.toLowerCase().trim() === correctAnswer.toLowerCase().trim()
+
+		setUserAnswer(prevAnswer => ({
+			...prevAnswer,
+			isAnswered: true,
+			isCorrect,
+		}))
+
+		if (isCorrect) {
+			setScreenReaderMessage('Correct answer')
 		} else {
-			setUserAnswer(prevAnswer => {
-				const newAnswer = {...prevAnswer, isAnswered: true, isCorrect: false}
-				return newAnswer
-			})
+			setScreenReaderMessage(`Wrong answer. The correct answer is: ${correctAnswer}`)
 		}
 	}
 
@@ -212,16 +217,18 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 			hintCount: prevAnswer.hintCount + 1,
 		}))
 
-		if (newUserAnswer === correctAnswer)
+		setScreenReaderMessage(`Hint provided: ${newUserAnswer}`)
+
+		if (newUserAnswer === correctAnswer) {
 			setUserAnswer(prevAnswer => ({
 				...prevAnswer,
 				isAnswered: true,
 				isCorrect: false,
 			}))
+			setScreenReaderMessage(`Hint revealed the full answer: ${correctAnswer}. This will be marked as incorrect.`)
+		}
 	}
 
-	// detect if device has fine pointer (mouse) or not (touch)
-	// if it has fine pointer, focus the textfield automatically and assume it's desktop to set autoFocus on the textarea
 	useEffect(() => {
 		if (typeof window !== 'undefined') {
 			const hasFinePointer = window.matchMedia('(pointer: fine)').matches
@@ -234,11 +241,9 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 		}
 	}, [])
 
-	// if currentFlashcard is null, try to take from queue
 	useEffect(() => {
 		if (!currentFlashcard && queue && queue.length > 0) {
 			setCurrentFlashcard(queue[0])
-			// remove first position from cache because we occupy it
 			queryClient.setQueryData(['nextFlashcards'], (oldData: Flashcard[] | undefined) =>
 				oldData ? oldData.slice(1) : [],
 			)
@@ -247,6 +252,10 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 
 	return (
 		<>
+			<div className='sr-only' role='status'>
+				{screenReaderMessage}
+			</div>
+
 			<div className='flex h-dvh flex-col items-center overflow-y-auto page-padding-x page-padding-y'>
 				<div
 					className={cn('w-full max-w-full space-y-48 sm:w-512', {
@@ -262,6 +271,7 @@ export default function StudyClient({initialFlashcard, initialDone, toReviewToda
 									value={userAnswer.answer}
 									onChange={handleUserAnswerChange}
 									autoFocus={isDesktop}
+									aria-label={`Type your answer for flashcard: ${currentFlashcard.question}`}
 								/>
 							) : (
 								<AnswerDisplay

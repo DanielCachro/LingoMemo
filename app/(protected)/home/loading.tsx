@@ -5,7 +5,8 @@ import WeekChartSkeleton from './_sections/WeekChartSection/Skeleton'
 
 export default function Loading() {
 	return (
-		<div className='py-48 sm:page-padding-y'>
+		<div className='py-48 sm:page-padding-y' role='status'>
+			<span className='sr-only'>Loading home view...</span>
 			<TotalStreakSectionSkeleton />
 			<WeekChartSkeleton />
 

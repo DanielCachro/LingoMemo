@@ -4,7 +4,7 @@ import {faChevronDown} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {Listbox, ListboxButton, ListboxOption, ListboxOptions} from '@headlessui/react'
 import {useState} from 'react'
-import ErrorMessage from './ErrorMessage'
+import ErrorMessage from './HeadlessErrorMessage'
 
 export type Option = {
 	value: string

@@ -4,7 +4,7 @@ import {faPlus, faXmark} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {Input as HeadlessInput, InputProps} from '@headlessui/react'
 import {useEffect, useState} from 'react'
-import ErrorMessage from './ErrorMessage'
+import ErrorMessage from './HeadlessErrorMessage'
 
 interface Props extends InputProps {
 	name: string
@@ -30,6 +30,7 @@ export default function TagInput({
 	const [inputValue, setInputValue] = useState('')
 	const [tags, setTags] = useState<string[]>(Array.from(new Set(initialTags)))
 	const [errors, setErrors] = useState(errorInTag ?? [])
+	const [screenReaderMessage, setScreenReaderMessage] = useState('')
 
 	function handleAddTag() {
 		const trimmed = inputValue.trim()
@@ -37,6 +38,7 @@ export default function TagInput({
 		const updated = Array.from(new Set([...tags, trimmed]))
 		setTags(updated)
 		setInputValue('')
+		setScreenReaderMessage(`${trimmed} added to list`)
 	}
 
 	function handleRemoveTag(index: number) {
@@ -50,6 +52,7 @@ export default function TagInput({
 
 		setTags(updated)
 		setErrors(updatedErrors)
+		setScreenReaderMessage(`${tags[index]} removed from list`)
 		onTagRemove?.(index)
 	}
 
@@ -61,20 +64,31 @@ export default function TagInput({
 	}
 
 	useEffect(() => {
+		if (screenReaderMessage) {
+			const timeout = setTimeout(() => {
+				setScreenReaderMessage('')
+			}, 5000)
+			return () => clearTimeout(timeout)
+		}
+	}, [screenReaderMessage])
+
+	useEffect(() => {
 		setErrors(errorInTag ?? [])
 	}, [errorInTag])
 
 	return (
 		<div>
-			<div className='space-y-16'>
+			<div>
 				<input type='hidden' name={name} value={JSON.stringify(tags)} />
 
-				<div className='flex w-full flex-wrap gap-8'>
-					{tags.map((tag, index) => {
-						const tagError = errors.find(error => error.index === index)
-						return <Tag key={tag} tag={tag} onRemove={() => handleRemoveTag(index)} error={!!tagError} />
-					})}
-				</div>
+				{tags.length > 0 && (
+					<div className='mb-16 flex w-full flex-wrap gap-8'>
+						{tags.map((tag, index) => {
+							const tagError = errors.find(error => error.index === index)
+							return <Tag key={tag} tag={tag} onRemove={() => handleRemoveTag(index)} error={!!tagError} />
+						})}
+					</div>
+				)}
 				<div
 					className={cn(
 						'flex space-x-12 rounded-sm border-2 border-background-300 bg-background-50 px-16 py-16 text-base placeholder-background-400 placeholder:font-medium focus-within:border-background-400 focus:outline-none dark:border-background-700 dark:bg-background-900 dark:focus-within:border-background-600',
@@ -83,6 +97,7 @@ export default function TagInput({
 					<HeadlessInput
 						{...props}
 						value={inputValue}
+						aria-label='Tag input'
 						onChange={e => {
 							setInputValue(e.target.value)
 							onChange?.(e)
@@ -93,6 +108,7 @@ export default function TagInput({
 					<button
 						type='button'
 						onClick={handleAddTag}
+						aria-label={`Add: ${inputValue} to list`}
 						className='h-24 w-24 shrink-0 cursor-pointer rounded-sm bg-primary-100 text-primary-500 hover:text-primary-400 dark:bg-primary-600 dark:text-primary-200 dark:hover:text-primary-100'>
 						<FontAwesomeIcon size='sm' icon={faPlus} />
 					</button>
@@ -102,6 +118,9 @@ export default function TagInput({
 				const message = errors.find(error => error.message)?.message
 				return message ? <ErrorMessage error={message} /> : null
 			})()}
+			<div className='sr-only' role='status'>
+				{screenReaderMessage}
+			</div>
 		</div>
 	)
 }
@@ -121,6 +140,7 @@ function Tag({tag, onRemove, error}: {tag: string; onRemove: () => void; error: 
 
 				<button
 					type='button'
+					aria-label={`Remove: ${tag} from list`}
 					className={cn('shrink-0 cursor-pointer hover:text-primary-400 dark:hover:text-primary-200', {
 						'hover:text-error-500 dark:hover:text-error-200': error,
 					})}

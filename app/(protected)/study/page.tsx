@@ -1,7 +1,11 @@
 import {getStudyData} from '@/lib/queries/study'
-import type {Viewport} from 'next'
+import type {Metadata, Viewport} from 'next'
 import StudyClient from './_components/StudyClient'
 
+export const metadata: Metadata = {
+	title: 'Study - LingoMemo',
+	description: `Study today's flashcards to improve your language skills`,
+}
 
 // Added `interactiveWidget: 'resizes-content'` to ensure the layout viewport
 // resizes when the on-screen keyboard appears on mobile devices (e.g. Android Chrome).

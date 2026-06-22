@@ -95,13 +95,21 @@ export default function Buttons(props: CheckAnswerProps | RateAnswerProps) {
 				{props.mode === 'checkAnswer' && (
 					<>
 						<li className={liClasses}>
-							<SecondaryButton className='px-32 py-[0.375rem]' onClick={props.handleGiveHint} pressed={pressed.hint}>
+							<SecondaryButton
+								className='px-32 py-[0.375rem]'
+								onClick={props.handleGiveHint}
+								pressed={pressed.hint}
+								aria-label='Press the left square bracket key to reveal a hint'>
 								Hint
 							</SecondaryButton>
 							<span>Key [</span>
 						</li>
 						<li className={liClasses}>
-							<PrimaryButton className='px-32 py-8' onClick={props.handleCheckAnswer} pressed={pressed.check}>
+							<PrimaryButton
+								className='px-32 py-8'
+								onClick={props.handleCheckAnswer}
+								pressed={pressed.check}
+								aria-label='Press Enter to check your answer'>
 								Check
 							</PrimaryButton>
 							<span>Enter</span>
@@ -114,7 +122,8 @@ export default function Buttons(props: CheckAnswerProps | RateAnswerProps) {
 							<RateButton
 								variant={!props.userAnswer.isCorrect ? 'primary' : 'secondary'}
 								pressed={pressed.rate0}
-								onClick={() => props.handleRateAnswer(0)}>
+								onClick={() => props.handleRateAnswer(0)}
+								aria-label='Press 1 key to rate your answer as bad'>
 								Bad
 							</RateButton>
 							<span>Key 1</span>
@@ -123,7 +132,8 @@ export default function Buttons(props: CheckAnswerProps | RateAnswerProps) {
 							<RateButton
 								variant={props.userAnswer.isCorrect && props.userAnswer.hintCount > 0 ? 'primary' : 'secondary'}
 								pressed={pressed.rate3}
-								onClick={() => props.handleRateAnswer(3)}>
+								onClick={() => props.handleRateAnswer(3)}
+								aria-label='Press 2 key to rate your answer as good'>
 								Good
 							</RateButton>
 							<span>Key 2</span>
@@ -132,7 +142,8 @@ export default function Buttons(props: CheckAnswerProps | RateAnswerProps) {
 							<RateButton
 								variant={props.userAnswer.isCorrect && props.userAnswer.hintCount === 0 ? 'primary' : 'secondary'}
 								pressed={pressed.rate5}
-								onClick={() => props.handleRateAnswer(5)}>
+								onClick={() => props.handleRateAnswer(5)}
+								aria-label='Press 3 key to rate your answer as easy'>
 								Easy
 							</RateButton>
 							<span>Key 3</span>

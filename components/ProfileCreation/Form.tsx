@@ -33,9 +33,11 @@ export default function Form({heading, subheading, icon, className, children, on
 			const result = await onSubmit(event)
 
 			if (!result.success) {
-				if (result.error) {
-					toast.error(result.error)
-				}
+				toast.error(
+					result.errors?.[0]?.message ||
+						'There was an error creating your learning profile. Please check the form for errors.',
+				)
+
 				setFormErrors(result)
 			}
 		})

@@ -1,5 +1,11 @@
+import {Metadata} from 'next'
 import Cards from './_components/Cards'
 import Heading from './_components/Heading'
+
+export const metadata: Metadata = {
+	title: 'Flashcards - LingoMemo',
+	description: 'Manage your flashcards collection.',
+}
 
 export default function FlashcardsPage() {
 	return (

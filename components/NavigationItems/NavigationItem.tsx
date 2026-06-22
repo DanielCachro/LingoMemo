@@ -35,7 +35,7 @@ export default function NavigationItem({
 					),
 				className,
 			)}>
-			<Link href={item.href} className='flex items-center gap-8'>
+			<Link href={item.href} className='flex items-center gap-8' aria-current={isActive ? 'page' : undefined}>
 				{item.icon}
 				<span>{item.title}</span>
 				{isActive && (

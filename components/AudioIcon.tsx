@@ -36,6 +36,7 @@ export default function AudioIcon({audio, className, ...props}: Props) {
 			role='button'
 			tabIndex={0}
 			aria-pressed={isPlaying}
+			aria-label={isPlaying ? 'Pause audio' : 'Play audio'}
 			onClick={handlePlay}
 			onKeyDown={e => {
 				if (e.key === 'Enter' || e.key === ' ') {

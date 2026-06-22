@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
 export default function PreferencesButton() {
 	return (
-		<PrimaryButton href='/preferences' scroll={false}>
+		<PrimaryButton href='/preferences' scroll={false} aria-label='Preferences' title='Preferences'>
 			<FontAwesomeIcon icon={faSliders} />
 		</PrimaryButton>
 	)

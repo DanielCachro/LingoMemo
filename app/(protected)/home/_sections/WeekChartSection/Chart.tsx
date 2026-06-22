@@ -27,6 +27,7 @@ export default function Chart({last7Days}: {last7Days: Awaited<ReturnType<typeof
 				const proportionalHeight =
 					day.cardsCompleted > 0 ? (day.cardsCompleted / maxCards) * (barMaxHeight / 16 - baseHeight) : 0
 				const height = baseHeight + proportionalHeight
+				const isCurrentDay = currentDay === day.day
 
 				return (
 					<motion.div
@@ -41,6 +42,9 @@ export default function Chart({last7Days}: {last7Days: Awaited<ReturnType<typeof
 								tabIndex={0}
 								value={day.cardsCompleted}
 								style={{height: `${height}rem`}}
+								aria-current={isCurrentDay ? 'date' : undefined}
+								role='img'
+								aria-label={`Completed ${day.cardsCompleted} cards on ${day.month} ${day.day}`}
 								variants={{
 									hidden: {scaleY: 0},
 									visible: {scaleY: 1, transition: {delay: 0.95, type: 'tween'}},
@@ -48,20 +52,23 @@ export default function Chart({last7Days}: {last7Days: Awaited<ReturnType<typeof
 								className={cn(
 									'peer order-2 w-full origin-bottom rounded-sm bg-primary-400 transition-colors duration-100 outline-none hover:bg-primary-600 focus-visible:bg-primary-600 focus-visible:inset-ring-1 dark:bg-primary-500',
 									{
-										'bg-primary-600 dark:bg-primary-600': currentDay === day.day,
+										'bg-primary-600 dark:bg-primary-600': isCurrentDay,
 									},
 								)}></motion.data>
 							<motion.p
+								aria-hidden='true'
 								className={cn(
 									'order-1 text-sm opacity-0 transition-opacity duration-100 peer-hover:opacity-100 peer-focus-visible:opacity-100',
 									{
-										'opacity-100': currentDay === day.day,
+										'opacity-100': isCurrentDay,
 									},
 								)}>
 								{day.cardsCompleted}
 							</motion.p>
 						</div>
-						<time dateTime={day.datetime} className='text-sm'>{`${day.month} ${day.day}`}</time>
+						<time dateTime={day.datetime} className='text-sm' aria-hidden='true'>
+							{`${day.month} ${day.day}`}{' '}
+						</time>
 					</motion.div>
 				)
 			})}

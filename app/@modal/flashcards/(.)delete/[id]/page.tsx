@@ -26,6 +26,7 @@ export default function FlashcardsDeleteModal({
 				return
 			}
 			queryClient.refetchQueries({queryKey: ['flashcards']})
+			toast.success('Flashcard deleted successfully.')
 		} catch (error) {
 			toast.error('Failed to delete flashcard. Please try again.')
 			console.error('Failed to delete flashcard:', error)

@@ -1,9 +1,27 @@
 import {cn} from '@/lib/utils/cn'
+import {Metadata} from 'next'
 import Image from 'next/image'
 import {redirect} from 'next/navigation'
 import EntryLoader from './_components/EntryLoader'
 import SearchBarWrapper from './_components/SearchBarWrapper'
 import {getTargetLang} from './_lib/actions'
+
+export async function generateMetadata({searchParams}: Props): Promise<Metadata> {
+	const params = await searchParams
+	const search = params?.search?.toLowerCase().trim()
+
+	if (search) {
+		return {
+			title: `${search} - Dictionary - LingoMemo`,
+			description: `Definition for the word ${search}.`,
+		}
+	}
+
+	return {
+		title: 'Dictionary - LingoMemo',
+		description: 'Browse dictionary entries and create flashcards with just one click.',
+	}
+}
 
 interface Props {
 	searchParams?: Promise<{search: string; lang: string}>
@@ -33,7 +51,15 @@ export default async function DictionaryPage({searchParams}: Props) {
 				{search && <EntryLoader search={search} targetLang={targetLang} />}
 				{!search && (
 					<div className='flex grow flex-col items-center justify-center space-y-32 text-center'>
-						<Image src='/cats/CatWow.svg' alt='Brand cat smiling' width={120} height={112} priority className='w-128' />
+						<Image
+							src='/cats/CatWow.svg'
+							alt='Brand cat smiling'
+							width={120}
+							height={112}
+							priority
+							className='w-128'
+							aria-hidden='true'
+						/>
 						<p>
 							Looking for a new word? <br /> Search above and turn it into a flashcard!
 						</p>
