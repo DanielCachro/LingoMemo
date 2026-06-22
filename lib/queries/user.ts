@@ -1,6 +1,7 @@
 import 'server-only'
 
 import {prisma} from '@/prisma/client'
+import {redirect} from 'next/navigation'
 import {cache} from 'react'
 import {createClient} from '../supabase/server'
 
@@ -25,7 +26,7 @@ export const getCurrentUser = cache(async () => {
 
 export async function getActiveLearningProfile() {
 	const user = await getCurrentUser()
-	if (!user) throw new Error('User not authenticated.')
+	if (!user) redirect('/auth/signin')
 
 	const activeLearningProfile = user.activeLearningProfile
 	const activeLearningProfileId = user.activeLearningProfileId
