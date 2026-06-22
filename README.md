@@ -230,6 +230,9 @@ DIRECT_URL=your_direct_database_connection_string
 # Supabase Configuration
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
+
+# App Configuration
+NEXT_PUBLIC_BASE_URL=your_actual_base_url (e.g., http://localhost:3000 for local dev)
 ```
 
 **How to get these values:**
@@ -238,6 +241,7 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
 - Create a new project and navigate to **Connect → ORM → Prisma**
 - Copy `DATABASE_URL` and `DIRECT_URL`
 - For `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, find them under **Connect → Framework → Next.js**
+- For `NEXT_PUBLIC_BASE_URL`, use http://localhost:3000 for local development. In production, this must be set to your actual domain (e.g., https://lingomemo.vercel.app)
 
 #### 4. Set Up the Database
 
@@ -296,6 +300,7 @@ Vercel is optimized for Next.js and provides the best performance:
      - `DIRECT_URL`
      - `NEXT_PUBLIC_SUPABASE_URL`
      - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+     - `NEXT_PUBLIC_BASE_URL` (Set this to your production Vercel domain, e.g., `https://lingomemo.vercel.app` - without the trailing slash)
 
 3. **Deploy**
    - Click **Deploy**

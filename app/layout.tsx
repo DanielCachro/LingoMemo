@@ -19,9 +19,15 @@ const nunito = Nunito({
 	weight: ['500', '700', '900'],
 })
 
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://lingomemo.vercel.app'
+
 export const metadata: Metadata = {
 	title: 'LingoMemo',
 	description: 'Create your own cards, track your progress, and never forget the words that matter.',
+	metadataBase: new URL(baseUrl),
+	alternates: {
+		canonical: '/',
+	},
 }
 
 export default function RootLayout({
