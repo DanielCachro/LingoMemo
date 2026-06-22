@@ -99,10 +99,24 @@ export default function Modal({
 		setIsOpen(false)
 	}, [])
 
+	// Check if the current modal is the topmost one in the DOM tree
+	const checkIsTopModal = useCallback(() => {
+		if (!modalRef.current) return false
+		// Find all active dialogs, ignoring those that are currently exiting
+		const dialogs = Array.from(
+			document.querySelectorAll('[role="dialog"][aria-modal="true"]:not([data-modal-exiting="true"])'),
+		)
+		// Filter out <Activity/> routes that are visually hidden
+		const visibleDialogs = dialogs.filter(dialog => window.getComputedStyle(dialog).display !== 'none')
+
+		// The current modal is the top one if it's the last visible element in the DOM tree
+		return visibleDialogs[visibleDialogs.length - 1] === modalRef.current
+	}, [])
+
 	// Close on Escape key press
 	useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
-			if (event.key === 'Escape') {
+			if (event.key === 'Escape' && checkIsTopModal()) {
 				handleClose()
 			}
 		}
@@ -111,7 +125,7 @@ export default function Modal({
 		return () => {
 			document.removeEventListener('keydown', handleKeyDown)
 		}
-	}, [handleClose])
+	}, [handleClose, checkIsTopModal])
 
 	// Body scroll lock
 	useEffect(() => {
@@ -137,6 +151,8 @@ export default function Modal({
 
 		// Small delay to allow Next.js routes and framer-motion to render/animate new elements
 		const focusTimer = setTimeout(() => {
+			if (!checkIsTopModal()) return
+
 			const focusableElements = getFocusableElements()
 
 			if (focusableElements.length === 0) {
@@ -152,6 +168,8 @@ export default function Modal({
 
 		// Prevent focus from escaping when active element is removed from DOM
 		const handleFocusIn = (event: FocusEvent) => {
+			if (!checkIsTopModal()) return
+
 			if (!modalElement.contains(event.target as Node)) {
 				event.preventDefault()
 				const focusableElements = getFocusableElements()
@@ -166,6 +184,7 @@ export default function Modal({
 		// Loop focus within the modal
 		const handleTabKey = (event: KeyboardEvent) => {
 			if (event.key !== 'Tab') return
+			if (!checkIsTopModal()) return
 
 			const focusableElements = getFocusableElements()
 			if (focusableElements.length === 0) return
@@ -197,7 +216,7 @@ export default function Modal({
 			document.removeEventListener('focusin', handleFocusIn)
 			clearTimeout(focusTimer)
 		}
-	}, [isOpen, pathname])
+	}, [isOpen, pathname, checkIsTopModal])
 
 	// In Next.js 16, intercepted routes and modals are not unmounted on navigation.
 	// Instead, they are hidden using the <Activity> API (kept in the DOM with display: none).
@@ -264,6 +283,7 @@ export default function Modal({
 						ref={modalRef}
 						tabIndex={-1} // Allow progammatic focus for focus trap
 						aria-label={heading}
+						data-modal-exiting={isExiting ? 'true' : undefined}
 						onDragEnd={onDragEnd}
 						initial={false}
 						animate={animationControls}
