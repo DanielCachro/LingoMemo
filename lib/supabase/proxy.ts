@@ -1,3 +1,4 @@
+import {PROTECTED_PATHS} from '@/lib/constants/protectedPaths'
 import {createServerClient} from '@supabase/ssr'
 import {NextResponse, type NextRequest} from 'next/server'
 
@@ -36,8 +37,8 @@ export async function updateSession(request: NextRequest) {
 	} = await supabase.auth.getUser()
 
 	// Redirect logic
-	const protectedPaths = ['/home', '/study', '/flashcards', '/dictionary', '/preferences']
-	const isProtectedPath = protectedPaths.some(path => request.nextUrl.pathname.startsWith(path))
+
+	const isProtectedPath = PROTECTED_PATHS.some(path => request.nextUrl.pathname.startsWith(path))
 
 	if (!user && isProtectedPath) {
 		const url = request.nextUrl.clone()
