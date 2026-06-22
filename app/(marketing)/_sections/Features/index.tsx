@@ -2,8 +2,10 @@ import {
 	faBook,
 	faBrain,
 	faChartLine,
+	faCloud,
 	faMobileScreen,
 	faRocket,
+	faUniversalAccess,
 	faUser,
 	faWindowRestore,
 } from '@fortawesome/free-solid-svg-icons'
@@ -38,17 +40,21 @@ export default function FeaturesSection() {
 						title='Custom Flashcards'
 						description='Create fully personalized flashcards tailored to your learning style, topics, or goals.'
 					/>
+					<FeatureCard
+						icon={faChartLine}
+						title='Progress Overview'
+						description='Track your study data, review history, and overall growth - with a motivating streak count that keeps you coming back.'
+					/>
 
 					<FeatureCard
 						icon={faUser}
 						title='Multiple Learning Profiles'
 						description="Learn multiple languages with separate profiles. Create custom ones too - even if they're not related to language learning at all."
 					/>
-
 					<FeatureCard
-						icon={faChartLine}
-						title='Progress Overview'
-						description='Track your study data, review history, and overall growth - with a motivating streak count that keeps you coming back.'
+						icon={faCloud}
+						title='Seamless Cloud Sync'
+						description='Your progress and flashcards are safely backed up and instantly synced across all your devices.'
 					/>
 
 					<FeatureCard
@@ -61,6 +67,11 @@ export default function FeaturesSection() {
 						icon={faRocket}
 						title='Fast & Fluid'
 						description='Enjoy a buttery smooth experience with instant interactions and zero lag.'
+					/>
+					<FeatureCard
+						icon={faUniversalAccess}
+						title='Accessible'
+						description='Fully compatible with screen readers and keyboard navigation for an inclusive experience.'
 					/>
 				</div>
 			</div>

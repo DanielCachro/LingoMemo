@@ -184,26 +184,6 @@
 	}
 }
 
-@utility cta-pattern {
-	background-color: var(--color-primary-500);
-
-	background-image:
-		radial-gradient(circle at center, var(--color-primary-500) 0%, transparent 75%),
-		radial-gradient(rgba(255, 255, 255, 0.2) 1.5px, transparent 1.5px);
-
-	background-size:
-		100% 100%,
-		24px 24px;
-	background-position: center;
-
-	@variant dark {
-		background-color: var(--color-primary-700);
-		background-image:
-			radial-gradient(circle at center, var(--color-primary-700) 0%, transparent 70%),
-			radial-gradient(rgba(255, 255, 255, 0.15) 1.5px, transparent 1.5px);
-	}
-}
-
 @utility scrollbar {
 	scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0);
 

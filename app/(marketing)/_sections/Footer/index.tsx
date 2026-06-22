@@ -7,7 +7,14 @@ export default function Footer() {
 		<footer className='py-48'>
 			<div className='max-w-7xl mx-auto flex flex-col items-center justify-between gap-24 px-24 md:flex-row md:px-48'>
 				<div className='flex items-center gap-8 md:flex-1'>
-					<Image src='/cats/CatSmile.svg' alt='LingoMemo Logo' width={120} height={112} className='h-24 w-24' />
+					<Image
+						src='/cats/CatSmile.svg'
+						alt='LingoMemo Logo'
+						width={120}
+						height={112}
+						className='h-24 w-24'
+						aria-hidden='true'
+					/>
 					<span className='font-bold text-background-700 dark:text-background-300'>LingoMemo</span>
 				</div>
 				<div className='text-sm text-background-500'>

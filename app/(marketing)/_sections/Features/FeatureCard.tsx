@@ -18,8 +18,8 @@ export default function FeatureCard({
 			initial={{opacity: 0, y: 20}}
 			whileInView={{opacity: 1, y: 0}}
 			viewport={{once: true, margin: '-50px'}}
-			transition={{duration: 0.5}}
-			whileHover={{y: -5}}
+			transition={{duration: 0.2}}
+			whileHover={{y: -10}}
 			className='group'>
 			<SlabBorder
 				rounded='xl'

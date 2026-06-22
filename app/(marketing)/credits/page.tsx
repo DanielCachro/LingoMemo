@@ -41,13 +41,13 @@ export default function CreditsPage() {
 				</Section>
 				<Section title='Illustrations'>
 					<p>
-						Cat illustrations are provided by{' '}
+						Cat illustrations and landing page images are designed by{' '}
 						<a
-							href='https://pl.freepik.com/darmowe-wektory/recznie-rysowana-kolekcja-elementow-emotikon_34271406.htm'
+							href='https://www.magnific.com/'
 							target='_blank'
 							rel='noopener noreferrer'
 							className='font-bold text-primary-500 hover:underline dark:text-primary-600'>
-							Freepik
+							Magnific
 						</a>
 						.
 					</p>

@@ -78,25 +78,27 @@ export default function HeroSection() {
 				</motion.div>
 			</motion.div>
 
-			<motion.div
-				initial={{opacity: 0, x: -100}}
-				animate={{opacity: 1, x: 0}}
-				transition={{delay: 0.5, duration: 0.8}}
-				className='absolute top-1/3 left-48 hidden xl:block'>
-				<FloatingCard
-					icon={faGraduationCap}
-					title='Mastery'
-					color='text-primary-500 dark:text-primary-600'
-					rotate={-6}
-				/>
-			</motion.div>
-			<motion.div
-				initial={{opacity: 0, x: 100}}
-				animate={{opacity: 1, x: 0}}
-				transition={{delay: 0.7, duration: 0.8}}
-				className='absolute top-1/4 right-48 hidden xl:block'>
-				<FloatingCard icon={faBrain} title='Growth' color='text-accent-500' rotate={6} />
-			</motion.div>
+			<div className='pointer-events-none absolute inset-0 mx-auto max-w-[120rem]'>
+				<motion.div
+					initial={{opacity: 0, x: -100}}
+					animate={{opacity: 1, x: 0}}
+					transition={{delay: 0.5, duration: 0.8}}
+					className='absolute top-1/3 left-48 hidden xl:block'>
+					<FloatingCard
+						icon={faGraduationCap}
+						title='Mastery'
+						color='text-primary-500 dark:text-primary-600'
+						rotate={-6}
+					/>
+				</motion.div>
+				<motion.div
+					initial={{opacity: 0, x: 100}}
+					animate={{opacity: 1, x: 0}}
+					transition={{delay: 0.7, duration: 0.8}}
+					className='absolute top-1/4 right-48 hidden xl:block'>
+					<FloatingCard icon={faBrain} title='Growth' color='text-accent-500' rotate={6} />
+				</motion.div>
+			</div>
 		</section>
 	)
 }
