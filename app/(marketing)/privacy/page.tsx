@@ -1,5 +1,6 @@
 import {Metadata} from 'next'
 import InfoPageLayout from '../_components/InfoPageLayout'
+import ResetConsentButton from './ResetConsentButton'
 import Section from './Section'
 
 export const metadata: Metadata = {
@@ -67,7 +68,10 @@ export default function PrivacyPage() {
 							website (e.g., loading times).
 						</li>
 					</ul>
-					<p className='mt-4'>These services are only enabled if you have given your consent via our cookie banner.</p>
+					<p className='mt-4'>
+						These services are only enabled if you have given your consent via our cookie banner. If you would like to
+						update your choice, please <ResetConsentButton />
+					</p>
 				</Section>
 
 				<Section title='4. How We Use Your Personal Data'>
