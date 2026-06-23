@@ -1,6 +1,12 @@
 import LinkTile from '@/components/LinkTile'
 import {faLanguage, faSignature} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+	title: 'Setup - LingoMemo',
+	description: 'Setup your language or self-study profile to get started with LingoMemo.',
+}
 
 export default function SetupPage() {
 	return (
