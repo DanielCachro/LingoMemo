@@ -5,6 +5,9 @@ import Section from './Section'
 export const metadata: Metadata = {
 	title: 'Privacy Policy - LingoMemo',
 	description: 'Privacy Policy for LingoMemo.',
+	alternates: {
+		canonical: '/privacy',
+	},
 }
 
 const config = {

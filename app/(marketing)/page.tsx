@@ -8,6 +8,9 @@ export const metadata: Metadata = {
 	title: 'LingoMemo - Master any language effortlessly',
 	description:
 		'The smarter way to learn vocabulary. Create custom flashcards, track your progress, and let our spaced repetition algorithm handle the rest.',
+	alternates: {
+		canonical: '/',
+	},
 }
 
 export default function LandingPage() {

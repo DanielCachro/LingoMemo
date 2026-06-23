@@ -25,9 +25,6 @@ export const metadata: Metadata = {
 	title: 'LingoMemo',
 	description: 'Create your own cards, track your progress, and never forget the words that matter.',
 	metadataBase: new URL(baseUrl),
-	alternates: {
-		canonical: '/',
-	},
 	verification: {
 		google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
 	},

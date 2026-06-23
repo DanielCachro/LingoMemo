@@ -4,6 +4,9 @@ import InfoPageLayout from '../_components/InfoPageLayout'
 export const metadata: Metadata = {
 	title: 'Terms - LingoMemo',
 	description: 'Legal notice and disclaimer for LingoMemo.',
+	alternates: {
+		canonical: '/terms',
+	},
 }
 
 const config = {

@@ -5,6 +5,9 @@ import Section from './Section'
 export const metadata: Metadata = {
 	title: 'Credits - LingoMemo',
 	description: 'Credits and attributions for resources used in LingoMemo.',
+	alternates: {
+		canonical: '/credits',
+	},
 }
 
 const ulClassName = 'ml-16 list-inside list-disc space-y-4'
