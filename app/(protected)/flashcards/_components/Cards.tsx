@@ -30,11 +30,18 @@ export default function Cards() {
 	const sort = getData<FlashcardsSort>('flashcardsSort') || []
 	const selectedCardIds = getData<number[]>('flashcardsToBulkDelete') || []
 
-	async function fetchFlashcards({pageParam}: {pageParam?: number}): Promise<FlashcardsApiResponse> {
+	async function fetchFlashcards({
+		pageParam,
+		signal,
+	}: {
+		pageParam?: number
+		signal?: AbortSignal
+	}): Promise<FlashcardsApiResponse> {
 		const res = await fetch(`/api/flashcards?limit=10&cursor=${pageParam}`, {
 			headers: {'Content-Type': 'application/json'},
 			method: 'POST',
 			body: JSON.stringify({searchTerm, filter, sort}),
+			signal,
 		})
 		if (!res.ok) {
 			throw new Error('Error fetching flashcards')
