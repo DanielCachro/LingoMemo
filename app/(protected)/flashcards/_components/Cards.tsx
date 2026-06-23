@@ -10,7 +10,9 @@ import Spinner from '@/components/Spinner'
 import FlashcardsStatus from '@/components/Status'
 import {faFilter, faUpDown} from '@fortawesome/free-solid-svg-icons'
 import {useInfiniteQuery, useQueryClient} from '@tanstack/react-query'
-import _, {pickBy} from 'lodash'
+import isEmpty from 'lodash/isEmpty'
+import isEqual from 'lodash/isEqual'
+import pickBy from 'lodash/pickBy'
 import {useInView} from 'motion/react'
 import {useRouter} from 'next/navigation'
 import {Fragment, useEffect, useRef, useState} from 'react'
@@ -115,13 +117,13 @@ export default function Cards() {
 				<SearchOptionsLinkButton
 					href='/flashcards/sort'
 					icon={faUpDown}
-					isActive={sort.length > 0 && !_.isEqual(sort, initialFlashcardsSortOrder)}
+					isActive={sort.length > 0 && !isEqual(sort, initialFlashcardsSortOrder)}
 					aria-label='Sort flashcards'
 				/>
 				<SearchOptionsLinkButton
 					href='/flashcards/filter'
 					icon={faFilter}
-					isActive={!_.isEmpty(filter) && !_.isEqual(filter, initialFlashcardsFilter)}
+					isActive={!isEmpty(filter) && !isEqual(filter, initialFlashcardsFilter)}
 					aria-label='Filter flashcards'
 				/>
 			</div>

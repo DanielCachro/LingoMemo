@@ -9,7 +9,7 @@ import {cn} from '@/lib/utils/cn'
 import {FlashcardFormValues} from '@/types/flashcards'
 import {Field, Label} from '@headlessui/react'
 import {useQueryClient} from '@tanstack/react-query'
-import _ from 'lodash'
+import isEmpty from 'lodash/isEmpty'
 import {useRouter} from 'next/navigation'
 import {useActionState, useEffect, useRef, useState, useTransition} from 'react'
 import {toast} from 'react-toastify'
@@ -76,9 +76,9 @@ export default function CreateEditModal({
 
 			const message =
 				formState.message ||
-				(_.isEmpty(formState.errors) ? errorMessage : 'Please fix the errors in the form and try again.')
+				(isEmpty(formState.errors) ? errorMessage : 'Please fix the errors in the form and try again.')
 
-			if (_.isEmpty(formState.errors)) {
+			if (isEmpty(formState.errors)) {
 				toast.error(message)
 			}
 

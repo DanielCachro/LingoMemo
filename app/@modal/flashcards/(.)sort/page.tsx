@@ -2,7 +2,7 @@
 import {useModalData} from '@/app/ModalDataProvider'
 import {faArrowDown, faGripVertical} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import _ from 'lodash'
+import isEqual from 'lodash/isEqual'
 import {motion, Reorder} from 'motion/react'
 import {useState} from 'react'
 import LeftAlignedModal from '../../_components/LeftAlignedModal'
@@ -25,7 +25,7 @@ export default function FlashcardsSortModal() {
 	const [items, setItems] = useState(savedSort || initialFlashcardsSortOrder)
 
 	function handleSubmit(closeModal: () => void) {
-		const orderChanged = !_.isEqual(items, initialFlashcardsSortOrder)
+		const orderChanged = !isEqual(items, initialFlashcardsSortOrder)
 		if (orderChanged) {
 			setData<FlashcardsSort>('flashcardsSort', items)
 		} else {
