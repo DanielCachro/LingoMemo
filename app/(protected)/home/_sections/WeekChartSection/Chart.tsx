@@ -50,7 +50,7 @@ export default function Chart({last7Days}: {last7Days: Awaited<ReturnType<typeof
 									visible: {scaleY: 1, transition: {delay: 0.95, type: 'tween'}},
 								}}
 								className={cn(
-									'peer order-2 w-full origin-bottom rounded-sm bg-primary-400 transition-colors duration-100 outline-none hover:bg-primary-600 focus-visible:bg-primary-600 focus-visible:inset-ring-1 dark:bg-primary-500',
+									'peer order-2 w-full origin-bottom rounded-sm bg-primary-400 transition-colors duration-100 outline-none hover:bg-primary-600 focus:bg-primary-600 focus-visible:inset-ring-1 dark:bg-primary-500',
 									{
 										'bg-primary-600 dark:bg-primary-600': isCurrentDay,
 									},
@@ -58,7 +58,7 @@ export default function Chart({last7Days}: {last7Days: Awaited<ReturnType<typeof
 							<motion.p
 								aria-hidden='true'
 								className={cn(
-									'order-1 text-sm opacity-0 transition-opacity duration-100 peer-hover:opacity-100 peer-focus-visible:opacity-100',
+									'order-1 text-sm opacity-0 transition-opacity duration-100 peer-hover:opacity-100 peer-focus:opacity-100',
 									{
 										'opacity-100': isCurrentDay,
 									},
