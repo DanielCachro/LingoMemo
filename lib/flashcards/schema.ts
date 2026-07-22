@@ -9,35 +9,77 @@ export const flashcardFieldsLimits = {
 	example: {max: 300},
 }
 
+function parseJsonArray(val: unknown, ctx: z.RefinementCtx, errorMessage: string): unknown {
+	if (val === null || val === undefined || val === '') {
+		return []
+	}
+
+	if (typeof val === 'string') {
+		try {
+			const parsed = JSON.parse(val)
+			if (!Array.isArray(parsed)) {
+				ctx.addIssue({
+					code: 'custom',
+					message: errorMessage,
+				})
+				return z.NEVER
+			}
+			return parsed
+		} catch {
+			ctx.addIssue({
+				code: 'custom',
+				message: errorMessage,
+			})
+			return z.NEVER
+		}
+	}
+
+	return val
+}
+
 export const flashcardFormSchema = z.object({
 	question: z
 		.string({message: 'Question must be a string'})
 		.min(flashcardFieldsLimits.question.min, {message: 'Question is required'})
-		.max(flashcardFieldsLimits.question.max, {message: 'Question must be no longer than 200 characters'}),
+		.max(flashcardFieldsLimits.question.max, {
+			message: `Question must be no longer than ${flashcardFieldsLimits.question.max} characters`,
+		}),
 	answer: z
 		.string({message: 'Answer must be a string'})
 		.min(flashcardFieldsLimits.answer.min, {message: 'Answer is required'})
-		.max(flashcardFieldsLimits.answer.max, {message: 'Answer must be no longer than 300 characters'}),
+		.max(flashcardFieldsLimits.answer.max, {
+			message: `Answer must be no longer than ${flashcardFieldsLimits.answer.max} characters`,
+		}),
 	note: z
 		.string({message: 'Note must be a string'})
-		.max(flashcardFieldsLimits.note.max, {message: 'Note must be no longer than 500 characters'})
+		.max(flashcardFieldsLimits.note.max, {
+			message: `Note must be no longer than ${flashcardFieldsLimits.note.max} characters`,
+		})
 		.optional(),
 	phonetic: z
 		.string({message: 'Phonetic must be a string'})
-		.max(flashcardFieldsLimits.phonetic.max, {message: 'Phonetic must be no longer than 100 characters'})
+		.max(flashcardFieldsLimits.phonetic.max, {
+			message: `Phonetic must be no longer than ${flashcardFieldsLimits.phonetic.max} characters`,
+		})
 		.optional(),
 	synonyms: z
-		.array(
-			z
-				.string({message: 'Synonym must be a string'})
-				.max(flashcardFieldsLimits.synonym.max, {message: 'Synonym must be no longer than 100 characters'}),
+		.preprocess(
+			(val, ctx) => parseJsonArray(val, ctx, 'Synonyms must be a valid JSON array'),
+			z.array(
+				z.string({message: 'Synonym must be a string'}).max(flashcardFieldsLimits.synonym.max, {
+					message: `Synonym must be no longer than ${flashcardFieldsLimits.synonym.max} characters`,
+				}),
+			),
 		)
-		.optional(),
+		.default([]),
 	examples: z
-		.array(
-			z
-				.string({message: 'Example must be a string'})
-				.max(flashcardFieldsLimits.example.max, {message: 'Example must be no longer than 300 characters'}),
+		.preprocess(
+			(val, ctx) => parseJsonArray(val, ctx, 'Examples must be a valid JSON array'),
+			z.array(
+				z.string({message: 'Example must be a string'}).max(flashcardFieldsLimits.example.max, {
+					message: `Example must be no longer than ${flashcardFieldsLimits.example.max} characters`,
+				}),
+			),
 		)
-		.optional(),
+		.default([]),
 })
