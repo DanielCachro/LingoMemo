@@ -1,63 +1,8 @@
 'use server'
 import {getCurrentUser} from '@/lib/queries/user'
 import {prisma} from '@/prisma/client'
-import {FlashcardActionState, FlashcardFormErrors, FlashcardFormValues} from '@/types/flashcards'
-import {z} from 'zod'
-import {flashcardFormSchema} from '../../flashcards/schema'
-
-function formatFlashcardErrors(error: z.ZodError): FlashcardFormErrors {
-	const errors: FlashcardFormErrors = {}
-
-	error.issues.forEach(issue => {
-		const field = issue.path[0] as keyof FlashcardFormErrors
-		const index = issue.path[1]
-
-		if (field === 'synonyms' || field === 'examples') {
-			if (!errors[field]) errors[field] = []
-			errors[field].push({index: index as number, message: issue.message})
-		} else {
-			errors[field] = issue.message
-		}
-	})
-
-	return errors
-}
-
-type ValidationResult = {success: true; data: FlashcardFormValues} | {success: false; errorState: FlashcardActionState}
-
-function parseAndValidateFlashcard(formData: FormData): ValidationResult {
-	const data = {
-		question: formData.get('question'),
-		answer: formData.get('answer'),
-		note: formData.get('note'),
-		phonetic: formData.get('phonetic'),
-		synonyms: JSON.parse((formData.get('synonyms') as string) || '[]'),
-		examples: JSON.parse((formData.get('examples') as string) || '[]'),
-	}
-
-	const parsed = flashcardFormSchema.safeParse(data)
-
-	if (!parsed.success) {
-		const errors = formatFlashcardErrors(parsed.error)
-		return {
-			success: false,
-			errorState: {
-				status: 'error',
-				message: 'Validation failed. Please correct the errors and try again.',
-				errors: {
-					question: errors.question,
-					answer: errors.answer,
-					note: errors.note,
-					phonetic: errors.phonetic,
-					synonyms: errors.synonyms,
-					examples: errors.examples,
-				},
-			} as FlashcardActionState,
-		}
-	}
-
-	return {success: true, data: parsed.data}
-}
+import {FlashcardActionState} from '@/types/flashcards'
+import {parseAndValidateFlashcard} from './manageUtils'
 
 export async function createFlashcard(_: FlashcardActionState, formData: FormData): Promise<FlashcardActionState> {
 	try {
