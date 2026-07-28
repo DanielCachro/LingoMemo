@@ -9,8 +9,8 @@
 		"start": "next start",
 		"lint": "next lint",
 		"postinstall": "prisma generate",
-		"test": "jest",
-		"test:watch": "jest --watch"
+		"test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
+		"test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --watch"
 	},
 	"dependencies": {
 		"@fortawesome/fontawesome-svg-core": "^7.0.0",
@@ -41,6 +41,7 @@
 	"devDependencies": {
 		"@eslint/eslintrc": "^3",
 		"@tailwindcss/postcss": "^4",
+		"@testcontainers/postgresql": "^12.0.4",
 		"@testing-library/dom": "^10.4.1",
 		"@testing-library/jest-dom": "^7.0.0",
 		"@testing-library/react": "^16.3.2",
@@ -51,6 +52,7 @@
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
 		"baseline-browser-mapping": "^2.10.33",
+		"cross-env": "^10.1.0",
 		"eslint": "^9",
 		"eslint-config-next": "15.4.5",
 		"jest": "^30.4.2",
@@ -60,6 +62,7 @@
 		"prettier-plugin-tailwindcss": "^0.6.14",
 		"prisma": "^7.0.1",
 		"tailwindcss": "^4",
+		"testcontainers": "^12.0.4",
 		"ts-node": "^10.9.2",
 		"typescript": "^5"
 	}

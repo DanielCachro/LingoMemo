@@ -31,6 +31,10 @@ const config: Config = {
 	// Add more setup options before each test is run
 	setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
 
+	// Specify the global setup and teardown scripts
+	globalSetup: '<rootDir>/tests/setup/globalSetup.ts',
+	globalTeardown: '<rootDir>/tests/setup/globalTeardown.ts',
+
 	// A list of reporter names that Jest uses when writing coverage reports
 	// coverageReporters: [
 	//   "json",
