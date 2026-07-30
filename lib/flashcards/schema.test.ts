@@ -89,7 +89,7 @@ describe('flashcardFormSchema', () => {
 			expect(parsed.success).toBe(false)
 			if (!parsed.success) {
 				const questionError = parsed.error.issues.find(issue => issue.path.includes('question'))
-				expect(questionError?.message).toBe('Question must be a string')
+				expect(questionError?.message).toBe('Question is required')
 			}
 		})
 

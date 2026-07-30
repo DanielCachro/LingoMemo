@@ -38,18 +38,24 @@ function parseJsonArray(val: unknown, ctx: z.RefinementCtx, errorMessage: string
 }
 
 export const flashcardFormSchema = z.object({
-	question: z
-		.string({message: 'Question must be a string'})
-		.min(flashcardFieldsLimits.question.min, {message: 'Question is required'})
-		.max(flashcardFieldsLimits.question.max, {
-			message: `Question must be no longer than ${flashcardFieldsLimits.question.max} characters`,
-		}),
-	answer: z
-		.string({message: 'Answer must be a string'})
-		.min(flashcardFieldsLimits.answer.min, {message: 'Answer is required'})
-		.max(flashcardFieldsLimits.answer.max, {
-			message: `Answer must be no longer than ${flashcardFieldsLimits.answer.max} characters`,
-		}),
+	question: z.preprocess(
+		val => (val === undefined ? '' : val),
+		z
+			.string({message: 'Question must be a string'})
+			.min(flashcardFieldsLimits.question.min, {message: 'Question is required'})
+			.max(flashcardFieldsLimits.question.max, {
+				message: `Question must be no longer than ${flashcardFieldsLimits.question.max} characters`,
+			}),
+	),
+	answer: z.preprocess(
+		val => (val === undefined ? '' : val),
+		z
+			.string({message: 'Answer must be a string'})
+			.min(flashcardFieldsLimits.answer.min, {message: 'Answer is required'})
+			.max(flashcardFieldsLimits.answer.max, {
+				message: `Answer must be no longer than ${flashcardFieldsLimits.answer.max} characters`,
+			}),
+	),
 	note: z
 		.string({message: 'Note must be a string'})
 		.max(flashcardFieldsLimits.note.max, {
