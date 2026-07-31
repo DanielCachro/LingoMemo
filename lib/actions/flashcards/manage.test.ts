@@ -5,7 +5,7 @@
 import {prisma} from '@/prisma/client'
 import {setupTestDatabase} from '@/tests/mocks/db'
 import {FlashcardActionState} from '@/types/flashcards'
-import {createFlashcard, updateFlashcard} from './manage'
+import {createFlashcard, deleteFlashcard, updateFlashcard} from './manage'
 
 import {getCurrentUser} from '@/lib/queries/user'
 import {parseAndValidateFlashcard} from './manageUtils'
@@ -384,10 +384,11 @@ describe('Flashcard Server Actions', () => {
 			const result = await updateFlashcard(nonExistentId, initialState, formData)
 
 			expect(result.status).toBe('error')
-			expect(result.message).toBe('Flashcard not found.')
+			expect(result.message).toBe('Flashcard to update was not found.')
 		})
 
-		it('should return an error if the flashcard not belong to the user', async () => {
+		it('should return an error if the flashcard does not belong to the user', async () => {
+			// flashcard that belongs to the test user
 			const existingFlashcard = await prisma.flashcard.create({
 				data: {
 					question: 'Brave',
@@ -404,6 +405,7 @@ describe('Flashcard Server Actions', () => {
 				},
 			})
 
+			// different activeLearningProfileId "runs" the test (not the test user's profile)
 			;(getCurrentUser as jest.Mock).mockResolvedValue({
 				activeLearningProfile: {
 					data: {
@@ -413,12 +415,24 @@ describe('Flashcard Server Actions', () => {
 				},
 				activeLearningProfileId: 9999,
 			})
+			;(parseAndValidateFlashcard as jest.Mock).mockReturnValue({
+				success: true,
+				data: {
+					answer: 'Updated Answer',
+				},
+			})
 
 			const formData = new FormData()
 			const result = await updateFlashcard(existingFlashcard.id, initialState, formData)
 
 			expect(result.status).toBe('error')
-			expect(result.message).toBe('Flashcard not found.')
+			expect(result.message).toBe('Flashcard to update was not found.')
+
+			// verify the flashcard was NOT updated in the database
+			const flashcardInDb = await prisma.flashcard.findUnique({
+				where: {id: existingFlashcard.id},
+			})
+			expect(flashcardInDb?.question).toBe('Brave')
 		})
 
 		it('should catch and handle unexpected database errors gracefully', async () => {
@@ -450,6 +464,140 @@ describe('Flashcard Server Actions', () => {
 			expect(result.message).toBe('Failed to update flashcard.')
 			expect(console.error).toHaveBeenCalledWith(
 				'Error updating flashcard:',
+				expect.objectContaining({message: 'Simulated DB error'}),
+			)
+		})
+	})
+
+	describe('deleteFlashcard', () => {
+		it('should successfully delete a flashcard', async () => {
+			// seed flashcard to delete
+			const existingFlashcard = await prisma.flashcard.create({
+				data: {
+					question: 'Question to delete',
+					learningProfile: {
+						connect: {
+							id: context.profile.id,
+						},
+					},
+					answer: {
+						create: {
+							text: 'Answer to delete',
+							isPersonal: true,
+						},
+					},
+				},
+			})
+
+			const result = await deleteFlashcard(existingFlashcard.id)
+
+			expect(result.success).toBe(true)
+			expect(result.error).toBeUndefined()
+			expect(console.error).not.toHaveBeenCalled()
+
+			// verify it was removed from database
+			const flashcardInDb = await prisma.flashcard.findUnique({
+				where: {id: existingFlashcard.id},
+			})
+
+			expect(flashcardInDb).toBeNull()
+		})
+
+		it('should return an error if the user is not authenticated', async () => {
+			;(getCurrentUser as jest.Mock).mockResolvedValue(null)
+
+			const result = await deleteFlashcard(1)
+
+			expect(result.success).toBe(false)
+			expect(result.error).toBe('Failed to delete flashcard.')
+			expect(console.error).toHaveBeenCalledWith(
+				'Error deleting flashcard:',
+				expect.objectContaining({message: 'User not authenticated'}),
+			)
+		})
+
+		it('should return an error if the user has no active learning profile', async () => {
+			;(getCurrentUser as jest.Mock).mockResolvedValue({
+				...context.user,
+				activeLearningProfile: null,
+				activeLearningProfileId: null,
+			})
+
+			const result = await deleteFlashcard(1)
+
+			expect(result.success).toBe(false)
+			expect(result.error).toBe('Failed to delete flashcard.')
+			expect(console.error).toHaveBeenCalledWith(
+				'Error deleting flashcard:',
+				expect.objectContaining({message: 'No active learning profile found.'}),
+			)
+		})
+
+		it('should return an error if the flashcard does not exist', async () => {
+			const nonExistentId = 9999
+
+			const result = await deleteFlashcard(nonExistentId)
+
+			expect(result.success).toBe(false)
+			expect(result.error).toBe('Failed to delete flashcard.')
+			// Prisma throws a RecordNotFound exception when trying to delete a non-existent record
+			expect(console.error).toHaveBeenCalled()
+		})
+
+		it('should return an error if the flashcard does not belong to the user', async () => {
+			// flashcard that belongs to the test user
+			const existingFlashcard = await prisma.flashcard.create({
+				data: {
+					question: 'Not my flashcard',
+					learningProfile: {
+						connect: {
+							id: context.profile.id,
+						},
+					},
+					answer: {
+						create: {
+							text: 'Some answer',
+							isPersonal: true,
+						},
+					},
+				},
+			})
+
+			// different activeLearningProfileId "runs" the test (not the test user's profile)
+			;(getCurrentUser as jest.Mock).mockResolvedValue({
+				...context.user,
+				activeLearningProfile: {
+					data: {
+						userId: 9999, // different user
+						profileName: 'Other Profile',
+					},
+				},
+				activeLearningProfileId: 9999,
+			})
+
+			const result = await deleteFlashcard(existingFlashcard.id)
+
+			expect(result.success).toBe(false)
+			expect(result.error).toBe('Failed to delete flashcard.')
+			expect(console.error).toHaveBeenCalled()
+
+			// verify the flashcard was NOT deleted from the database
+			const flashcardInDb = await prisma.flashcard.findUnique({
+				where: {id: existingFlashcard.id},
+			})
+
+			expect(flashcardInDb).not.toBeNull()
+		})
+
+		it('should catch and handle unexpected database errors gracefully', async () => {
+			jest.spyOn(prisma.flashcard, 'delete').mockRejectedValueOnce(new Error('Simulated DB error'))
+
+			const result = await deleteFlashcard(1)
+
+			expect(result.success).toBe(false)
+			expect(result.error).toBe('Failed to delete flashcard.')
+			expect(console.error).toHaveBeenCalledWith(
+				'Error deleting flashcard:',
 				expect.objectContaining({message: 'Simulated DB error'}),
 			)
 		})

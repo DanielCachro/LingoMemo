@@ -90,7 +90,7 @@ export async function updateFlashcard(
 		})
 
 		if (!currentFlashcard) {
-			return {status: 'error', message: 'Flashcard not found.', errors: {}}
+			return {status: 'error', message: 'Flashcard to update was not found.', errors: {}}
 		}
 
 		const commonData = {
