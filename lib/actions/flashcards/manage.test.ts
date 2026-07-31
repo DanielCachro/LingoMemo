@@ -5,7 +5,7 @@
 import {prisma} from '@/prisma/client'
 import {setupTestDatabase} from '@/tests/mocks/db'
 import {FlashcardActionState} from '@/types/flashcards'
-import {createFlashcard, deleteFlashcard, updateFlashcard} from './manage'
+import {bulkDeleteFlashcards, createFlashcard, deleteFlashcard, updateFlashcard} from './manage'
 
 import {getCurrentUser} from '@/lib/queries/user'
 import {parseAndValidateFlashcard} from './manageUtils'
@@ -598,6 +598,129 @@ describe('Flashcard Server Actions', () => {
 			expect(result.error).toBe('Failed to delete flashcard.')
 			expect(console.error).toHaveBeenCalledWith(
 				'Error deleting flashcard:',
+				expect.objectContaining({message: 'Simulated DB error'}),
+			)
+		})
+	})
+
+	describe('bulkDeleteFlashcards', () => {
+		it('should successfully delete multiple flashcards belonging to the user', async () => {
+			// seed multiple flashcards
+			const flashcard1 = await prisma.flashcard.create({
+				data: {
+					question: 'Question 1',
+					learningProfile: {connect: {id: context.profile.id}},
+					answer: {create: {text: 'Answer 1', isPersonal: true}},
+				},
+			})
+			const flashcard2 = await prisma.flashcard.create({
+				data: {
+					question: 'Question 2',
+					learningProfile: {connect: {id: context.profile.id}},
+					answer: {create: {text: 'Answer 2', isPersonal: true}},
+				},
+			})
+			const flashcard3 = await prisma.flashcard.create({
+				data: {
+					question: 'Question 3 (should not be deleted)',
+					learningProfile: {connect: {id: context.profile.id}},
+					answer: {create: {text: 'Answer 3', isPersonal: true}},
+				},
+			})
+
+			const result = await bulkDeleteFlashcards([flashcard1.id, flashcard2.id])
+
+			expect(result.success).toBe(true)
+			expect(result.error).toBeUndefined()
+			expect(console.error).not.toHaveBeenCalled()
+
+			// verify they were removed from the database
+			const remainingFlashcards = await prisma.flashcard.findMany({
+				where: {
+					id: {in: [flashcard1.id, flashcard2.id, flashcard3.id]},
+				},
+			})
+
+			// only flashcard3 should remain
+			expect(remainingFlashcards).toHaveLength(1)
+			expect(remainingFlashcards[0].id).toBe(flashcard3.id)
+		})
+
+		it('should return an error if the user is not authenticated', async () => {
+			;(getCurrentUser as jest.Mock).mockResolvedValue(null)
+
+			const result = await bulkDeleteFlashcards([1, 2, 3])
+
+			expect(result.success).toBe(false)
+			expect(result.error).toBe('Failed to delete flashcards.')
+			expect(console.error).toHaveBeenCalledWith(
+				'Error deleting flashcards in bulk:',
+				expect.objectContaining({message: 'User not authenticated'}),
+			)
+		})
+
+		it('should return an error if the user has no active learning profile', async () => {
+			;(getCurrentUser as jest.Mock).mockResolvedValue({
+				...context.user,
+				activeLearningProfile: null,
+				activeLearningProfileId: null,
+			})
+
+			const result = await bulkDeleteFlashcards([1, 2, 3])
+
+			expect(result.success).toBe(false)
+			expect(result.error).toBe('Failed to delete flashcards.')
+			expect(console.error).toHaveBeenCalledWith(
+				'Error deleting flashcards in bulk:',
+				expect.objectContaining({message: 'No active learning profile found.'}),
+			)
+		})
+
+		it('should not delete flashcards that do not belong to the user (silently skip them)', async () => {
+			// seed a flashcard that belongs to the test user
+			const existingFlashcard = await prisma.flashcard.create({
+				data: {
+					question: 'Not my flashcard',
+					learningProfile: {connect: {id: context.profile.id}},
+					answer: {create: {text: 'Some answer', isPersonal: true}},
+				},
+			})
+
+			// mock the current user to simulate someone else
+			;(getCurrentUser as jest.Mock).mockResolvedValue({
+				...context.user,
+				activeLearningProfile: {
+					data: {
+						userId: 9999, // different user
+						profileName: 'Other Profile',
+					},
+				},
+				activeLearningProfileId: 9999,
+			})
+
+			const result = await bulkDeleteFlashcards([existingFlashcard.id])
+
+			// Prisma's deleteMany doesn't throw if it deletes 0 records, it just returns { count: 0 }.
+			// So the function will return success: true, but the record should NOT be deleted.
+			expect(result.success).toBe(true)
+
+			// verify the flashcard was NOT deleted from the database
+			const flashcardInDb = await prisma.flashcard.findUnique({
+				where: {id: existingFlashcard.id},
+			})
+
+			expect(flashcardInDb).not.toBeNull()
+		})
+
+		it('should catch and handle unexpected database errors gracefully', async () => {
+			jest.spyOn(prisma.flashcard, 'deleteMany').mockRejectedValueOnce(new Error('Simulated DB error'))
+
+			const result = await bulkDeleteFlashcards([1, 2, 3])
+
+			expect(result.success).toBe(false)
+			expect(result.error).toBe('Failed to delete flashcards.')
+			expect(console.error).toHaveBeenCalledWith(
+				'Error deleting flashcards in bulk:',
 				expect.objectContaining({message: 'Simulated DB error'}),
 			)
 		})
