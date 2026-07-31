@@ -470,7 +470,7 @@ describe('Flashcard Server Actions', () => {
 	})
 
 	describe('deleteFlashcard', () => {
-		it('should successfully delete a flashcard', async () => {
+		it('should successfully delete a flashcard and its associated personal answer (isPersonal = true)', async () => {
 			// seed flashcard to delete
 			const existingFlashcard = await prisma.flashcard.create({
 				data: {
@@ -487,6 +487,9 @@ describe('Flashcard Server Actions', () => {
 						},
 					},
 				},
+				include: {
+					answer: true,
+				},
 			})
 
 			const result = await deleteFlashcard(existingFlashcard.id)
@@ -499,8 +502,55 @@ describe('Flashcard Server Actions', () => {
 			const flashcardInDb = await prisma.flashcard.findUnique({
 				where: {id: existingFlashcard.id},
 			})
-
 			expect(flashcardInDb).toBeNull()
+
+			// verify the associated personal answer was also removed
+			const answerInDb = await prisma.answer.findUnique({
+				where: {id: existingFlashcard.answer.id},
+			})
+			expect(answerInDb).toBeNull()
+		})
+
+		it('should delete the flashcard but keep the associated answer if it is NOT personal (isPersonal = false)', async () => {
+			// seed flashcard with a public answer
+			const existingFlashcard = await prisma.flashcard.create({
+				data: {
+					question: 'Question to delete',
+					learningProfile: {
+						connect: {
+							id: context.profile.id,
+						},
+					},
+					answer: {
+						create: {
+							text: 'Public Answer',
+							isPersonal: false,
+						},
+					},
+				},
+				include: {
+					answer: true,
+				},
+			})
+
+			const result = await deleteFlashcard(existingFlashcard.id)
+
+			expect(result.success).toBe(true)
+			expect(result.error).toBeUndefined()
+
+			// verify flashcard was removed from database
+			const flashcardInDb = await prisma.flashcard.findUnique({
+				where: {id: existingFlashcard.id},
+			})
+			expect(flashcardInDb).toBeNull()
+
+			// verify the associated PUBLIC answer was NOT removed
+			const answerInDb = await prisma.answer.findUnique({
+				where: {id: existingFlashcard.answer.id},
+			})
+			expect(answerInDb).not.toBeNull()
+			expect(answerInDb?.text).toBe('Public Answer')
+			expect(answerInDb?.isPersonal).toBe(false)
 		})
 
 		it('should return an error if the user is not authenticated', async () => {
@@ -590,7 +640,7 @@ describe('Flashcard Server Actions', () => {
 		})
 
 		it('should catch and handle unexpected database errors gracefully', async () => {
-			jest.spyOn(prisma.flashcard, 'delete').mockRejectedValueOnce(new Error('Simulated DB error'))
+			jest.spyOn(prisma.flashcard, 'findUnique').mockRejectedValueOnce(new Error('Simulated DB error'))
 
 			const result = await deleteFlashcard(1)
 
@@ -604,7 +654,7 @@ describe('Flashcard Server Actions', () => {
 	})
 
 	describe('bulkDeleteFlashcards', () => {
-		it('should successfully delete multiple flashcards belonging to the user', async () => {
+		it('should successfully delete multiple flashcards and their associated personal answers (isPersonal = true)', async () => {
 			// seed multiple flashcards
 			const flashcard1 = await prisma.flashcard.create({
 				data: {
@@ -612,6 +662,7 @@ describe('Flashcard Server Actions', () => {
 					learningProfile: {connect: {id: context.profile.id}},
 					answer: {create: {text: 'Answer 1', isPersonal: true}},
 				},
+				include: {answer: true},
 			})
 			const flashcard2 = await prisma.flashcard.create({
 				data: {
@@ -619,6 +670,7 @@ describe('Flashcard Server Actions', () => {
 					learningProfile: {connect: {id: context.profile.id}},
 					answer: {create: {text: 'Answer 2', isPersonal: true}},
 				},
+				include: {answer: true},
 			})
 			const flashcard3 = await prisma.flashcard.create({
 				data: {
@@ -626,6 +678,7 @@ describe('Flashcard Server Actions', () => {
 					learningProfile: {connect: {id: context.profile.id}},
 					answer: {create: {text: 'Answer 3', isPersonal: true}},
 				},
+				include: {answer: true},
 			})
 
 			const result = await bulkDeleteFlashcards([flashcard1.id, flashcard2.id])
@@ -634,7 +687,7 @@ describe('Flashcard Server Actions', () => {
 			expect(result.error).toBeUndefined()
 			expect(console.error).not.toHaveBeenCalled()
 
-			// verify they were removed from the database
+			// verify flashcards were removed from the database
 			const remainingFlashcards = await prisma.flashcard.findMany({
 				where: {
 					id: {in: [flashcard1.id, flashcard2.id, flashcard3.id]},
@@ -644,6 +697,60 @@ describe('Flashcard Server Actions', () => {
 			// only flashcard3 should remain
 			expect(remainingFlashcards).toHaveLength(1)
 			expect(remainingFlashcards[0].id).toBe(flashcard3.id)
+
+			// verify the associated personal answers were also removed
+			const remainingAnswers = await prisma.answer.findMany({
+				where: {
+					id: {in: [flashcard1.answer.id, flashcard2.answer.id, flashcard3.answer.id]},
+				},
+			})
+
+			// only answer3 should remain
+			expect(remainingAnswers).toHaveLength(1)
+			expect(remainingAnswers[0].id).toBe(flashcard3.answer.id)
+		})
+
+		it('should delete flashcards but keep the associated answers if they are NOT personal (isPersonal = false)', async () => {
+			// seed multiple flashcards with public answers
+			const flashcard1 = await prisma.flashcard.create({
+				data: {
+					question: 'Question 1',
+					learningProfile: {connect: {id: context.profile.id}},
+					answer: {create: {text: 'Public Answer 1', isPersonal: false}},
+				},
+				include: {answer: true},
+			})
+			const flashcard2 = await prisma.flashcard.create({
+				data: {
+					question: 'Question 2',
+					learningProfile: {connect: {id: context.profile.id}},
+					answer: {create: {text: 'Public Answer 2', isPersonal: false}},
+				},
+				include: {answer: true},
+			})
+
+			const result = await bulkDeleteFlashcards([flashcard1.id, flashcard2.id])
+
+			expect(result.success).toBe(true)
+			expect(result.error).toBeUndefined()
+
+			// verify flashcards were removed
+			const remainingFlashcards = await prisma.flashcard.findMany({
+				where: {
+					id: {in: [flashcard1.id, flashcard2.id]},
+				},
+			})
+			expect(remainingFlashcards).toHaveLength(0)
+
+			// verify the associated PUBLIC answers were NOT removed
+			const remainingAnswers = await prisma.answer.findMany({
+				where: {
+					id: {in: [flashcard1.answer.id, flashcard2.answer.id]},
+				},
+			})
+
+			// both public answers should still exist in the database
+			expect(remainingAnswers).toHaveLength(2)
 		})
 
 		it('should return an error if the user is not authenticated', async () => {
@@ -713,7 +820,7 @@ describe('Flashcard Server Actions', () => {
 		})
 
 		it('should catch and handle unexpected database errors gracefully', async () => {
-			jest.spyOn(prisma.flashcard, 'deleteMany').mockRejectedValueOnce(new Error('Simulated DB error'))
+			jest.spyOn(prisma.flashcard, 'findMany').mockRejectedValueOnce(new Error('Simulated DB error'))
 
 			const result = await bulkDeleteFlashcards([1, 2, 3])
 

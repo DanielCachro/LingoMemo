@@ -154,17 +154,41 @@ export async function deleteFlashcard(flashcardId: number): Promise<{success: bo
 		const user = await getCurrentUser()
 		if (!user) throw new Error('User not authenticated')
 
-		const activeLearningProfile = user.activeLearningProfile
 		const activeLearningProfileId = user.activeLearningProfileId
+		if (!activeLearningProfileId) throw new Error('No active learning profile found.')
 
-		if (!activeLearningProfile || !activeLearningProfileId) throw new Error('No active learning profile found.')
-
-		await prisma.flashcard.delete({
+		// Fetch the flashcard with its answer first to check the isPersonal flag
+		const flashcard = await prisma.flashcard.findUnique({
 			where: {
 				id: flashcardId,
 				learningProfileId: activeLearningProfileId,
 			},
+			include: {
+				answer: true,
+			},
 		})
+
+		if (!flashcard) {
+			throw new Error('Flashcard not found or unauthorized.')
+		}
+
+		if (flashcard.answer.isPersonal) {
+			// Delete both Flashcard and Answer in a transaction
+			await prisma.$transaction([
+				prisma.flashcard.delete({
+					where: {id: flashcard.id},
+				}),
+				prisma.answer.delete({
+					where: {id: flashcard.answerId},
+				}),
+			])
+		} else {
+			// Just delete the flashcard, leave the public answer intact
+			await prisma.flashcard.delete({
+				where: {id: flashcard.id},
+			})
+		}
+
 		return {success: true}
 	} catch (error) {
 		console.error('Error deleting flashcard:', error)
@@ -177,19 +201,47 @@ export async function bulkDeleteFlashcards(flashcardIds: number[]): Promise<{suc
 		const user = await getCurrentUser()
 		if (!user) throw new Error('User not authenticated')
 
-		const activeLearningProfile = user.activeLearningProfile
 		const activeLearningProfileId = user.activeLearningProfileId
+		if (!activeLearningProfileId) throw new Error('No active learning profile found.')
 
-		if (!activeLearningProfile || !activeLearningProfileId) throw new Error('No active learning profile found.')
-
-		await prisma.flashcard.deleteMany({
+		// Fetch flashcards to determine which ones have personal answers
+		const flashcards = await prisma.flashcard.findMany({
 			where: {
-				id: {
-					in: flashcardIds,
-				},
+				id: {in: flashcardIds},
 				learningProfileId: activeLearningProfileId,
 			},
+			include: {
+				answer: true,
+			},
 		})
+
+		if (flashcards.length === 0) {
+			return {success: true}
+		}
+
+		const validFlashcardIds = flashcards.map(flashcard => flashcard.id)
+		const personalAnswerIds = flashcards
+			.filter(flashcard => flashcard.answer.isPersonal)
+			.map(flashcard => flashcard.answerId)
+
+		// We delete flashcards first, then cleanup any personal answers
+		await prisma.$transaction([
+			prisma.flashcard.deleteMany({
+				where: {
+					id: {in: validFlashcardIds},
+				},
+			}),
+			...(personalAnswerIds.length > 0
+				? [
+						prisma.answer.deleteMany({
+							where: {
+								id: {in: personalAnswerIds},
+							},
+						}),
+					]
+				: []),
+		])
+
 		return {success: true}
 	} catch (error) {
 		console.error('Error deleting flashcards in bulk:', error)
