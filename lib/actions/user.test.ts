@@ -18,27 +18,27 @@ describe('User Server Actions', () => {
 
 	const context = setupTestDatabase()
 
-	beforeEach(async () => {
-		// already in setupTestDatabase, but just to be explicit here
-		jest.clearAllMocks()
-		// set up default happy-path mock before each test
-		;(getCurrentUser as jest.Mock).mockResolvedValue({
-			...context.user,
-			timeZone: 'Europe/Warsaw',
-			utcOffsetMinutes: 120,
-		})
-
-		// reset the user to a known state before each test
-		await prisma.user.update({
-			where: {id: context.user.id},
-			data: {
+	describe('setUserTimeZone', () => {
+		beforeEach(async () => {
+			// already in setupTestDatabase, but just to be explicit here
+			jest.clearAllMocks()
+			// set up default happy-path mock before each test
+			;(getCurrentUser as jest.Mock).mockResolvedValue({
+				...context.user,
 				timeZone: 'Europe/Warsaw',
 				utcOffsetMinutes: 120,
-			},
-		})
-	})
+			})
 
-	describe('setUserTimeZone', () => {
+			// reset the user to a known state before each test
+			await prisma.user.update({
+				where: {id: context.user.id},
+				data: {
+					timeZone: 'Europe/Warsaw',
+					utcOffsetMinutes: 120,
+				},
+			})
+		})
+
 		it('should successfully update the user time zone and offset in the database', async () => {
 			const result = await setUserTimeZone('Asia/Tokyo', 540)
 
@@ -74,7 +74,7 @@ describe('User Server Actions', () => {
 		it('should throw an error if the user is not authenticated', async () => {
 			;(getCurrentUser as jest.Mock).mockResolvedValue(null)
 
-			await expect(setUserTimeZone('Europe/Warsaw', 120)).rejects.toThrow('User not authenticated.')
+			await expect(setUserTimeZone('Asia/Tokyo', 540)).rejects.toThrow('User not authenticated.')
 		})
 
 		it('should allow timeZone to be undefined and preserve existing timeZone', async () => {
@@ -102,7 +102,7 @@ describe('User Server Actions', () => {
 			// artificially force a Prisma error for this test
 			jest.spyOn(prisma.user, 'update').mockRejectedValueOnce(new Error('Simulated DB error'))
 
-			await expect(setUserTimeZone('Europe/Warsaw', 120)).rejects.toThrow('Simulated DB error')
+			await expect(setUserTimeZone('Asia/Tokyo', 540)).rejects.toThrow('Simulated DB error')
 		})
 	})
 })
