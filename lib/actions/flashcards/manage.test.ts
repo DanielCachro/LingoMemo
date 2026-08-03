@@ -160,6 +160,30 @@ describe('Flashcard Server Actions', () => {
 			expect(result.message).toBe('An unexpected error occurred while creating the flashcard.')
 			expect(console.error).toHaveBeenCalledWith('Error creating flashcard:', expect.any(Error))
 		})
+
+		it('should set note and phonetic to null when they are not provided', async () => {
+			;(parseAndValidateFlashcard as jest.Mock).mockReturnValueOnce({
+				success: true,
+				data: {
+					question: 'Brave',
+					answer: 'Ready to face danger or pain; showing courage.',
+					note: undefined,
+					phonetic: undefined,
+				},
+			})
+
+			const formData = new FormData()
+			const result = await createFlashcard(initialState, formData)
+
+			expect(result.status).toBe('success')
+
+			const flashcardInDb = await prisma.flashcard.findFirst({
+				include: {answer: true},
+			})
+
+			expect(flashcardInDb?.note).toBeNull()
+			expect(flashcardInDb?.answer?.phonetic).toBeNull()
+		})
 	})
 
 	describe('updateFlashcard', () => {
