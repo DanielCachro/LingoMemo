@@ -5,10 +5,16 @@
 import {getCurrentUser} from '@/lib/queries/user'
 import {prisma} from '@/prisma/client'
 import {setupTestDatabase} from '@/tests/mocks/db'
-import {setUserTimeZone} from './user'
+import type {RevalidationConfig} from '@/types/revalidate'
+import {revalidatePath} from 'next/cache'
+import {setActiveLearningProfile, setUserTimeZone} from './user'
 
 jest.mock('@/lib/queries/user', () => ({
 	getCurrentUser: jest.fn(),
+}))
+
+jest.mock('next/cache', () => ({
+	revalidatePath: jest.fn(),
 }))
 
 describe('User Server Actions', () => {
@@ -103,6 +109,109 @@ describe('User Server Actions', () => {
 			jest.spyOn(prisma.user, 'update').mockRejectedValueOnce(new Error('Simulated DB error'))
 
 			await expect(setUserTimeZone('Asia/Tokyo', 540)).rejects.toThrow('Simulated DB error')
+		})
+	})
+
+	describe('setActiveLearningProfile', () => {
+		beforeEach(async () => {
+			jest.clearAllMocks()
+
+			// mock user with a null learning profile initially
+			;(getCurrentUser as jest.Mock).mockResolvedValue({
+				...context.user,
+				activeLearningProfileId: null,
+			})
+
+			// reset the database state
+			await prisma.user.update({
+				where: {id: context.user.id},
+				data: {
+					activeLearningProfileId: null,
+				},
+			})
+		})
+
+		it('should successfully update the active learning profile and its relation in the database', async () => {
+			// use the profile created in setupTestDatabase
+			const validProfileId = context.profile.id
+
+			// verify initial state before action
+			const userBeforeAction = await prisma.user.findUnique({
+				where: {id: context.user.id},
+				include: {activeLearningProfile: true},
+			})
+
+			expect(userBeforeAction?.activeLearningProfileId).toBeNull()
+			expect(userBeforeAction?.activeLearningProfile).toBeNull() // verify that the relation is also null before the action
+
+			await setActiveLearningProfile(validProfileId)
+
+			// verify the state after the action
+			const userAfterAction = await prisma.user.findUnique({
+				where: {id: context.user.id},
+				include: {activeLearningProfile: true},
+			})
+
+			expect(userAfterAction).not.toBeNull()
+			expect(userAfterAction?.activeLearningProfileId).toBe(validProfileId)
+
+			// verify that the relation is also updated correctly
+			expect(userAfterAction?.activeLearningProfile).not.toBeNull()
+			expect(userAfterAction?.activeLearningProfile?.id).toBe(validProfileId)
+		})
+
+		it('should throw an error if the user is not authenticated', async () => {
+			;(getCurrentUser as jest.Mock).mockResolvedValue(null)
+
+			const validProfileId = context.profile.id
+			await expect(setActiveLearningProfile(validProfileId)).rejects.toThrow('User not authenticated.')
+
+			// verify that no changes were made to the database
+			const userInDb = await prisma.user.findUnique({
+				where: {id: context.user.id},
+			})
+			expect(userInDb?.activeLearningProfileId).toBeNull()
+		})
+
+		it('should call revalidatePath when config.revalidateAfter is true', async () => {
+			const validProfileId = context.profile.id
+			const config: RevalidationConfig = {
+				revalidateAfter: true,
+				pathToRevalidate: '/dashboard',
+				type: 'layout',
+			}
+
+			await setActiveLearningProfile(validProfileId, config)
+
+			expect(revalidatePath).toHaveBeenCalledTimes(1)
+			expect(revalidatePath).toHaveBeenCalledWith('/dashboard', 'layout')
+		})
+
+		it('should NOT call revalidatePath when config.revalidateAfter is false', async () => {
+			const validProfileId = context.profile.id
+			const config: RevalidationConfig = {
+				revalidateAfter: false,
+			}
+
+			await setActiveLearningProfile(validProfileId, config)
+
+			expect(revalidatePath).not.toHaveBeenCalled()
+		})
+
+		it('should NOT call revalidatePath by default if no config is provided', async () => {
+			const validProfileId = context.profile.id
+
+			// calling without the second argument (defaults to false)
+			await setActiveLearningProfile(validProfileId)
+
+			expect(revalidatePath).not.toHaveBeenCalled()
+		})
+
+		it('should propagate database errors if prisma update fails', async () => {
+			jest.spyOn(prisma.user, 'update').mockRejectedValueOnce(new Error('Simulated DB error'))
+
+			const validProfileId = context.profile.id
+			await expect(setActiveLearningProfile(validProfileId)).rejects.toThrow('Simulated DB error')
 		})
 	})
 })
