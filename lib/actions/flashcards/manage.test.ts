@@ -70,6 +70,7 @@ describe('Flashcard Server Actions', () => {
 			expect(console.error).not.toHaveBeenCalled()
 
 			const flashcardInDb = await prisma.flashcard.findFirst({
+				where: {learningProfileId: context.profile.id},
 				include: {answer: true},
 			})
 
@@ -99,7 +100,9 @@ describe('Flashcard Server Actions', () => {
 				expect.objectContaining({message: 'User not authenticated'}),
 			)
 
-			const count = await prisma.flashcard.count()
+			const count = await prisma.flashcard.count({
+				where: {learningProfileId: context.profile.id},
+			})
 			expect(count).toBe(0)
 		})
 
@@ -120,7 +123,9 @@ describe('Flashcard Server Actions', () => {
 				expect.objectContaining({message: 'No active learning profile found.'}),
 			)
 
-			const count = await prisma.flashcard.count()
+			const count = await prisma.flashcard.count({
+				where: {learningProfileId: context.profile.id},
+			})
 			expect(count).toBe(0)
 		})
 
@@ -143,7 +148,9 @@ describe('Flashcard Server Actions', () => {
 
 			expect(result).toEqual(validationErrorState)
 
-			const count = await prisma.flashcard.count()
+			const count = await prisma.flashcard.count({
+				where: {learningProfileId: context.profile.id},
+			})
 			expect(count).toBe(0)
 		})
 
@@ -180,6 +187,7 @@ describe('Flashcard Server Actions', () => {
 			expect(result.status).toBe('success')
 
 			const flashcardInDb = await prisma.flashcard.findFirst({
+				where: {learningProfileId: context.profile.id},
 				include: {answer: true},
 			})
 
@@ -375,7 +383,9 @@ describe('Flashcard Server Actions', () => {
 				expect.objectContaining({message: 'No active learning profile found.'}),
 			)
 
-			const count = await prisma.flashcard.count()
+			const count = await prisma.flashcard.count({
+				where: {learningProfileId: context.profile.id},
+			})
 			expect(count).toBe(0)
 		})
 

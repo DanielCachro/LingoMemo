@@ -1,5 +1,6 @@
 import {Prisma} from '@/lib/generated/prisma/client'
 import {prisma} from '@/prisma/client'
+import {randomUUID} from 'crypto' 
 
 export type TestDatabaseContext = {
 	user: Prisma.UserGetPayload<{
@@ -28,7 +29,7 @@ export type TestDatabaseContext = {
 export function setupTestDatabase(): TestDatabaseContext {
 	const context = {} as TestDatabaseContext
 
-	// Ensure the database connection is closed after all tests are done
+	// ensure the database connection is closed after all tests are done
 	afterAll(async () => {
 		await prisma.$disconnect()
 	})
@@ -36,14 +37,14 @@ export function setupTestDatabase(): TestDatabaseContext {
 	beforeEach(async () => {
 		jest.clearAllMocks()
 
-		// Clean up tables before each test for total isolation
-		await truncateAllTables()
+		const userId = randomUUID()
+		const uniqueEmail = `test-${userId}@example.com`
 
 		const user = await prisma.user.create({
 			data: {
-				id: 'test-user-id',
+				id: userId,
 				name: 'Test User',
-				email: 'test@example.com',
+				email: uniqueEmail,
 				timeZone: 'Europe/Warsaw',
 				utcOffsetMinutes: 120,
 			},
@@ -65,20 +66,23 @@ export function setupTestDatabase(): TestDatabaseContext {
 		context.profile = profile
 	})
 
+	afterEach(async () => {
+		if (context.user?.id) {
+			try {
+				// break the circular dependency before deletion
+				await prisma.user.update({
+					where: {id: context.user.id},
+					data: {activeLearningProfileId: null},
+				})
+
+				await prisma.user.delete({
+					where: {id: context.user.id},
+				})
+			} catch (error) {
+				// safely ignore errors during cleanup (e.g. if the test already deleted the user)
+				console.error('Cleanup error:', error)
+			}
+		}
+	})
 	return context
-}
-
-async function truncateAllTables() {
-	const tablenames = await prisma.$queryRaw<Array<{tablename: string}>>`
-        SELECT tablename 
-        FROM pg_tables 
-        WHERE schemaname = 'public' 
-          AND tablename != '_prisma_migrations'
-    `
-
-	const tables = tablenames.map(({tablename}) => `"${tablename}"`).join(', ')
-
-	if (tables.length > 0) {
-		await prisma.$executeRawUnsafe(`TRUNCATE TABLE ${tables} CASCADE;`)
-	}
 }
