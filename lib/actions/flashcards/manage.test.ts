@@ -38,6 +38,8 @@ describe('Flashcard Server Actions', () => {
 	}
 
 	beforeEach(() => {
+		// already in setupTestDatabase, but just to be explicit here
+		jest.clearAllMocks()
 		// set up default happy-path mocks before each test
 		;(getCurrentUser as jest.Mock).mockResolvedValue({
 			...context.user,
