@@ -6,12 +6,14 @@ import {FlashcardResponseQuality} from '@/types/study'
 import {DateTime} from 'luxon'
 
 export async function updateFlashcard(flashcardId: number, q: FlashcardResponseQuality) {
-	if (q !== 0 && q !== 3 && q !== 5) throw new Error('Invalid quality value')
+	if (q !== 0 && q !== 3 && q !== 5) throw new Error('Invalid quality value.')
 
 	const user = await getCurrentUser()
-	const activeLearningProfileId = user?.activeLearningProfileId
+	if (!user) throw new Error('User not authenticated.')
 
-	if (!activeLearningProfileId) throw new Error('No active learning profile for user')
+	const activeLearningProfile = user.activeLearningProfile
+	const activeLearningProfileId = user.activeLearningProfileId
+	if (!activeLearningProfile || !activeLearningProfileId) throw new Error('No active learning profile found.')
 
 	const flashcard = await prisma.flashcard.findUnique({
 		where: {
@@ -20,7 +22,7 @@ export async function updateFlashcard(flashcardId: number, q: FlashcardResponseQ
 		},
 	})
 
-	if (!flashcard) throw new Error('Flashcard not found or access denied')
+	if (!flashcard) throw new Error('Flashcard not found or access denied.')
 
 	let newInterval = 0
 
