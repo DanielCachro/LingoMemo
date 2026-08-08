@@ -13,7 +13,7 @@ import {z} from 'zod'
 
 export async function deleteLearningProfile(profileId: number, config: RevalidationConfig = {revalidateAfter: false}) {
 	const user = await getCurrentUser()
-	if (!user) return {success: false, error: 'User not authenticated'}
+	if (!user) return {success: false, error: 'User not authenticated.'}
 
 	const activeLearningProfile = user.activeLearningProfile
 	const activeLearningProfileId = user.activeLearningProfileId
@@ -81,7 +81,7 @@ export async function createLearningProfile(
 	config: RevalidationConfig & {redirectTo?: string} = {revalidateAfter: false},
 ): Promise<{success: boolean; errors?: CreateLearningProfileError[]; error?: string}> {
 	const user = await getCurrentUser()
-	if (!user) return {success: false, error: 'User not authenticated'}
+	if (!user) return {success: false, error: 'User not authenticated.'}
 
 	try {
 		let createData: Record<string, unknown>
