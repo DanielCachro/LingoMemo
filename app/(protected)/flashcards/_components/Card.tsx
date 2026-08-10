@@ -81,23 +81,22 @@ export default function Card({flashcard, isSelected, onSelectionChange}: CardPro
 		<div className='rounded-sm border-2 border-background-300 bg-background-50 p-16 dark:border-background-700 dark:bg-background-900'>
 			<div className='space-y-12'>
 				<div className='flex justify-between gap-8'>
-					<div className='flex min-w-0 flex-1 flex-wrap items-baseline gap-x-12 gap-y-4'>
+					<div className='flex min-w-0 flex-1 flex-wrap items-baseline gap-x-4 gap-y-4'>
 						<p className='font-bold break-all whitespace-pre-wrap' aria-label='Flashcard answer'>
 							{flashcard.answer.text}
 						</p>
 
-						<div className='flex flex-wrap items-center gap-4'>
-							{flashcard.answer.audio.map((audio, index) => (
-								<div key={index} className='shrink-0'>
-									<AudioIcon audio={audio} />
-								</div>
-							))}
-
+						<div className='flex flex-wrap items-baseline'>
 							<p
-								className='wrap-break-word break-all whitespace-pre-wrap text-background-400 dark:text-background-500'
+								className='mr-8 wrap-break-word break-all whitespace-pre-wrap text-background-400 dark:text-background-500'
 								aria-label='Flashcard phonetic'>
 								{flashcard.answer.phonetic}
 							</p>
+							{flashcard.answer.audio.map((audio, index) => (
+								<div key={index} className='mr-4 shrink-0'>
+									<AudioIcon className='text-background-500 dark:text-background-400' audio={audio} />
+								</div>
+							))}
 						</div>
 					</div>
 					<div className='ml-8 flex shrink-0 items-center gap-4 self-start'>
