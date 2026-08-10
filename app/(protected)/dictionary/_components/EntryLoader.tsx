@@ -5,19 +5,30 @@ import Entry from './Entry'
 async function fetchAudioUrls(search: string) {
 	'use cache'
 	cacheLife('max')
+
 	if (!search) return []
 
-	try {
-		const result = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${search}`)
-		if (!result.ok) throw new Error('Failed to fetch audio URLs')
-		const data = await result.json()
-		const audioUrls = data[0].phonetics
-			.map((phonetic: {audio?: string}) => phonetic.audio)
-			.filter((audio: string | undefined) => audio)
-		return audioUrls
-	} catch {
-		return []
+	const result = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${search}`)
+
+	if (!result.ok) {
+		// if the word is not found, return an empty array instead of throwing an error
+		if (result.status === 404) {
+			return []
+		}
+
+		// if it's a server error (e.g., 502 Cloudflare) throw an error
+		// thanks to that Next.js won't cache the result and will retry on the next request
+		throw new Error('Dictionary API is currently unavailable.')
 	}
+
+	// Safely parse the JSON response and extract audio URLs, filtering out any undefined values
+	const data = await result.json()
+	const audioUrls =
+		data[0]?.phonetics
+			?.map((phonetic: {audio?: string}) => phonetic.audio)
+			?.filter((audio: string | undefined) => audio) || []
+
+	return audioUrls
 }
 
 async function fetchEntry(search: string, targetLang: string): Promise<DictionaryEntry | NotFoundEntry> {
