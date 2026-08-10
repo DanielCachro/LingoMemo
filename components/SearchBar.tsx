@@ -2,7 +2,7 @@
 import {cn} from '@/lib/utils/cn'
 import {faSearch} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {FormEvent} from 'react'
+import {ChangeEvent, FormEvent} from 'react'
 import Input from './Form/Input'
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
 	placeholder?: string
 	formAction?: (formData: FormData) => void | Promise<void>
 	onSubmit?: (event: FormEvent<HTMLFormElement>) => void | Promise<void>
-	onChange?: (event: FormEvent<HTMLInputElement>) => void | Promise<void>
+	onChange?: (event: ChangeEvent<HTMLInputElement>) => void | Promise<void>
 }
 
 export default function SearchBar({className, placeholder, formAction, onSubmit, onChange}: Props) {

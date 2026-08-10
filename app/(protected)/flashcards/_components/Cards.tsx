@@ -15,7 +15,7 @@ import isEqual from 'lodash/isEqual'
 import pickBy from 'lodash/pickBy'
 import {useInView} from 'motion/react'
 import {useRouter} from 'next/navigation'
-import {Fragment, useEffect, useRef, useState} from 'react'
+import {ChangeEvent, Fragment, useEffect, useRef, useState} from 'react'
 import BulkSelectFloatingButton from './BulkSelectFloatingButton'
 import Card from './Card'
 import SearchOptionsLinkButton from './SearchOptionsLinkButton'
@@ -66,7 +66,7 @@ export default function Cards() {
 		getNextPageParam: lastPage => lastPage.cursor,
 	})
 
-	function handleSearch(event: React.FormEvent<HTMLInputElement>) {
+	function handleSearch(event: ChangeEvent<HTMLInputElement>) {
 		if (lastSearchChange.current) {
 			window.clearTimeout(lastSearchChange.current)
 		}
